@@ -3,7 +3,7 @@
 \docType{data}
 \name{Concrete}
 \alias{Concrete}
-\title{Concrete - This is the strength of concrete daa set originally posted on UCI: https://archive.ics.uci.edu/dataset/165/concrete+compressive+strength}
+\title{Concrete - This is the strength of concrete daa set originally posted on UCI}
 \format{
 Concrete
 A data frame with 1030 rows and 9 columns:
@@ -18,6 +18,9 @@ A data frame with 1030 rows and 9 columns:
 \item{Age}{Day (1~365) -- Input Variable}
 \item{Strength}{quantitative -- MPa -- Output Variable}
 }
+}
+\source{
+https://archive.ics.uci.edu/dataset/165/concrete+compressive+strength
 }
 \usage{
 Concrete

@@ -3,7 +3,7 @@
 \docType{data}
 \name{Insurance}
 \alias{Insurance}
-\title{Insurance - The data is from UCI: https://www.kaggle.com/datasets/thedevastator/prediction-of-insurance-charges-using-age-gender}
+\title{Insurance - The data is from UCI}
 \format{
 Insurance
 A data frame with 1338 rows and 7 columns
@@ -15,6 +15,9 @@ Credit to Bob Wakefield
 \item{Region}{The region the customer lives in. (String)}
 \item{Charges}{The insurance charges for the customer. (Float)}
 }
+}
+\source{
+https://www.kaggle.com/datasets/thedevastator/prediction-of-insurance-charges-using-age-gender
 }
 \usage{
 Insurance

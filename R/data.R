@@ -20,7 +20,7 @@
 #' \item{medv}{Median value of owner occupied homes, from the 1970 United States census}
 #' }
 #'
-#' @source <https://www.researchgate.net/publication/4974606_Hedonic_housing_prices_and_the_demand_for_clean_air>
+#' @source <https://www.law.berkeley.edu/files/Hedonic.PDF>
 "Boston_housing"
 
 
@@ -46,10 +46,10 @@
 #' \item{medv}{Median value of owner occupied homes, from the 1970 United States census}
 #' }
 #'
-#' @source <https://www.researchgate.net/publication/4974606_Hedonic_housing_prices_and_the_demand_for_clean_air>
+#' @source <https://www.law.berkeley.edu/files/Hedonic.PDF>
 "New_Boston"
 
-#' Concrete - This is the strength of concrete daa set originally posted on UCI: https://archive.ics.uci.edu/dataset/165/concrete+compressive+strength
+#' Concrete - This is the strength of concrete daa set originally posted on UCI
 #'
 #' @description
 #' Concrete is the most important material in civil engineering. The concrete compressive strength is a highly nonlinear function of age and ingredients.
@@ -67,9 +67,10 @@
 #'    \item{Age}{Day (1~365) -- Input Variable}
 #'    \item{Strength}{quantitative -- MPa -- Output Variable}
 #' }
+#' @source https://archive.ics.uci.edu/dataset/165/concrete+compressive+strength
 "Concrete"
 
-#' Insurance - The data is from UCI: https://www.kaggle.com/datasets/thedevastator/prediction-of-insurance-charges-using-age-gender
+#' Insurance - The data is from UCI
 #'
 #' @description
 #' This dataset contains detailed information about insurance customers, including their age, sex, body mass index (BMI), number of children, smoking status and region. Having access to such valuable insights allows analysts to get a better view into customer behaviour and the factors that contribute to their insurance charges.
@@ -84,4 +85,5 @@
 #'    \item{Region}{The region the customer lives in. (String)}
 #'    \item{Charges}{The insurance charges for the customer. (Float)}
 #' }
+#' @source https://www.kaggle.com/datasets/thedevastator/prediction-of-insurance-charges-using-age-gender
 "Insurance"

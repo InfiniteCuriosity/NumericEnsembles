@@ -8,7 +8,7 @@
 An object of class \code{data.frame} with 5 rows and 14 columns.
 }
 \source{
-\url{https://www.researchgate.net/publication/4974606_Hedonic_housing_prices_and_the_demand_for_clean_air}
+\url{https://www.law.berkeley.edu/files/Hedonic.PDF}
 }
 \usage{
 New_Boston
