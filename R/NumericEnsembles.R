@@ -1,6 +1,6 @@
 # This is a test
 
-#' numerical—function to perform numerical analysis and return the results to the user
+#' Numeric—function to automatically build 23 individual models and 17 ensembles then return the results to the user
 #'
 #' @param data data can be a CSV file or within an R package, such as MASS::Boston
 #' @param colnum a column number in your data
@@ -17,6 +17,41 @@
 #' @return a real number
 #' @export Numeric
 #'
+#' @examples
+#' # Note that examples take about one minute each to run to completion
+#' Numeric(data = Boston_housing,
+#'   colnum = 9,
+#'   numresamples = 2,
+#'   how_to_handle_strings = 0,
+#'   do_you_have_new_data = "N",
+#'   save_all_trained_models = "N",
+#'   remove_ensemble_correlations_greater_than = 1.00,
+#'   train_amount = 0.60,
+#'   test_amount = 0.20,
+#'   validation_amount = 0.20)
+#'
+#'  Numeric(data = Concrete,
+#'   colnum = 9,
+#'   numresamples = 2,
+#'   how_to_handle_strings = 1,
+#'   do_you_have_new_data = "N",
+#'   save_all_trained_models = "N",
+#'   remove_ensemble_correlations_greater_than = 1.00,
+#'   train_amount = 0.60,
+#'   test_amount = 0.20,
+#'   validation_amount = 0.20
+#'   )
+#'
+#'  Numeric(data = Insurance,
+#'   colnum = 7,
+#'   numresamples = 2,
+#'   how_to_handle_strings = 1,
+#'   do_you_have_new_data = "N",
+#'   save_all_trained_models = "N",
+#'   remove_ensemble_correlations_greater_than = 1.00,
+#'   train_amount = 0.60,
+#'   test_amount = 0.20,
+#'   validation_amount = 0.20)
 #'
 #' @importFrom arm bayesglm
 #' @importFrom brnn brnn
@@ -32,7 +67,7 @@
 #' @importFrom gbm gbm
 #' @importFrom glmnet glmnet
 #' @importFrom ggplot2 aes geom_boxplot facet_wrap labs geom_histogram
-#' @importFrom graphics mtext pairs par hist rect panel.smooth gaussian
+#' @importFrom graphics mtext pairs par hist rect panel.smooth
 #' @importFrom gridExtra arrangeGrob
 #' @importFrom ipred bagging
 #' @importFrom leaps regsubsets
@@ -51,6 +86,7 @@
 #' @importFrom tree tree cv.tree misclass.tree
 #' @importFrom utils tail str head read.csv
 #' @importFrom xgboost xgb.DMatrix xgb.train
+
 
 Numeric <- function(data, colnum, numresamples, how_to_handle_strings = c(0("none"), 1("factor levels")), do_you_have_new_data = c("Y", "N"),
                     save_all_trained_models = c("Y", "N"), remove_ensemble_correlations_greater_than, use_parallel = c("Y", "N"),
@@ -115,7 +151,11 @@ Numeric <- function(data, colnum, numresamples, how_to_handle_strings = c(0("non
   }
 
 
-  head_df <- head(df, n = 10)
+  head_df <- reactable::reactable(head(df, n = 10),
+                                  searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
+                                  striped = TRUE, highlight = TRUE, resizable = TRUE
+  )%>%
+    reactablefmtr::add_title("Head of the data frame")
 
   ## Set baseline RMSE and Standard Deviation (SD) based on the full data set
   actual_RMSE <- Metrics::rmse(actual = df$y, predicted = df$y)
@@ -124,9 +164,11 @@ Numeric <- function(data, colnum, numresamples, how_to_handle_strings = c(0("non
 
   # Data summary
   data_summary <- summary(df)
-
-  # Data dictionary
-  data_dictionary <- str(df)
+  data_summary <- reactable::reactable(round(as.data.frame(do.call(cbind, lapply(df, summary))), 4),
+                                       searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
+                                       striped = TRUE, highlight = TRUE, resizable = TRUE
+  )%>%
+    reactablefmtr::add_title("Data summary")
 
   #### Pariwise scatter plot ####
 
@@ -147,9 +189,14 @@ Numeric <- function(data, colnum, numresamples, how_to_handle_strings = c(0("non
   ## Correlation data and plots ##
   df1 <- df %>% purrr::keep(is.numeric)
   M1 <- stats::cor(df1)
+  M1 <- reactable::reactable(round(cor(df), 4),
+                             searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
+                             striped = TRUE, highlight = TRUE, resizable = TRUE
+  )%>%
+    reactablefmtr::add_title("Correlation of the data")
   title <- "Correlation plot of the numerical data"
-  corrplot::corrplot(M1, method = "number", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
-  corrplot::corrplot(M1, method = "circle", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
+  corrplot::corrplot(stats::cor(df1), method = "number", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
+  corrplot::corrplot(stats::cor(df1), method = "circle", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
 
   ## Boxplots of the numeric data ##
   boxplots <- df %>%
@@ -2027,6 +2074,21 @@ Numeric <- function(data, colnum, numresamples, how_to_handle_strings = c(0("non
     }
 
     head_ensemble <- head(ensemble)
+    head_ensemble <- # Head of the ensemble
+      reactable::reactable(round(head_ensemble, 4),
+                           searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
+                           striped = TRUE, highlight = TRUE, resizable = TRUE
+      )%>%
+      reactablefmtr::add_title("Head of the ensemble")
+
+    ensemble_correlation <- cor(ensemble)
+    ensemble_correlation <- reactable::reactable(round(cor(ensemble), 4),
+                                                 searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
+                                                 striped = TRUE, highlight = TRUE, resizable = TRUE
+    )%>%
+      reactablefmtr::add_title("Correlation of the ensemble")
+
+
 
     #### Split the ensemble data into train (60%), test (20%) and validation (20%) ####
     ensemble_idx <- sample(seq(1, 3), size = nrow(ensemble), replace = TRUE, prob = c(train_amount, test_amount, validation_amount))
@@ -5177,11 +5239,10 @@ Numeric <- function(data, colnum, numresamples, how_to_handle_strings = c(0("non
       ensemble_xgb_model <<- ensemble_xgb_model # Extreme Gradient Boosrting using ensemble data
     }
 
-    str(df)
     return(list(
       "head_of_data" = head_df, "accuracy_plot" = accuracy_plot, "overfitting_plot" = overfitting_plot,
       "histograms" = histograms, "boxplots" = boxplots, "predictor_vs_target" = predictor_vs_target,
-      "final_results_table" = final_results, "data_correlation" = M1, "data_summary" = data_summary, "head_of_ensemble" = head_ensemble, "ensemble_correlation" = cor(ensemble),
+      "final_results_table" = final_results, "data_correlation" = M1, "data_summary" = data_summary, "head_of_ensemble" = head_ensemble, "ensemble_correlation" = ensemble_correlation,
       "accuracy_barchart" = accuracy_barchart, "train_vs_holdout" = total_plot, "duration_barchart" = duration_barchart, "overfitting_barchart" = overfitting_barchart,
       "bias_barchart" = bias_barchart, "MSE_barchart" = MSE_barchart, "MAE_barchart" = MAE_barchart, "SSE_barchart" = SSE_barchart,
       "bias_plot" = bias_plot, "MSE_plot" = MSE_plot, "MAE_plot" = MAE_plot, "SSE_plot" = SSE_plot,
@@ -5236,8 +5297,6 @@ Numeric <- function(data, colnum, numresamples, how_to_handle_strings = c(0("non
     ensemble_xgb_model <<- ensemble_xgb_model # Extreme Gradient Boosrting using ensemble data
   }
 
-  str(df)
-
   # Outliers list
   df2 <- df %>% purrr::keep(is.numeric)
 
@@ -5258,15 +5317,16 @@ Numeric <- function(data, colnum, numresamples, how_to_handle_strings = c(0("non
     print(noquote(""))
   }
 
-  list(
+  return(list(
     "head_of_data" = head_df, "accuracy_plot" = accuracy_plot, "overfitting_plot" = overfitting_plot,
     "histograms" = histograms, "boxplots" = boxplots, "predictor_vs_target" = predictor_vs_target, "final_results_table" = final_results,
-    "data_correlation" = M1, "data_summary" = data_summary, "head_of_ensemble" = head_ensemble, "ensemble_correlation" = cor(ensemble),
+    "data_correlation" = M1, "data_summary" = data_summary, "head_of_ensemble" = head_ensemble, "ensemble_correlation" = ensemble_correlation,
     "accuracy_barchart" = accuracy_barchart, "train_vs_holdout" = total_plot, "duration_barchart" = duration_barchart, "overfitting_barchart" = overfitting_barchart,
     "bias_barchart" = bias_barchart, "MSE_barchart" = MSE_barchart, "MAE_barchart" = MAE_barchart, "SSE_barchart" = SSE_barchart,
     "bias_plot" = bias_plot, "MSE_plot" = MSE_plot, "MAE_plot" = MAE_plot, "SSE_plot" = SSE_plot,
     "colnum" = colnum, "numresamples" = numresamples, "save_all_trained_modesl" = save_all_trained_models,
     "remove_ensemble_correlations_greater_than" = remove_ensemble_correlations_greater_than,
     "train_amount" = train_amount, "test_amount" = test_amount, "validation_amount" = validation_amount
+  )
   )
 }
