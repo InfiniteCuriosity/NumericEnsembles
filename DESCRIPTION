@@ -1,6 +1,6 @@
 Package: NumericEnsembles
 Title: Automatically Runs 23 Individual Numeric Models and 17 Ensembles of Models
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: 
     person("Russ", "Conte", , "russconte@mac.com", role = c("aut", "cre"))
 Depends:
@@ -38,7 +38,7 @@ Depends:
     utils,
     xgboost,
     R (>= 2.10)
-Description: Automatically runs 23 individual models and 13 ensembles on numeric data. The package returns complete results on all 40 models, 25 charts, multiple tables. You simply provide the data, answer a few questions, and the package does the rest.
+Description: Automatically runs 23 individual models and 17 ensembles on numeric data. The package returns complete results on all 40 models, 25 charts, multiple tables. You simply provide the data, answer a few questions, and the package does the rest.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -51,6 +51,4 @@ Suggests:
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: http://www.NumericEnsembles.com, https://github.com/InfiniteCuriosity/NumericEnsembles
-github: https://github.com/InfiniteCuriosity/NumericEnsembles
-Book: https://www.dataaip.com/ensemblesbook/
 BugReports: https://github.com/InfiniteCuriosity/NumericEnsembles/issues
