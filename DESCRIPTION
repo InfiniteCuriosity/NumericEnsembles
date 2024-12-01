@@ -50,6 +50,7 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-URL: http://www.NumericEnsembles.com
+URL: http://www.NumericEnsembles.com, https://github.com/InfiniteCuriosity/NumericEnsembles
 github: https://github.com/InfiniteCuriosity/NumericEnsembles
 Book: https://www.dataaip.com/ensemblesbook/
+BugReports: https://github.com/InfiniteCuriosity/NumericEnsembles/issues
