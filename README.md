@@ -37,30 +37,30 @@ Numeric(data = MASS::Boston,
 
 The 40 models are:
 
-1. Bagged Random Forest
+1. Bagged Random Forest (tuned)
 2. Bagging
 3. BayesGLM
 4. BayesRNN
-5. BoostRF (Random Forest)
+5. BoostRF (tuned)
 6. Cubist
 7. Earth
-8. Elastic
-9. Ensemble Bagged Random Forest
+8. Elastic (optimized by cross-validation)
+9. Ensemble Bagged Random Forest (tuned)
 10. Ensemble Bagging
 11. Ensemble BayesGLM
 12. Ensemble BayesRNN
-13. Ensemble BoostRF (Random Forest)
+13. Ensemble BoostRF (tuned)
 14. Ensemble Cubist
 15. Ensemble Earth
-16. Ensemble Elastic
-17. Ensemble Graident Boosted
-18. Ensemble K-Nearest Neighbors
-19. Ensemble Lasso
-20. Ensemble Linear
-21. EnsembleRF (Random Forest)
-22. Ensemble Ridge
+16. Ensemble Elastic (optimized by cross-validation)
+17. Ensemble Gradient Boosted
+18. Ensemble K-Nearest Neighbors (tuned)
+19. Ensemble Lasso (optimized by cross-validation)
+20. Ensemble Linear (tuned)
+21. EnsembleRF (tuned)
+22. Ensemble Ridge (optimized by cross-validation)
 23. Ensemble RPart
-24. EnsembleSVM (Support Vector Machines)
+24. EnsembleSVM (tuned)
 25. Ensemble Trees
 26. Ensemble XGBoost
 27. GAM (Generalized Additive Models)
@@ -72,9 +72,9 @@ The 40 models are:
 33. PCR (Principal Components Regression)
 34. PLS (Partial Least Squares)
 35. RF (Random Forest)
-36. Ridge
+36. Ridge (optimized by cross-validation)
 37. RPart
-38. SVM (Supoort Vector Machines)
+38. SVM (Support Vector Machines, tuned)
 39. Tree
 40. XGBoost
 
@@ -123,12 +123,12 @@ The package contains two example data sets to demonstrate this result. Boston_Ho
 
 ``` r
 library(NumericEnsembles)
-Numeric(data = Boston_Housing,
+Numeric(data = Boston_housing,
         colnum = 14,
         numresamples = 25,
         how_to_handle_strings = 0,
-        do_you_have_new_data = "N",
-        save_all_trained_models = "N",
+        do_you_have_new_data = "Y",
+        save_all_trained_models = "Y",
         remove_ensemble_correlations_greater_than = 1.00,
         use_parallel = "Y",
         train_amount = 0.60,
