@@ -77,7 +77,7 @@ For example, I frequently do 25 random resamplings, as this gives a more accurat
 
 **Automatically builds 23 individual numeric models, as follows:**
 
-• Bagged Random Forest (called bag_rf in the package)
+• Bagged Random Forest (tuned with optimized hyperparameters)
 
 • Bagging
 
@@ -85,37 +85,37 @@ For example, I frequently do 25 random resamplings, as this gives a more accurat
 
 • Bayes Regularized Neural Networks (called BayesRNN in the package)
 
-• Boosed Random Forest (called boost_rf in the package)
+• Boosed Random Forest (tuned with optimized hyperparameters)
 
-• Cubist =
+• Cubist
 
 • Earth
 
-• Elastic
+• Elastic (tuned with optimized via cross validation)
 
-• Generalized Additive Models (called GAM in the package)
+• Generalized Additive Models including smoothing splines (tuned with optimized hyperparameters)
 
-• Gradient Boosted (called gb in the package)
+• Gradient Boosted
 
-• K-Nearest Neighbors (tuned), (called knn in the package)
+• K-Nearest Neighbors (tuned with optimized hyperparamaters)
 
-• Lasso
+• Lasso (optimized via cross validation)
 
-• Linear (tuned)
+• Linear (optimized hyperparameters)
 
-• Neuralnet
+• Neuralnet (optimized)
 
-• Partial Least Squares (called pls in the package)
+• Partial Least Squares
 
-• Principal Components Regression (called pcr in the package)
+• Principal Components Regression
 
-• Random Forest (called rf in the package)
+• Random Forest (tumed woth optimized hyperparameters)
 
-• Ridge
+• Ridge (optimized via cross validation)
 
 • RPart
 
-• Support Vector Machines (called svm in the package)
+• Support Vector Machines (tuned with optimized hyperparameters)
 
 • Tree
 
@@ -167,33 +167,33 @@ It does the same procedures for the ensemble as it did for the individual models
 
 Fit the model on the training data, make predictions and check accuracy on the test and validation data. Calculate bias, MAE, MSE, SSE for each model, calculate the time.
 
-• Ensemble Bagged Random Forest (called ensemble_bag_rf in the package)
+• Ensemble Bagged Random Forest (tuned with optimized hyperparamters)
 
 • Ensemble Bagging
 
-• Ensemble Bayes GLM (called ensemble_bayesglm in the package)
+• Ensemble Bayes GLM
 
-• Ensemble BayesRNN (called ensemble_bayesrnn in the package)
+• Ensemble BayesRNN
 
-• Ensemble Boosted Random Forest (called ensemble_boost_rf in the package)
+• Ensemble Boosted Random Forest (tuned with optimized hyperparameters)
 
 • Ensemble Cubist
 
 • Ensemble Earth
 
-• Ensemble Elastic
+• Ensemble Elastic (optimized via cross validation)
 
 • Ensemble Gradient Boosted
 
-• Ensemble K-Nearest Neighbors (tuned)
+• Ensemble K-Nearest Neighbors (tuned with optimized hyperparameters)
 
-• Ensemble Lasso
+• Ensemble Lasso (optimized via cross validation)
 
-• Ensemble Linear (tuned)
+• Ensemble Linear (tuned with optimized hyperparameters)
 
-• Ensemble Random Forest (tuned)
+• Ensemble Random Forest (tuned with optimized hyperparameters)
 
-• Ensemble Ridge
+• Ensemble Ridge (optimized via cross validation)
 
 • Ensemble RPart
 
@@ -270,7 +270,7 @@ As a note, the overfitting by resample plot is potentially very useful. Clearly 
 
 ![Duration by model, shorter is better](Duration.jpeg){width="700"}
 
-Summary: NumericEnsembles accomplishes all of these tasks in one code chunk, and typically the best model here beats the best models from previously published results. 
+Summary: NumericEnsembles accomplishes all of these tasks in one code chunk, and typically the best model here beats the best models from previously published results.
 
 Lowest RMSE from the Kaggle competition: 2.09684
 
@@ -278,8 +278,7 @@ Lowest RMSE from the NumericEnsembles package: 0.1135
 
 Decrease in error rate:94.5871% decrease using Numeric Ensembles compared to the best result from the student Kaggle competition, and NumericEnsembles returns tables, charts, and much more, in only a few minutes.
 
-Calculate percentage change:
-from V~1~ = 2.09684 to V~2~ = 0.1135 
+Calculate percentage change: from V~1~ = 2.09684 to V~2~ = 0.1135 
 
 (𝑉2−𝑉1)\|𝑉1\|×100
 
