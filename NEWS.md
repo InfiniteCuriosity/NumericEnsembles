@@ -1,3 +1,5 @@
+# NumericEnsembles 0.2.0
+
 # NumericEnsembles 0.1.0
 
 * Initial CRAN submission.
