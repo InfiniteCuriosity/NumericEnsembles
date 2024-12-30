@@ -2396,7 +2396,7 @@ for (i in 1:numresamples) {
     ensemble <- ensemble[stats::complete.cases(ensemble), ] # Removes rows with NAs
   }
 
-  ensemble <- Filter(function(x) sd(x) != 0, df) # Removes columns with no variation
+  ensemble <- Filter(function(x) sd(x) != 0, ensemble) # Removes columns with no variation
 
   print(noquote(""))
   print("Working on the Ensembles section")
