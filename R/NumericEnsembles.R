@@ -2393,8 +2393,10 @@ for (i in 1:numresamples) {
   y_ensemble <- c(test$y, validation$y)
 
   if(sum(is.na(ensemble > 0))){
-    ensemble <- ensemble[stats::complete.cases(ensemble), ]
+    ensemble <- ensemble[stats::complete.cases(ensemble), ] # Removes rows with NAs
   }
+
+  ensemble <- Filter(function(x) sd(x) != 0, df) # Removes columns with no variation
 
   print(noquote(""))
   print("Working on the Ensembles section")
