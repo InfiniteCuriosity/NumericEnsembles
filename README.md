@@ -35,7 +35,7 @@ Numeric(data = MASS::Boston,
 
 ```
 
-The 40 models are:
+The 40 models which are all built automatically and without error are:
 
 1. Bagged Random Forest (tuned)
 2. Bagging
@@ -138,6 +138,6 @@ Numeric(data = Boston_housing,
 
 ```
 
-Use the data set New_Boston when asked for "What is the URL of the new data?". The URL for the data is: https://raw.githubusercontent.com/InfiniteCuriosity/EnsemblesData/refs/heads/main/NewBoston.csv
+Use the data set New_Boston when asked for "What is the URL of the new data?". The URL for the new data is: https://raw.githubusercontent.com/InfiniteCuriosity/EnsemblesData/refs/heads/main/NewBoston.csv
 
-You may use external data to accomplish the same result.
+External data may be used to accomplish the same result.
