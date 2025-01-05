@@ -23,7 +23,7 @@
 #' @importFrom Cubist cubist
 #' @importFrom doParallel registerDoParallel
 #' @importFrom dplyr all_of arrange relocate rename last_col n_distinct filter %>% mutate_if
-#' @importFrom e1071 tune.svm tune.gknn tune.randomForest
+#' @importFrom e1071 tune.svm tune.gknn tune.nnet tune.randomForest
 #' @importFrom earth earth
 #' @importFrom gam gam gam.s s
 #' @importFrom gbm gbm
@@ -34,7 +34,7 @@
 #' @importFrom ipred bagging
 #' @importFrom leaps regsubsets
 #' @importFrom Metrics rmse
-#' @importFrom neuralnet neuralnet
+#' @importFrom nnet nnet
 #' @importFrom parallel makeCluster
 #' @importFrom pls pcr
 #' @importFrom purrr keep map_dbl
@@ -1853,54 +1853,48 @@ for (i in 1:numresamples) {
 
   ####  Model 14 Neuralnet ####
   neuralnet_start <- Sys.time()
-  maxs <- apply(df, 2, max)
-  mins <- apply(df, 2, min)
-  scaled <- as.data.frame(scale(df, center = mins, scale = maxs - mins))
-  train_ <- scaled[idx == 1, ]
-  test_ <- scaled[idx == 2, ]
-  validation_ <- scaled[idx == 3, ]
-  n <- names(train_)
-  f <- as.formula(paste("y ~", paste(n[!n %in% "y"], collapse = " + ")))
-  nn <- neuralnet(f, data = train_, hidden = c(5, 3), linear.output = TRUE)
-  predict_test_nn <- neuralnet::compute(nn, test_[, 1:ncol(df) - 1])
-  predict_test_nn_ <- predict_test_nn$net.result * (max(df$y) - min(df$y)) + min(df$y)
-  predict_train_nn <- neuralnet::compute(nn, train_[, 1:ncol(df) - 1])
-  predict_train_nn_ <- predict_train_nn$net.result * (max(df$y) - min(df$y)) + min(df$y)
-  neuralnet_train_RMSE[i] <- Metrics::rmse(actual = train$y, predicted = predict_train_nn_)
+  neuralnet_train_fit <- e1071::tune.nnet(x = train, y = train$y, size = 10)
+  neuralnet_train_RMSE[i] <- Metrics::rmse(actual = train$y, predicted = predict(
+    object = neuralnet_train_fit$best.model,
+    newdata = train
+  ))
   neuralnet_train_RMSE_mean <- mean(neuralnet_train_RMSE)
-  neuralnet_test_RMSE[i] <- Metrics::rmse(actual = test$y, predicted = predict_test_nn_)
+  neuralnet_test_RMSE[i] <- Metrics::rmse(actual = test$y, predicted = predict(
+    object = neuralnet_train_fit$best.model,
+    newdata = test
+  ))
   neuralnet_test_RMSE_mean <- mean(neuralnet_test_RMSE)
-  predict_validation_nn <- neuralnet::compute(nn, validation_[, 1:ncol(df) - 1])
-  predict_validation_nn_ <- predict_validation_nn$net.result * (max(df$y) - min(df$y)) + min(df$y)
-  neuralnet_validation_RMSE[i] <- Metrics::rmse(actual = validation$y, predicted = predict_validation_nn_)
+  neuralnet_validation_RMSE[i] <- Metrics::rmse(actual = validation$y, predicted = predict(
+    object = neuralnet_train_fit$best.model,
+    newdata = validation
+  ))
   neuralnet_validation_RMSE_mean <- mean(neuralnet_validation_RMSE)
-  neuralnet_holdout_RMSE[i] <- mean(c(neuralnet_test_RMSE, neuralnet_validation_RMSE))
-  neuralnet_holdout_RMSE_mean <- mean(neuralnet_holdout_RMSE)
-  neuralnet_holdout_RMSE_sd_mean <- mean(sd(c(neuralnet_test_RMSE, neuralnet_validation_RMSE)))
-  neuralnet_test_predict_value[i] <- mean(predict_test_nn_)
-  neuralnet_test_predict_value_mean <- mean(neuralnet_test_predict_value)
-  neuralnet_validation_predict_value[i] <- mean(predict_validation_nn_)
-  neuralnet_validation_predict_value_mean <- mean(neuralnet_validation_predict_value)
-  neuralnet_test_sd <- sd(predict_test_nn_)
-  neuralnet_validation_sd <- sd(predict_validation_nn_)
-  neuralnet_sd_mean <- mean(neuralnet_test_sd, neuralet_validation_sd)
+  neuralnet_holdout_RMSE[i] <- mean(neuralnet_test_RMSE_mean, neuralnet_validation_RMSE_mean)
+  neuralnet_holdout_RMSE_mean <- mean(c(neuralnet_holdout_RMSE))
+  neuralnet_holdout_RMSE_sd_mean <- sd(c(neuralnet_test_RMSE_mean, neuralnet_validation_RMSE_mean))
+  neuralnet_train_predict_value <- as.numeric(predict(object = neuralnet_train_fit$best.model, newdata = train))
+  neuralnet_test_predict_value <- as.numeric(predict(object = neuralnet_train_fit$best.model, newdata = test))
+  neuralnet_validation_predict_value <- as.numeric(predict(object = neuralnet_train_fit$best.model, newdata = validation))
+  neuralnet_predict_value_mean <- mean(c(neuralnet_test_predict_value, neuralnet_validation_predict_value))
+  neuralnet_sd[i] <- sd(c(neuralnet_test_predict_value, neuralnet_validation_predict_value))
+  neuralnet_sd_mean <- mean(neuralnet_sd)
   neuralnet_overfitting[i] <- neuralnet_holdout_RMSE_mean / neuralnet_train_RMSE_mean
   neuralnet_overfitting_mean <- mean(neuralnet_overfitting)
   neuralnet_overfitting_range <- range(neuralnet_overfitting)
   neuralnet_overfitting_sd <- sd(neuralnet_overfitting)
-  y_hat_neuralnet <- c(predict_test_nn_, predict_validation_nn_)
-  neuralnet_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = y_hat_neuralnet)
+  neuralnet_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(neuralnet_test_predict_value, neuralnet_validation_predict_value))
   neuralnet_bias_mean <- mean(neuralnet_bias)
   neuralnet_bias_sd <- sd(neuralnet_bias)
-  neuralnet_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = y_hat_neuralnet)
+  neuralnet_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(neuralnet_test_predict_value, neuralnet_validation_predict_value))
   neuralnet_MAE_mean <- mean(neuralnet_MAE)
   neuralnet_MAE_sd <- sd(neuralnet_MAE)
-  neuralnet_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = y_hat_neuralnet)
+  neuralnet_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(neuralnet_test_predict_value, neuralnet_validation_predict_value))
   neuralnet_MSE_mean <- mean(neuralnet_MSE)
   neuralnet_MSE_sd <- sd(neuralnet_MSE)
-  neuralnet_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = y_hat_neuralnet)
+  neuralnet_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(neuralnet_test_predict_value, neuralnet_validation_predict_value))
   neuralnet_SSE_mean <- mean(neuralnet_SSE)
   neuralnet_SSE_sd <- sd(neuralnet_SSE)
+  y_hat_neuralnet <- c(neuralnet_test_predict_value, neuralnet_validation_predict_value)
   neuralnet_ks_p_value[i] <- stats::ks.test(x = y_hat_neuralnet, y = c(train$y, validation$y), exact = TRUE)$p.value
   neuralnet_ks_p_value_mean <- mean(neuralnet_ks_p_value)
   neuralnet_ks_p_value_sd <- sd(neuralnet_ks_p_value)
@@ -5683,15 +5677,7 @@ if (do_you_have_new_data == "Y") {
   new_knn <- predict(object = knn_train_fit$best.model, newdata = new_data[, 1:ncol(new_data) - 1], k = knn_train_fit$best_model$k)
   new_lasso <- rowMeans(predict(object = best_lasso_model, newdata = new_data, newx = as.matrix(new_data[, 1:ncol(new_data) - 1])))
   new_linear <- predict(object = linear_train_fit$best.model, newdata = new_data)
-
-  maxs <- apply(new_data, 2, max)
-  mins <- apply(new_data, 2, min)
-  scaled <- as.data.frame(scale(new_data, center = mins, scale = maxs - mins))
-  n <- names(new_data)
-  f <- as.formula(paste("y ~", paste(n[!n %in% "y"], collapse = " + ")))
-  nn <- neuralnet(f, data = new_data, hidden = c(5, 3), linear.output = T)
-  new_neuralnet <- neuralnet::compute(nn, new_data[, 1:ncol(new_data) - 1])$net.result[, 1]
-
+  new_neuralnet <- predict(object = neuralnet_train_fit$best.model, new_data = new_data)
   new_pls <- predict(object = pls_train_fit, newdata = new_data)[, , 1]
   new_pcr <- predict(object = pcr_train_fit, newdata = new_data)[, , 1]
   new_rf <- predict(object = rf_train_fit$best.model, newdata = new_data)
@@ -5735,7 +5721,7 @@ if (do_you_have_new_data == "Y") {
     "KNN" = new_knn / knn_holdout_RMSE_mean,
     "Lasso" = new_lasso / lasso_holdout_RMSE_mean,
     "Linear" = new_linear / linear_holdout_RMSE_mean,
-    "Neuralnet" = new_pcr / pcr_holdout_RMSE_mean,
+    "Neuralnet" = new_neuralnet / neuralnet_holdout_RMSE_mean,
     "PCR" = new_pcr / pcr_holdout_RMSE_mean,
     "PLS" = new_pls / pls_holdout_RMSE_mean,
     "RandomForest" = new_rf / rf_holdout_RMSE_mean,
@@ -5864,7 +5850,7 @@ if (do_you_have_new_data == "Y") {
     knn_train_fit <<- knn_train_fit # K-Nearest Neighbors
     best_lasso_model <<- best_lasso_model # Lasso models
     linear_train_fit <<- linear_train_fit # Linear models
-    nn <<- nn # neuralnet models
+    neuralnet_train_fit <<- neuralnet_train_fit # neuralnet models
     pls_train_fit <<- pls_train_fit # pls models
     pcr_train_fit <<- pcr_train_fit # Principal Components Regression models
     rf_train_fit <<- rf_train_fit # Random Forest models
@@ -5923,7 +5909,7 @@ if (save_all_trained_models == "Y") {
   knn_train_fit <<- knn_train_fit # K-Nearest Neighbors
   best_lasso_model <<- best_lasso_model # Lasso models
   linear_train_fit <<- linear_train_fit # Linear models
-  nn <<- nn # neuralnet models
+  neuralnet_train_fit <<- neuralnet_train_fit # neuralnet models
   pls_train_fit <<- pls_train_fit # pls models
   pcr_train_fit <<- pcr_train_fit # Principal Components Regression models
   rf_train_fit <<- rf_train_fit # Random Forest models
