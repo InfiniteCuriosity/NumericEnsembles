@@ -23,7 +23,6 @@ Depends:
     gridExtra,
     ipred,
     leaps,
-    nnet,
     parallel,
     pls,
     purrr,
