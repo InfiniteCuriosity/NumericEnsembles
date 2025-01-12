@@ -8,6 +8,7 @@ Numeric(
   data,
   colnum,
   numresamples,
+  best_subsets = c(0("none"), 1("Forward"), 2("Backward"), 3("Exhaustive"), 4("SeqRep")),
   how_to_handle_strings = c(0("none"), 1("factor levels")),
   do_you_have_new_data = c("Y", "N"),
   save_all_trained_models = c("Y", "N"),
@@ -24,6 +25,8 @@ Numeric(
 \item{colnum}{a column number in your data}
 
 \item{numresamples}{the number of resamples}
+
+\item{best_subsets}{0 None, 1 Forward, 2 Backward, 3 Exhaustive 4 Seqrep}
 
 \item{how_to_handle_strings}{0: No strings, 1: Factor values, 2: One-hot encoding, 3: One-hot encoding AND jitter}
 
