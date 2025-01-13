@@ -209,22 +209,6 @@ data_summary <- reactable::reactable(round(as.data.frame(do.call(cbind, lapply(d
 )%>%
   reactablefmtr::add_title("Data summary")
 
-#### Pariwise scatter plot ####
-
-panel.hist <- function(x, ...) {
-  usr <- par("usr")
-  par(usr = c(usr[1:2], 0, 1.5))
-  h <- hist(x, plot = FALSE)
-  breaks <- h$breaks
-  nB <- length(breaks)
-  y <- h$counts
-  y <- y / max(y)
-  rect(breaks[-nB], 0, breaks[-1], y, col = "cyan", ...)
-}
-
-pairs(df, panel = panel.smooth, main = "Pairwise scatter plots and histograms of the numerical data", lower.panel = panel.smooth, diag.panel = panel.hist)
-
-
 ## Correlation data and plots ##
 df1 <- df %>% purrr::keep(is.numeric)
 M1 <- stats::cor(df1)
