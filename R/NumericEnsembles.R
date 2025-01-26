@@ -3,10 +3,11 @@
 #' @param data data can be a CSV file or within an R package, such as MASS::Boston
 #' @param colnum a column number in your data
 #' @param numresamples the number of resamples
-#' @param best_subsets 0 None, 1 Forward, 2 Backward, 3 Exhaustive 4 Seqrep
 #' @param how_to_handle_strings 0: No strings, 1: Factor values, 2: One-hot encoding, 3: One-hot encoding AND jitter
-#' @param do_you_have_new_data "Y" or "N". If "Y", then you will be asked for the new data
+#' @param predict_on_new_data "Y" or "N". If "Y", then you will be asked for the new data
 #' @param save_all_trained_models "Y" or "N". If "Y", then places all the trained models in the Environment
+#' @param scale_data "Y" or "N" to scale numeric data
+#' @param ensemble_reduction_method BIC (1, 2, 3, 4) or Mallow's_cp (5, 6, 7, 8) for Forward, Backward, Exhaustive and SeqRep
 #' @param remove_ensemble_correlations_greater_than Enter a number to remove correlations in the ensembles
 #' @param use_parallel "Y" or "N" for parallel processing
 #' @param train_amount set the amount for the training data
@@ -30,13 +31,12 @@
 #' @importFrom gbm gbm
 #' @importFrom glmnet glmnet
 #' @importFrom ggplot2 aes geom_boxplot facet_wrap labs geom_histogram
-#' @importFrom graphics mtext pairs par hist rect panel.smooth
+#' @importFrom graphics mtext par hist rect panel.smooth
 #' @importFrom gridExtra arrangeGrob
-#' @importFrom gt gt
 #' @importFrom ipred bagging
 #' @importFrom leaps regsubsets
 #' @importFrom Metrics rmse
-#' @importFrom nnet nnet
+#' @importFrom neuralnet neuralnet
 #' @importFrom parallel makeCluster
 #' @importFrom pls pcr
 #' @importFrom purrr keep map_dbl
@@ -45,14 +45,18 @@
 #' @importFrom reactablefmtr add_title
 #' @importFrom readr read_lines
 #' @importFrom rpart rpart
-#' @importFrom stats as.formula complete.cases cor lm sd predict residuals reorder quantile gaussian var model.matrix
+#' @importFrom stats as.formula cor sd predict residuals reorder quantile gaussian stats BIC
 #' @importFrom tidyr gather pivot_longer
 #' @importFrom tree tree cv.tree misclass.tree
 #' @importFrom utils tail str head read.csv
 #' @importFrom xgboost xgb.DMatrix xgb.train
 
-Numeric <- function(data, colnum, numresamples, best_subsets = c(0("none"), 1("Forward"), 2("Backward"), 3("Exhaustive"), 4("SeqRep")), how_to_handle_strings = c(0("none"), 1("factor levels")), do_you_have_new_data = c("Y", "N"),
-                    save_all_trained_models = c("Y", "N"), remove_ensemble_correlations_greater_than, use_parallel = c("Y", "N"),
+
+Numeric <- function(data, colnum, numresamples, how_to_handle_strings = c(0("none"), 1("factor levels"), 2("One-hot encoding"), 3("One-hot encoding with jitter")), predict_on_new_data = c("Y", "N"),
+                    save_all_trained_models = c("Y", "N"), remove_ensemble_correlations_greater_than,
+                    ensemble_reduction_method = c(0("none"), 1("BIC exhaustive"), 2("BIC forward"), 3("BIC backward"), 4("BIC seqrep"),
+                    5("Mallows_cp exhaustive"), 6("Mallows_cp forward"), 7("Mallows_cp backward"), 8("Mallows_cp, seqrep")),
+                    scale_data = c("Y", "N"), use_parallel = c("Y", "N"),
                     train_amount, test_amount, validation_amount) {
 
 use_parallel <- 0
@@ -69,10 +73,13 @@ colnames(data)[colnum] <- "y"
 df <- data %>% dplyr::relocate(y, .after = last_col()) # Moves the target column to the last column on the right
 df <- df[sample(nrow(df)), ]
 
+if(scale_data == "Y"){
+  df <- as.data.frame(scale(df[, 1:ncol(df) -1]) %>% cbind(y = df$y))
+}
 
-if (do_you_have_new_data == "Y") {
+if (predict_on_new_data == "Y") {
   new_data <- readline("What is the URL of the new data? ")
-  new_data <- utils::read.csv(new_data)
+  new_data <- read.csv("https://raw.githubusercontent.com/InfiniteCuriosity/EnsemblesData/refs/heads/main/NewBoston.csv")
 
   y <- 0
   colnames(new_data)[colnum] <- "y"
@@ -86,7 +93,7 @@ if (how_to_handle_strings == 1) {
   df <- dplyr::mutate_if(df, is.factor, as.numeric)
 }
 
-if (how_to_handle_strings == 1 && do_you_have_new_data == "Y") {
+if (how_to_handle_strings == 1 && predict_on_new_data == "Y") {
   newdata <- dplyr::mutate_if(newdata, is.character, as.factor)
   newdata <- dplyr::mutate_if(newdata, is.factor, as.numeric)
 }
@@ -96,7 +103,7 @@ if (how_to_handle_strings == 2) {
   df <- data.frame(predict(dummy, newdata=df))
 }
 
-if (how_to_handle_strings == 2 && do_you_have_new_data == "Y") {
+if (how_to_handle_strings == 2 && predict_on_new_data == "Y") {
   dummy <- caret::dummyVars(" ~ .", data=newdata)
   newdata <- data.frame(predict(dummy, newdata=newdata))
 }
@@ -107,86 +114,10 @@ if (how_to_handle_strings == 3) {
   df <- data.frame(lapply(df, jitter))
 }
 
-if (how_to_handle_strings == 3 && do_you_have_new_data == "Y") {
+if (how_to_handle_strings == 3 && predict_on_new_data == "Y") {
   dummy <- caret::dummyVars(" ~ .", data=newdata)
   newdata <- data.frame(predict(dummy, newdata=newdata))
   newdata <- data.frame(lapply(newdata, jitter))
-}
-
-if(best_subsets == 1){
-  train <- data[1:as.numeric(train_amount * nrow(data)), ]
-  test <- data[(as.numeric(train_amount * nrow(data)) +1):nrow(data), ]
-  regfit_best <- leaps::regsubsets(y ~ ., data = train, nvmax = ncol(df)-1, method = "forward")
-  regfit_test <- model.matrix(y ~ ., data = test)
-
-  val_errors <- rep(NA, ncol(df)-1)
-  for (i in 2:ncol(df)-1) {
-    coefi = stats::coef(regfit_best, id = i)
-    pred = regfit_test[ , names(coefi)] %*% coefi
-    val_errors[i] <- mean((test$y - pred)^2)
-  }
-
-  colnames_01 <- names(stats::coef(regfit_best, which.min(val_errors)))
-  colnames_01 <- colnames_01[2:length(colnames_01)]
-  df <- data %>% dplyr::select(colnames_01)
-  df <- cbind(df, y = data$y)
-}
-
-if(best_subsets == 2){
-  train <- data[1:as.numeric(train_amount * nrow(data)), ]
-  test <- data[(as.numeric(train_amount * nrow(data)) +1):nrow(data), ]
-  regfit_best <- leaps::regsubsets(y ~ ., data = train, nvmax = ncol(df)-1, method = "backward")
-  regfit_test <- model.matrix(y ~ ., data = test)
-
-  val_errors <- rep(NA, ncol(df)-1)
-  for (i in 2:ncol(df)-1) {
-    coefi = stats::coef(regfit_best, id = i)
-    pred = regfit_test[ , names(coefi)] %*% coefi
-    val_errors[i] <- mean((test$y - pred)^2)
-  }
-
-  colnames_01 <- names(stats::coef(regfit_best, which.min(val_errors)))
-  colnames_01 <- colnames_01[2:length(colnames_01)]
-  df <- data %>% dplyr::select(colnames_01)
-  df <- cbind(df, y = data$y)
-}
-
-if(best_subsets == 3){
-  train <- data[1:as.numeric(train_amount * nrow(data)), ]
-  test <- data[(as.numeric(train_amount * nrow(data)) +1):nrow(data), ]
-  regfit_best <- leaps::regsubsets(y ~ ., data = train, nvmax = ncol(df)-1, method = "exhaustive")
-  regfit_test <- model.matrix(y ~ ., data = test)
-
-  val_errors <- rep(NA, ncol(df)-1)
-  for (i in 2:ncol(df)-1) {
-    coefi = stats::coef(regfit_best, id = i)
-    pred = regfit_test[ , names(coefi)] %*% coefi
-    val_errors[i] <- mean((test$y - pred)^2)
-  }
-
-  colnames_01 <- names(stats::coef(regfit_best, which.min(val_errors)))
-  colnames_01 <- colnames_01[2:length(colnames_01)]
-  df <- data %>% dplyr::select(colnames_01)
-  df <- cbind(df, y = data$y)
-}
-
-if(best_subsets == 4){
-  train <- data[1:as.numeric(train_amount * nrow(data)), ]
-  test <- data[(as.numeric(train_amount * nrow(data)) +1):nrow(data), ]
-  regfit_best <- leaps::regsubsets(y ~ ., data = train, nvmax = ncol(df)-1, method = "seqrep")
-  regfit_test <- model.matrix(y ~ ., data = test)
-
-  val_errors <- rep(NA, ncol(df)-1)
-  for (i in 2:ncol(df)-1) {
-    coefi = stats::coef(regfit_best, id = i)
-    pred = regfit_test[ , names(coefi)] %*% coefi
-    val_errors[i] <- mean((test$y - pred)^2)
-  }
-
-  colnames_01 <- names(stats::coef(regfit_best, which.min(val_errors)))
-  colnames_01 <- colnames_01[2:length(colnames_01)]
-  df <- data %>% dplyr::select(colnames_01)
-  df <- cbind(df, y = data$y)
 }
 
 
@@ -246,6 +177,22 @@ predictor_vs_target <- df %>%
 
 #### Full analysis starts here ####
 
+bag_rf_train_RMSE <- 0
+bag_rf_test_RMSE <- 0
+bag_rf_validation_RMSE <- 0
+bag_rf_sd <- 0
+bag_rf_overfitting <- 0
+bag_rf_duration <- 0
+bag_rf_holdout_RMSE <- 0
+bag_rf_holdout_RMSE_mean <- 0
+bag_rf_bias <- 0
+bag_rf_MAE <- 0
+bag_rf_MSE <- 0
+bag_rf_SSE <- 0
+bag_rf_ks_stat <- 0
+bag_rf_ks_p_value <- 0
+bag_rf_ks_p_value_sd <- 0
+
 bagging_train_RMSE <- 0
 bagging_test_RMSE <- 0
 bagging_validation_RMSE <- 0
@@ -294,6 +241,23 @@ bayesrnn_MSE <- 0
 bayesrnn_SSE <- 0
 bayesrnn_ks_stat <- 0
 bayesrnn_ks_p_value <- 0
+
+boost_rf_train_RMSE <- 0
+boost_rf_test_RMSE <- 0
+boost_rf_validation_RMSE <- 0
+boost_rf_sd <- 0
+boost_rf_overfitting <- 0
+boost_rf_duration <- 0
+boost_rf_duration_mean <- 0
+boost_rf_holdout_mean <- 0
+boost_rf_holdout_RMSE <- 0
+boost_rf_holdout_RMSE_mean <- 0
+boost_rf_bias <- 0
+boost_rf_MAE <- 0
+boost_rf_MSE <- 0
+boost_rf_SSE <- 0
+boost_rf_ks_stat <- 0
+boost_rf_ks_p_value <- 0
 
 cubist_train_RMSE <- 0
 cubist_test_RMSE <- 0
@@ -396,6 +360,23 @@ gb_SSE <- 0
 gb_ks_stat <- 0
 gb_ks_p_value <- 0
 
+knn_train_RMSE <- 0
+knn_test_RMSE <- 0
+knn_validation_RMSE <- 0
+knn_sd <- 0
+knn_overfitting <- 0
+knn_duration <- 0
+knn_duration_mean <- 0
+knn_holdout_mean <- 0
+knn_holdout_RMSE <- 0
+knn_holdout_RMSE_mean <- 0
+knn_bias <- 0
+knn_MAE <- 0
+knn_MSE <- 0
+knn_SSE <- 0
+knn_ks_stat <- 0
+knn_ks_p_value <- 0
+
 lasso_train_RMSE <- 0
 lasso_train_RMSE_df <- data.frame(lasso_train_RMSE)
 lasso_test_RMSE <- 0
@@ -444,20 +425,41 @@ linear_SSE <- 0
 linear_ks_stat <- 0
 linear_ks_p_value <- 0
 
-nnet_train_RMSE <- 0
-nnet_test_RMSE <- 0
-nnet_validation_RMSE <- 0
-nnet_sd <- 0
-nnet_overfitting <- 0
-nnet_duration <- 0
-nnet_holdout_RMSE <- 0
-nnet_holdout_RMSE_mean <- 0
-nnet_bias <- 0
-nnet_MAE <- 0
-nnet_MSE <- 0
-nnet_SSE <- 0
-nnet_ks_stat <- 0
-nnet_ks_p_value <- 0
+neuralnet_test_RMSE <- 0
+neuralnet_test_RMSE_mean <- 0
+neuralnet_validation_RMSE <- 0
+neuralnet_validation_RMSE_mean <- 0
+neuralnet_test_predict_value <- 0
+neuralnet_RMSE_sd <- 0
+neuralnet_test_sd <- 0
+neuralnet_test_sd_df <- data.frame(neuralnet_test_sd)
+neuralnet_test_predict_value_mean <- 0
+y_hat_neuralnet <- 0
+neuralnet_RMSE_difference <- 0
+neuralnet_train_RMSE <- 0
+neuralnet_train_RMSE_mean <- 0
+neuralnet_overfitting <- 0
+neuralnet_overfitting_mean <- 0
+predict_new_data_nn <- 0
+predict_train_nn_ <- 0
+predict_test_nn_ <- 0
+predict_validation_nn_ <- 0
+neuralnet_validation_predict_value <- 0
+neuralnet_validation_predict_value_mean <- 0
+neuralet_validation_sd <- 0
+neuralnet_RMSE <- 0
+neuralnet_holdout_RMSE <- 0
+neuralnet_holdout_RMSE_sd_mean <- 0
+neuralnet_sd <- 0
+neuralnet_sd_mean <- 0
+neuralnet_duration <- 0
+neuralnet_duration_mean <- 0
+neuralnet_bias <- 0
+neuralnet_MAE <- 0
+neuralnet_MSE <- 0
+neuralnet_SSE <- 0
+neuralnet_ks_stat <- 0
+neuralnet_ks_p_value <- 0
 
 pls_train_RMSE <- 0
 pls_test_RMSE <- 0
@@ -492,6 +494,23 @@ pcr_MSE <- 0
 pcr_SSE <- 0
 pcr_ks_stat <- 0
 pcr_ks_p_value <- 0
+
+rf_train_RMSE <- 0
+rf_test_RMSE <- 0
+rf_validation_RMSE <- 0
+rf_sd <- 0
+rf_overfitting <- 0
+rf_duration <- 0
+rf_duration_mean <- 0
+rf_holdout_mean <- 0
+rf_holdout_RMSE <- 0
+rf_holdout_RMSE_mean <- 0
+rf_bias <- 0
+rf_MAE <- 0
+rf_MSE <- 0
+rf_SSE <- 0
+rf_ks_stat <- 0
+rf_ks_p_value <- 0
 
 ridge_train_RMSE <- 0
 ridge_train_RMSE_df <- data.frame(ridge_train_RMSE)
@@ -594,6 +613,22 @@ xgb_SSE <- 0
 xgb_ks_stat <- 0
 xgb_ks_p_value <- 0
 
+ensemble_bag_rf_train_RMSE <- 0
+ensemble_bag_rf_test_RMSE <- 0
+ensemble_bag_rf_validation_RMSE <- 0
+ensemble_bag_rf_sd <- 0
+ensemble_bag_rf_overfitting <- 0
+ensemble_bag_rf_duration <- 0
+ensemble_bag_rf_holdout_RMSE <- 0
+ensemble_bag_rf_holdout_RMSE_mean <- 0
+ensemble_bag_rf_predict_value_mean <- 0
+ensemble_bag_rf_bias <- 0
+ensemble_bag_rf_MAE <- 0
+ensemble_bag_rf_MSE <- 0
+ensemble_bag_rf_SSE <- 0
+ensemble_bag_rf_ks_stat <- 0
+ensemble_bag_rf_ks_p_value <- 0
+
 ensemble_bagging_train_RMSE <- 0
 ensemble_bagging_test_RMSE <- 0
 ensemble_bagging_validation_RMSE <- 0
@@ -641,6 +676,22 @@ ensemble_bayesrnn_MSE <- 0
 ensemble_bayesrnn_SSE <- 0
 ensemble_bayesrnn_ks_stat <- 0
 ensemble_bayesrnn_ks_p_value <- 0
+
+ensemble_boost_rf_train_RMSE <- 0
+ensemble_boost_rf_test_RMSE <- 0
+ensemble_boost_rf_validation_RMSE <- 0
+ensemble_boost_rf_sd <- 0
+ensemble_boost_rf_overfitting <- 0
+ensemble_boost_rf_duration <- 0
+ensemble_boost_rf_holdout_RMSE <- 0
+ensemble_boost_rf_holdout_RMSE_mean <- 0
+ensemble_boost_rf_predict_value_mean <- 0
+ensemble_boost_rf_bias <- 0
+ensemble_boost_rf_MAE <- 0
+ensemble_boost_rf_MSE <- 0
+ensemble_boost_rf_SSE <- 0
+ensemble_boost_rf_ks_stat <- 0
+ensemble_boost_rf_ks_p_value <- 0
 
 ensemble_cubist_train_RMSE <- 0
 ensemble_cubist_test_RMSE <- 0
@@ -736,6 +787,44 @@ ensemble_gb_SSE <- 0
 ensemble_gb_ks_stat <- 0
 ensemble_gb_ks_p_value <- 0
 
+ensemble_knn_test_RMSE <- 0
+ensemble_knn_test_RMSE_df <- data.frame(ensemble_knn_test_RMSE)
+ensemble_knn_test_RMSE_mean <- 0
+ensemble_knn_test_mean <- 0
+ensemble_knn_test_mean_df <- data.frame(ensemble_knn_test_mean)
+ensemble_knn_validation_RMSE <- 0
+ensemble_knn_validation_RMSE_df <- data.frame(ensemble_knn_validation_RMSE)
+ensemble_knn_validation_RMSE_mean <- 0
+ensemble_knn_RMSE <- 0
+ensemble_knn_RMSE_mean <- 0
+ensemble_knn_test_sd <- 0
+ensemble_y_hat_knn <- 0
+ensemble_knn_test_sd <- 0
+ensemble_knn_test_sd_df <- data.frame(ensemble_knn_test_sd)
+ensemble_knn_validation_sd <- 0
+ensemble_knn_validation_sd_df <- data.frame(ensemble_knn_validation_sd)
+ensemble_knn_sd_test_df <- data.frame(ensemble_knn_test_sd)
+ensemble_knn_test <- 0
+ensemble_knn_test_predict_value <- 0
+ensemble_knn_train_RMSE <- 0
+ensemble_knn_train_RMSE_df <- data.frame(ensemble_knn_train_RMSE)
+ensemble_knn_train_RMSE_mean <- 0
+ensemble_knn_overfitting <- 0
+ensemble_knn_overfitting_df <- data.frame(ensemble_knn_overfitting)
+ensemble_knn_overfitting_mean <- 0
+ensemble_knn_duration <- 0
+ensemble_knn_holdout_RMSE <- 0
+ensemble_knn_holdout_RMSE_mean <- 0
+ensemble_knn_holdout_RMSE_sd_mean <- 0
+ensemble_knn_sd <- 0
+ensemble_knn_sd_mean <- 0
+ensemble_knn_bias <- 0
+ensemble_knn_MAE <- 0
+ensemble_knn_MSE <- 0
+ensemble_knn_SSE <- 0
+ensemble_knn_ks_stat <- 0
+ensemble_knn_ks_p_value <- 0
+
 ensemble_lasso_test_RMSE <- 0
 ensemble_lasso_test_RMSE_df <- data.frame(ensemble_lasso_test_RMSE)
 ensemble_lasso_validation_RMSE <- 0
@@ -797,20 +886,21 @@ ensemble_linear_SSE <- 0
 ensemble_linear_ks_stat <- 0
 ensemble_linear_ks_p_value <- 0
 
-ensemble_neuralnet_train_RMSE <- 0
-ensemble_neuralnet_test_RMSE <- 0
-ensemble_neuralnet_validation_RMSE <- 0
-ensemble_neuralnet_sd <- 0
-ensemble_neuralnet_overfitting <- 0
-ensemble_neuralnet_duration <- 0
-ensemble_neuralnet_holdout_RMSE <- 0
-ensemble_neuralnet_holdout_RMSE_mean <- 0
-ensemble_neuralnet_bias <- 0
-ensemble_neuralnet_MAE <- 0
-ensemble_neuralnet_MSE <- 0
-ensemble_neuralnet_SSE <- 0
-ensemble_neuralnet_ks_stat <- 0
-ensemble_neuralnet_ks_p_value <- 0
+ensemble_rf_train_RMSE <- 0
+ensemble_rf_test_RMSE <- 0
+ensemble_rf_validation_RMSE <- 0
+ensemble_rf_sd <- 0
+ensemble_rf_overfitting <- 0
+ensemble_rf_duration <- 0
+ensemble_rf_holdout_RMSE <- 0
+ensemble_rf_holdout_RMSE_mean <- 0
+ensemble_rf_predict_value_mean <- 0
+ensemble_rf_bias <- 0
+ensemble_rf_MAE <- 0
+ensemble_rf_MSE <- 0
+ensemble_rf_SSE <- 0
+ensemble_rf_ks_stat <- 0
+ensemble_rf_ks_p_value <- 0
 
 ensemble_ridge_test_RMSE <- 0
 ensemble_ridge_test_RMSE_df <- data.frame(ensemble_ridge_test_RMSE)
@@ -998,11 +1088,66 @@ for (i in 1:numresamples) {
   test <- df[idx == 2, ]
   validation <- df[idx == 3, ]
 
+  ####  Model #1 Bagged Random Forest tuned ####
+  bag_rf_start <- Sys.time()
+  bag_rf_train_fit <- e1071::tune.randomForest(x = train, y = train$y, mtry = ncol(train) - 1)
+  bag_rf_train_RMSE[i] <- Metrics::rmse(actual = train$y, predicted = predict(
+    object = bag_rf_train_fit$best.model,
+    newdata = train
+  ))
+  bag_rf_train_RMSE_mean <- mean(bag_rf_train_RMSE)
+  bag_rf_test_RMSE[i] <- Metrics::rmse(actual = test$y, predicted = predict(
+    object = bag_rf_train_fit$best.model,
+    newdata = test
+  ))
+  bag_rf_test_RMSE_mean <- mean(bag_rf_test_RMSE)
+  bag_rf_validation_RMSE[i] <- Metrics::rmse(actual = validation$y, predicted = predict(
+    object = bag_rf_train_fit$best.model,
+    newdata = validation
+  ))
+  bag_rf_validation_RMSE_mean <- mean(bag_rf_validation_RMSE)
+  bag_rf_holdout_RMSE[i] <- mean(bag_rf_test_RMSE_mean, bag_rf_validation_RMSE_mean)
+  bag_rf_holdout_RMSE_mean <- mean(c(bag_rf_holdout_RMSE))
+  bag_rf_holdout_RMSE_sd_mean <- sd(c(bag_rf_test_RMSE_mean, bag_rf_validation_RMSE_mean))
+  bag_rf_train_predict_value <- as.numeric(predict(object = bag_rf_train_fit$best.model, newdata = train))
+  bag_rf_test_predict_value <- as.numeric(predict(object = bag_rf_train_fit$best.model, newdata = test))
+  bag_rf_validation_predict_value <- as.numeric(predict(object = bag_rf_train_fit$best.model, newdata = validation))
+  bag_rf_predict_value_mean <- mean(c(bag_rf_test_predict_value, bag_rf_validation_predict_value))
+  bag_rf_sd[i] <- sd(c(bag_rf_test_predict_value, bag_rf_validation_predict_value))
+  bag_rf_sd_mean <- mean(bag_rf_sd)
+  bag_rf_overfitting[i] <- bag_rf_holdout_RMSE_mean / bag_rf_train_RMSE_mean
+  bag_rf_overfitting_mean <- mean(bag_rf_overfitting)
+  bag_rf_overfitting_range <- range(bag_rf_overfitting)
+  bag_rf_overfitting_sd <- sd(bag_rf_overfitting)
+  bag_rf_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(bag_rf_test_predict_value, bag_rf_validation_predict_value))
+  bag_rf_bias_mean <- mean(bag_rf_bias)
+  bag_rf_bias_sd <- sd(bag_rf_bias)
+  bag_rf_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(bag_rf_test_predict_value, bag_rf_validation_predict_value))
+  bag_rf_MAE_mean <- mean(bag_rf_MAE)
+  bag_rf_MAE_sd <- sd(bag_rf_MAE)
+  bag_rf_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(bag_rf_test_predict_value, bag_rf_validation_predict_value))
+  bag_rf_MSE_mean <- mean(bag_rf_MSE)
+  bag_rf_MSE_sd <- sd(bag_rf_MSE)
+  bag_rf_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(bag_rf_test_predict_value, bag_rf_validation_predict_value))
+  bag_rf_SSE_mean <- mean(bag_rf_SSE)
+  bag_rf_SSE_sd <- sd(bag_rf_SSE)
+  y_hat_bag_rf <- c(bag_rf_test_predict_value, bag_rf_validation_predict_value)
+  bag_rf_ks_p_value[i] <- stats::ks.test(x = y_hat_bag_rf, y = c(train$y, validation$y), exact = TRUE)$p.value
+  bag_rf_ks_p_value_mean <- mean(bag_rf_ks_p_value)
+  bag_rf_ks_p_value_sd <- sd(bag_rf_ks_p_value)
+  bag_rf_ks_stat[i] <- stats::ks.test(x = y_hat_bag_rf, y = c(train$y, validation$y), exact = TRUE)$statistic
+  bag_rf_ks_stat_mean <- mean(bag_rf_ks_stat)
+  bag_rf_ks_test <- c(bag_rf_ks_stat_mean, bag_rf_ks_p_value_mean)
+
+  bag_rf_end <- Sys.time()
+  bag_rf_duration[i] <- bag_rf_end - bag_rf_start
+  bag_rf_duration_mean <- mean(bag_rf_duration)
+  bag_rf_duration_sd <- sd(bag_rf_duration)
 
   ####  Model #2 Bagging ####
   bagging_start <- Sys.time()
   bagging_train_fit <- ipred::bagging(formula = y ~ ., data = train)
-  bagging_train_RMSE[i] <- tail(Metrics::rmse(actual = train$y, predicted = predict(object = bagging_train_fit, newdata = train)), 1)
+  bagging_train_RMSE[i] <- Metrics::rmse(actual = train$y, predicted = predict(object = bagging_train_fit, newdata = train))
   bagging_train_RMSE_mean <- mean(bagging_train_RMSE)
   bagging_test_RMSE[i] <- Metrics::rmse(actual = test$y, predicted = predict(object = bagging_train_fit, newdata = test))
   bagging_test_RMSE_mean <- mean(bagging_test_RMSE)
@@ -1138,7 +1283,63 @@ for (i in 1:numresamples) {
   bayesrnn_duration_mean <- mean(bayesrnn_duration)
   bayesrnn_duration_sd <- sd(bayesrnn_duration)
 
-  ####  Model #7 Cubist ####
+  ####  Model #5 Boosted Random Forest ####
+  boost_rf_start <- Sys.time()
+  boost_rf_train_fit <- e1071::tune.randomForest(x = train, y = train$y, mtry = ncol(train) - 1)
+  boost_rf_train_RMSE[i] <- Metrics::rmse(actual = train$y, predicted = predict(
+    object = boost_rf_train_fit$best.model,
+    newdata = train
+  ))
+  boost_rf_train_RMSE_mean <- mean(boost_rf_train_RMSE)
+  boost_rf_test_RMSE[i] <- Metrics::rmse(actual = test$y, predicted = predict(
+    object = boost_rf_train_fit$best.model,
+    newdata = test
+  ))
+  boost_rf_test_RMSE_mean <- mean(boost_rf_test_RMSE)
+  boost_rf_validation_RMSE[i] <- Metrics::rmse(actual = validation$y, predicted = predict(
+    object = boost_rf_train_fit$best.model,
+    newdata = validation
+  ))
+  boost_rf_validation_RMSE_mean <- mean(boost_rf_validation_RMSE)
+  boost_rf_holdout_RMSE[i] <- mean(boost_rf_test_RMSE_mean, boost_rf_validation_RMSE_mean)
+  boost_rf_holdout_RMSE_mean <- mean(boost_rf_holdout_RMSE)
+  boost_rf_holdout_RMSE_sd_mean <- sd(c(boost_rf_test_RMSE_mean, boost_rf_validation_RMSE_mean))
+  boost_rf_train_predict_value <- as.numeric(predict(object = boost_rf_train_fit$best.model, newdata = train))
+  boost_rf_test_predict_value <- as.numeric(predict(object = boost_rf_train_fit$best.model, newdata = test))
+  boost_rf_validation_predict_value <- as.numeric(predict(object = boost_rf_train_fit$best.model, newdata = validation))
+  boost_rf_predict_value_mean <- mean(c(boost_rf_test_predict_value, boost_rf_validation_predict_value))
+  boost_rf_sd[i] <- sd(c(boost_rf_test_predict_value, boost_rf_validation_predict_value))
+  boost_rf_sd_mean <- mean(boost_rf_sd)
+  boost_rf_overfitting[i] <- boost_rf_holdout_RMSE_mean / boost_rf_train_RMSE_mean
+  boost_rf_overfitting_mean <- mean(boost_rf_overfitting)
+  boost_rf_overfitting_range <- range(boost_rf_overfitting)
+  boost_rf_overfitting_sd <- sd(boost_rf_overfitting)
+  y_hat_boost_rf <- c(boost_rf_test_predict_value, boost_rf_validation_predict_value)
+  boost_rf_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(boost_rf_test_predict_value, boost_rf_validation_predict_value))
+  boost_rf_bias_mean <- mean(boost_rf_bias)
+  boost_rf_bias_sd <- sd(boost_rf_bias)
+  boost_rf_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(boost_rf_test_predict_value, boost_rf_validation_predict_value))
+  boost_rf_MAE_mean <- mean(boost_rf_MAE)
+  boost_rf_MAE_sd <- sd(boost_rf_MAE)
+  boost_rf_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(boost_rf_test_predict_value, boost_rf_validation_predict_value))
+  boost_rf_MSE_mean <- mean(boost_rf_MSE)
+  boost_rf_MSE_sd <- sd(boost_rf_MSE)
+  boost_rf_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(boost_rf_test_predict_value, boost_rf_validation_predict_value))
+  boost_rf_SSE_mean <- mean(boost_rf_SSE)
+  boost_rf_SSE_sd <- sd(boost_rf_SSE)
+  boost_rf_ks_p_value[i] <- stats::ks.test(x = y_hat_boost_rf, y = c(train$y, validation$y), exact = TRUE)$p.value
+  boost_rf_ks_p_value_mean <- mean(boost_rf_ks_p_value)
+  boost_rf_ks_p_value_sd <- sd(boost_rf_ks_p_value)
+  boost_rf_ks_stat[i] <- stats::ks.test(x = y_hat_boost_rf, y = c(train$y, validation$y), exact = TRUE)$statistic
+  boost_rf_ks_stat_mean <- mean(boost_rf_ks_stat)
+  boost_rf_ks_test <- c(boost_rf_ks_stat_mean, boost_rf_ks_p_value_mean)
+
+  boost_rf_end <- Sys.time()
+  boost_rf_duration[i] <- boost_rf_end - boost_rf_start
+  boost_rf_duration_mean <- mean(boost_rf_duration)
+  boost_rf_duration_sd <- sd(boost_rf_duration)
+
+  ####  Model #6 Cubist ####
   cubist_start <- Sys.time()
   cubist_train_fit <- Cubist::cubist(x = train[, 1:ncol(train) - 1], y = train$y)
   cubist_train_RMSE[i] <- Metrics::rmse(actual = train$y, predicted = predict(object = cubist_train_fit, newdata = train))
@@ -1185,7 +1386,7 @@ for (i in 1:numresamples) {
   cubist_duration_mean <- mean(cubist_duration)
   cubist_duration_sd <- sd(cubist_duration)
 
-  ####  Model #8 earth ####
+  ####  Model #6 earth ####
   earth_start <- Sys.time()
   earth_train_fit <- earth::earth(x = train[, 1:ncol(train) - 1], y = train$y)
   earth_train_RMSE[i] <- Metrics::rmse(actual = train$y, predicted = predict(object = earth_train_fit, newdata = train))
@@ -1232,7 +1433,7 @@ for (i in 1:numresamples) {
   earth_duration_mean <- mean(earth_duration)
   earth_duration_sd <- sd(earth_duration)
 
-  #### Model #9  Elastic Net ####
+  #### Model #7  Elastic Net ####
   elastic_start <- Sys.time()
   y <- train$y
   x <- data.matrix(train %>% dplyr::select(-y))
@@ -1325,7 +1526,7 @@ for (i in 1:numresamples) {
   elastic_duration_sd <- sd(elastic_duration)
 
 
-  #### Model #10 GAM (Generalized Additive Models) with Smoothing Splines ####
+  #### Model #8 GAM (Generalized Additive Models) with Smoothing Splines ####
   gam_start <- Sys.time()
   n_unique_vals <- purrr::map_dbl(df, dplyr::n_distinct)
 
@@ -1392,7 +1593,7 @@ for (i in 1:numresamples) {
   gam_duration_mean <- mean(gam_duration)
   gam_duration_sd <- sd(gam_duration)
 
-  ####  Model #11 Gradient Boosted ####
+  ####  Model #9 Gradient Boosted ####
   gb_start <- Sys.time()
   gb_train_fit <- gbm::gbm(train$y ~ ., data = train, distribution = "gaussian", n.trees = 100, shrinkage = 0.1, interaction.depth = 10)
   gb_train_RMSE[i] <- Metrics::rmse(actual = train$y, predicted = predict(object = gb_train_fit, newdata = train))
@@ -1439,8 +1640,73 @@ for (i in 1:numresamples) {
   gb_duration_mean <- mean(gb_duration)
   gb_duration_sd <- sd(gb_duration)
 
+  ####  Model #10 K-Nearest Neighbors ####
+  knn_start <- Sys.time()
+  knn_train_fit <- e1071::tune.gknn(x = train[, 1:ncol(train) - 1], y = train$y, scale = TRUE, k = c(1:25))
+  knn_train_RMSE[i] <- Metrics::rmse(actual = train$y, predicted = predict(
+    object = knn_train_fit$best.model,
+    newdata = train[, 1:ncol(train) - 1], k = knn_train_fit$best_model$k
+  ))
+  knn_train_RMSE_mean <- mean(knn_train_RMSE)
+  knn_test_RMSE[i] <- Metrics::rmse(actual = test$y, predicted = predict(
+    object = knn_train_fit$best.model,
+    k = knn_train_fit$best_model$k, newdata = test[, 1:ncol(test) - 1]
+  ))
+  knn_test_RMSE_mean <- mean(knn_test_RMSE)
+  knn_validation_RMSE[i] <- Metrics::rmse(actual = validation$y, predicted = predict(
+    object = knn_train_fit$best.model,
+    newdata = validation[, 1:ncol(validation) - 1], k = knn_train_fit$best_model$k
+  ))
+  knn_validation_RMSE_mean <- mean(knn_validation_RMSE)
+  knn_holdout_RMSE[i] <- mean(c(knn_test_RMSE_mean, knn_validation_RMSE_mean))
+  knn_holdout_RMSE_mean <- mean(knn_holdout_RMSE)
+  knn_holdout_RMSE_sd_mean <- sd(c(knn_test_RMSE_mean, knn_validation_RMSE_mean))
+  knn_train_predict_value <- as.numeric(predict(
+    object = knn_train_fit$best.model, newdata = train[, 1:ncol(train) - 1],
+    k = knn_train_fit$best_model$k
+  ))
+  knn_test_predict_value <- as.numeric(predict(
+    object = knn_train_fit$best.model, newdata = test[, 1:ncol(test) - 1],
+    k = knn_train_fit$best_model$k
+  ))
+  knn_validation_predict_value <- as.numeric(predict(
+    object = knn_train_fit$best.model, newdata = validation[, 1:ncol(test) - 1],
+    k = knn_train_fit$best_model$k
+  ))
+  knn_predict_value <- mean(c(knn_test_predict_value, knn_validation_predict_value))
+  knn_predict_value_mean <- mean(c(knn_test_predict_value, knn_validation_predict_value))
+  knn_sd[i] <- sd(c(knn_test_predict_value, knn_validation_predict_value))
+  knn_sd_mean <- mean(knn_sd)
+  knn_overfitting[i] <- knn_holdout_RMSE_mean / knn_train_RMSE_mean
+  knn_overfitting_mean <- mean(knn_overfitting)
+  knn_overfitting_range <- range(knn_overfitting)
+  knn_overfitting_sd <- sd(knn_overfitting)
+  y_hat_knn <- c(knn_test_predict_value, knn_validation_predict_value)
+  knn_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(knn_test_predict_value, knn_validation_predict_value))
+  knn_bias_mean <- mean(knn_bias)
+  knn_bias_sd <- sd(knn_bias)
+  knn_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(knn_test_predict_value, knn_validation_predict_value))
+  knn_MAE_mean <- mean(knn_MAE)
+  knn_MAE_sd <- sd(knn_MAE)
+  knn_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(knn_test_predict_value, knn_validation_predict_value))
+  knn_MSE_mean <- mean(knn_MSE)
+  knn_MSE_sd <- sd(knn_MSE)
+  knn_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(knn_test_predict_value, knn_validation_predict_value))
+  knn_SSE_mean <- mean(knn_SSE)
+  knn_SSE_sd <- sd(knn_SSE)
+  knn_ks_p_value[i] <- stats::ks.test(x = y_hat_knn, y = c(train$y, validation$y), exact = TRUE)$p.value
+  knn_ks_p_value_mean <- mean(knn_ks_p_value)
+  knn_ks_p_value_sd <- sd(knn_ks_p_value)
+  knn_ks_stat[i] <- stats::ks.test(x = y_hat_knn, y = c(train$y, validation$y), exact = TRUE)$statistic
+  knn_ks_stat_mean <- mean(knn_ks_stat)
+  knn_ks_test <- c(knn_ks_stat_mean, knn_ks_p_value_mean)
 
-  ####  13. Lasso Net ####
+  knn_end <- Sys.time()
+  knn_duration[i] <- knn_end - knn_start
+  knn_duration_mean <- mean(knn_duration)
+  knn_duration_sd <- sd(knn_duration)
+
+  ####  11. Lasso Net ####
   lasso_start <- Sys.time()
   y <- train$y
   x <- data.matrix(train %>% dplyr::select(-y))
@@ -1530,21 +1796,21 @@ for (i in 1:numresamples) {
   lasso_duration_sd <- sd(lasso_duration)
 
 
-  ####  Model 14 Linear ####
+  ####  Model 12 Linear ####
   linear_start <- Sys.time()
-  linear_train_fit <- lm(y ~ ., data = train)
-  linear_train_RMSE[i] <- Metrics::rmse(actual = train$y, predicted = predict(object = linear_train_fit, newdata = train))
+  linear_train_fit <- e1071::tune.rpart(formula = y ~ ., data = train)
+  linear_train_RMSE[i] <- Metrics::rmse(actual = train$y, predicted = predict(object = linear_train_fit$best.model, newdata = train))
   linear_train_RMSE_mean <- mean(linear_train_RMSE)
-  linear_test_RMSE[i] <- Metrics::rmse(actual = test$y, predicted = predict(object = linear_train_fit, newdata = test))
+  linear_test_RMSE[i] <- Metrics::rmse(actual = test$y, predicted = predict(object = linear_train_fit$best.model, newdata = test))
   linear_test_RMSE_mean <- mean(linear_test_RMSE)
-  linear_validation_RMSE[i] <- Metrics::rmse(actual = validation$y, predicted = predict(object = linear_train_fit, newdata = validation))
+  linear_validation_RMSE[i] <- Metrics::rmse(actual = validation$y, predicted = predict(object = linear_train_fit$best.model, newdata = validation))
   linear_validation_RMSE_mean <- mean(linear_validation_RMSE)
   linear_holdout_RMSE[i] <- mean(c(linear_test_RMSE_mean, linear_validation_RMSE_mean))
   linear_holdout_RMSE_mean <- mean(linear_holdout_RMSE)
   linear_holdout_RMSE_sd_mean <- sd(c(linear_test_RMSE_mean, linear_validation_RMSE_mean))
-  linear_train_predict_value <- as.numeric(predict(object = linear_train_fit, newdata = train))
-  linear_test_predict_value <- as.numeric(predict(object = linear_train_fit, newdata = test))
-  linear_validation_predict_value <- as.numeric(predict(object = linear_train_fit, newdata = validation))
+  linear_train_predict_value <- as.numeric(predict(object = linear_train_fit$best.model, newdata = train))
+  linear_test_predict_value <- as.numeric(predict(object = linear_train_fit$best.model, newdata = test))
+  linear_validation_predict_value <- as.numeric(predict(object = linear_train_fit$best.model, newdata = validation))
   linear_predict_value_mean <- mean(c(linear_test_predict_value, linear_validation_predict_value))
   linear_sd[i] <- sd(c(linear_test_predict_value, linear_validation_predict_value))
   linear_sd_mean <- mean(linear_sd)
@@ -1577,52 +1843,67 @@ for (i in 1:numresamples) {
   linear_duration_mean <- mean(linear_duration)
   linear_duration_sd <- sd(linear_duration)
 
-  #### Model 15 Tuned Neuralnet ####
-  nnet_start <- Sys.time()
-  nnet_train_fit <- nnet::nnet(train$y ~ ., data = train, size = 0, linout = TRUE, skip = TRUE)
-  nnet_train_RMSE[i] <- Metrics::rmse(actual = train$y, predicted = predict(object = nnet_train_fit, newdata = train))
-  nnet_train_RMSE_mean <- mean(nnet_train_RMSE)
-  nnet_test_RMSE[i] <- Metrics::rmse(actual = test$y, predicted = predict(object = nnet_train_fit, newdata = test))
-  nnet_test_RMSE_mean <- mean(nnet_test_RMSE)
-  nnet_validation_RMSE[i] <- Metrics::rmse(actual = validation$y, predicted = predict(object = nnet_train_fit, newdata = validation))
-  nnet_validation_RMSE_mean <- mean(nnet_validation_RMSE)
-  nnet_holdout_RMSE[i] <- mean(c(nnet_test_RMSE_mean, nnet_validation_RMSE_mean))
-  nnet_holdout_RMSE_mean <- mean(nnet_holdout_RMSE)
-  nnet_holdout_RMSE_sd_mean <- sd(c(nnet_test_RMSE_mean, nnet_validation_RMSE_mean))
-  nnet_train_predict_value <- predict(object = nnet_train_fit, newdata = train)
-  nnet_test_predict_value <- predict(object = nnet_train_fit, newdata = test)
-  nnet_validation_predict_value <- predict(object = nnet_train_fit, newdata = validation)
-  nnet_predict_value_mean <- mean(c(nnet_test_predict_value, nnet_validation_predict_value))
-  nnet_sd[i] <- sd(c(nnet_test_predict_value, nnet_validation_predict_value))
-  nnet_sd_mean <- mean(nnet_sd)
-  nnet_overfitting[i] <- nnet_holdout_RMSE_mean / nnet_train_RMSE_mean
-  nnet_overfitting_mean <- mean(nnet_overfitting)
-  nnet_overfitting_range <- range(nnet_overfitting)
-  nnet_overfitting_sd <- sd(nnet_overfitting)
-  y_hat_neuralnet <- c(nnet_test_predict_value, nnet_validation_predict_value)
-  nnet_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(nnet_test_predict_value, nnet_validation_predict_value))
-  nnet_bias_mean <- mean(nnet_bias)
-  nnet_bias_sd <- sd(nnet_bias)
-  nnet_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(nnet_test_predict_value, nnet_validation_predict_value))
-  nnet_MAE_mean <- mean(nnet_MAE)
-  nnet_MAE_sd <- sd(nnet_MAE)
-  nnet_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(nnet_test_predict_value, nnet_validation_predict_value))
-  nnet_MSE_mean <- mean(nnet_MSE)
-  nnet_MSE_sd <- sd(nnet_MSE)
-  nnet_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(nnet_test_predict_value, nnet_validation_predict_value))
-  nnet_SSE_mean <- mean(nnet_SSE)
-  nnet_SSE_sd <- sd(nnet_SSE)
-  nnet_ks_p_value[i] <- stats::ks.test(x = y_hat_neuralnet, y = c(train$y, validation$y), exact = TRUE)$p.value
-  nnet_ks_p_value_mean <- mean(nnet_ks_p_value)
-  nnet_ks_p_value_sd <- sd(nnet_ks_p_value)
-  nnet_ks_stat[i] <- stats::ks.test(x = y_hat_neuralnet, y = c(train$y, validation$y), exact = TRUE)$statistic
-  nnet_ks_stat_mean <- mean(nnet_ks_stat)
-  nnet_ks_test <- c(nnet_ks_stat_mean, nnet_ks_p_value_mean)
+  ####  Model 14 Neuralnet ####
+  neuralnet_start <- Sys.time()
+  maxs <- apply(df, 2, max)
+  mins <- apply(df, 2, min)
+  scaled <- as.data.frame(scale(df, center = mins, scale = maxs - mins))
+  train_ <- scaled[idx == 1, ]
+  test_ <- scaled[idx == 2, ]
+  validation_ <- scaled[idx == 3, ]
+  n <- names(train_)
+  f <- as.formula(paste("y ~", paste(n[!n %in% "y"], collapse = " + ")))
+  nn <- neuralnet(f, data = train_, hidden = c(5, 3), linear.output = TRUE)
+  predict_test_nn <- neuralnet::compute(nn, test_[, 1:ncol(df) - 1])
+  predict_test_nn_ <- predict_test_nn$net.result * (max(df$y) - min(df$y)) + min(df$y)
+  predict_train_nn <- neuralnet::compute(nn, train_[, 1:ncol(df) - 1])
+  predict_train_nn_ <- predict_train_nn$net.result * (max(df$y) - min(df$y)) + min(df$y)
+  neuralnet_train_RMSE[i] <- Metrics::rmse(actual = train$y, predicted = predict_train_nn_)
+  neuralnet_train_RMSE_mean <- mean(neuralnet_train_RMSE)
+  neuralnet_test_RMSE[i] <- Metrics::rmse(actual = test$y, predicted = predict_test_nn_)
+  neuralnet_test_RMSE_mean <- mean(neuralnet_test_RMSE)
+  predict_validation_nn <- neuralnet::compute(nn, validation_[, 1:ncol(df) - 1])
+  predict_validation_nn_ <- predict_validation_nn$net.result * (max(df$y) - min(df$y)) + min(df$y)
+  neuralnet_validation_RMSE[i] <- Metrics::rmse(actual = validation$y, predicted = predict_validation_nn_)
+  neuralnet_validation_RMSE_mean <- mean(neuralnet_validation_RMSE)
+  neuralnet_holdout_RMSE[i] <- mean(c(neuralnet_test_RMSE, neuralnet_validation_RMSE))
+  neuralnet_holdout_RMSE_mean <- mean(neuralnet_holdout_RMSE)
+  neuralnet_holdout_RMSE_sd_mean <- mean(sd(c(neuralnet_test_RMSE, neuralnet_validation_RMSE)))
+  neuralnet_test_predict_value[i] <- mean(predict_test_nn_)
+  neuralnet_test_predict_value_mean <- mean(neuralnet_test_predict_value)
+  neuralnet_validation_predict_value[i] <- mean(predict_validation_nn_)
+  neuralnet_validation_predict_value_mean <- mean(neuralnet_validation_predict_value)
+  neuralnet_test_sd <- sd(predict_test_nn_)
+  neuralnet_validation_sd <- sd(predict_validation_nn_)
+  neuralnet_sd_mean <- mean(neuralnet_test_sd, neuralet_validation_sd)
+  neuralnet_overfitting[i] <- neuralnet_holdout_RMSE_mean / neuralnet_train_RMSE_mean
+  neuralnet_overfitting_mean <- mean(neuralnet_overfitting)
+  neuralnet_overfitting_range <- range(neuralnet_overfitting)
+  neuralnet_overfitting_sd <- sd(neuralnet_overfitting)
+  y_hat_neuralnet <- c(predict_test_nn_, predict_validation_nn_)
+  neuralnet_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = y_hat_neuralnet)
+  neuralnet_bias_mean <- mean(neuralnet_bias)
+  neuralnet_bias_sd <- sd(neuralnet_bias)
+  neuralnet_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = y_hat_neuralnet)
+  neuralnet_MAE_mean <- mean(neuralnet_MAE)
+  neuralnet_MAE_sd <- sd(neuralnet_MAE)
+  neuralnet_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = y_hat_neuralnet)
+  neuralnet_MSE_mean <- mean(neuralnet_MSE)
+  neuralnet_MSE_sd <- sd(neuralnet_MSE)
+  neuralnet_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = y_hat_neuralnet)
+  neuralnet_SSE_mean <- mean(neuralnet_SSE)
+  neuralnet_SSE_sd <- sd(neuralnet_SSE)
+  neuralnet_ks_p_value[i] <- stats::ks.test(x = y_hat_neuralnet, y = c(train$y, validation$y), exact = TRUE)$p.value
+  neuralnet_ks_p_value_mean <- mean(neuralnet_ks_p_value)
+  neuralnet_ks_p_value_sd <- sd(neuralnet_ks_p_value)
+  neuralnet_ks_stat[i] <- stats::ks.test(x = y_hat_neuralnet, y = c(train$y, validation$y), exact = TRUE)$statistic
+  neuralnet_ks_stat_mean <- mean(neuralnet_ks_stat)
+  neuralnet_ks_test <- c(neuralnet_ks_stat_mean, neuralnet_ks_p_value_mean)
 
-  nnet_end <- Sys.time()
-  nnet_duration[i] <- nnet_end - nnet_start
-  nnet_duration_mean <- mean(nnet_duration)
-  nnet_duration_sd <- sd(nnet_duration)
+  neuralnet_end <- Sys.time()
+  neuralnet_duration[i] <- neuralnet_end - neuralnet_start
+  neuralnet_duration_mean <- mean(neuralnet_duration)
+  neuralnet_duration_sd <- sd(neuralnet_duration)
 
   #### Model 15 Partial Least Squares ####
   pls_start <- Sys.time()
@@ -1717,6 +1998,53 @@ for (i in 1:numresamples) {
   pcr_duration[i] <- pcr_end - pcr_start
   pcr_duration_mean <- mean(pcr_duration)
   pcr_duration_sd <- sd(pcr_duration)
+
+  ####  Model 17 Random Forest ####
+  rf_start <- Sys.time()
+  rf_train_fit <- e1071::tune.randomForest(x = train, y = train$y, data = train)
+  rf_train_RMSE[i] <- Metrics::rmse(actual = train$y, predicted = predict(object = rf_train_fit$best.model, newdata = train))
+  rf_train_RMSE_mean <- mean(rf_train_RMSE)
+  rf_test_RMSE[i] <- Metrics::rmse(actual = test$y, predicted = predict(object = rf_train_fit$best.model, newdata = test))
+  rf_test_RMSE_mean <- mean(rf_test_RMSE)
+  rf_validation_RMSE[i] <- Metrics::rmse(actual = validation$y, predicted = predict(object = rf_train_fit$best.model, newdata = validation))
+  rf_validation_RMSE_mean <- mean(rf_validation_RMSE)
+  rf_holdout_RMSE[i] <- mean(c(rf_test_RMSE_mean, rf_validation_RMSE_mean))
+  rf_holdout_RMSE_mean <- mean(rf_holdout_RMSE)
+  rf_holdout_RMSE_sd_mean <- sd(c(rf_test_RMSE_mean, rf_validation_RMSE_mean))
+  rf_train_predict_value <- predict(object = rf_train_fit$best.model, newdata = train)
+  rf_test_predict_value <- predict(object = rf_train_fit$best.model, newdata = test)
+  rf_validation_predict_value <- predict(object = rf_train_fit$best.model, newdata = validation)
+  rf_predict_value_mean <- mean(c(rf_test_predict_value, rf_validation_predict_value))
+  rf_sd[i] <- sd(c(rf_test_predict_value, rf_validation_predict_value))
+  rf_sd_mean <- mean(rf_sd)
+  rf_overfitting[i] <- rf_holdout_RMSE_mean / rf_train_RMSE_mean
+  rf_overfitting_mean <- mean(rf_overfitting)
+  rf_overfitting_range <- range(rf_overfitting)
+  rf_overfitting_sd <- sd(rf_overfitting)
+  y_hat_rf <- c(rf_test_predict_value, rf_validation_predict_value)
+  rf_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(rf_test_predict_value, rf_validation_predict_value))
+  rf_bias_mean <- mean(rf_bias)
+  rf_bias_sd <- sd <- sd(rf_bias)
+  rf_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(rf_test_predict_value, rf_validation_predict_value))
+  rf_MAE_mean <- mean(rf_MAE)
+  rf_MAE_sd <- sd(rf_MAE)
+  rf_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(rf_test_predict_value, rf_validation_predict_value))
+  rf_MSE_mean <- mean(rf_MSE)
+  rf_MSE_sd <- sd(rf_MSE)
+  rf_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(rf_test_predict_value, rf_validation_predict_value))
+  rf_SSE_mean <- mean(rf_SSE)
+  rf_SSE_sd <- sd(rf_SSE)
+  rf_ks_p_value[i] <- stats::ks.test(x = y_hat_rf, y = c(train$y, validation$y), exact = TRUE)$p.value
+  rf_ks_p_value_mean <- mean(rf_ks_p_value)
+  rf_ks_p_value_sd <- sd(rf_ks_p_value)
+  rf_ks_stat[i] <- stats::ks.test(x = y_hat_rf, y = c(train$y, validation$y), exact = TRUE)$statistic
+  rf_ks_stat_mean <- mean(rf_ks_stat)
+  rf_ks_test <- c(rf_ks_stat_mean, rf_ks_p_value_mean)
+
+  rf_end <- Sys.time()
+  rf_duration[i] <- rf_end - rf_start
+  rf_duration_mean <- mean(rf_duration)
+  rf_duration_sd <- sd(rf_duration)
 
   ####  Model 18 Ridge Net ####
   ridge_start <- Sys.time()
@@ -2028,38 +2356,141 @@ for (i in 1:numresamples) {
   #### Begin weighted ensembles here ####
 
   ensemble <- data.frame(
+    "BagRF" = y_hat_bag_rf * 1 / bag_rf_holdout_RMSE_mean,
+    "Bagging" = y_hat_bagging * 1 / bagging_holdout_RMSE_mean,
+    "BayesGLM" = y_hat_bayesglm * 1 / bayesglm_holdout_RMSE_mean,
+    "BayesRNN" = y_hat_bayesrnn * 1 / bayesrnn_holdout_RMSE_mean,
+    "BoostRF" = y_hat_boost_rf * 1 / boost_rf_holdout_RMSE_mean,
     "Cubist" = y_hat_cubist * 1 / cubist_holdout_RMSE_mean,
     "Earth" = y_hat_earth * 1 / earth_holdout_RMSE_mean,
     "Elastic" = y_hat_elastic / elastic_holdout_RMSE,
     "GAM" = y_hat_gam * 1 / gam_holdout_RMSE_mean,
     "GBM" = y_hat_gb * 1 / gb_holdout_RMSE_mean,
+    "KNN" = y_hat_knn * 1 / knn_holdout_RMSE_mean,
     "Lasso" = y_hat_lasso / lasso_holdout_RMSE_mean,
     "Linear" = y_hat_linear * 1 / linear_holdout_RMSE_mean,
-    "Neuralnet" = y_hat_neuralnet * 1 / nnet_holdout_RMSE_mean,
+    "Neuralnet" = y_hat_neuralnet / neuralnet_holdout_RMSE_mean,
     "PCR" = y_hat_pcr * 1 / pcr_holdout_RMSE_mean,
     "PLS" = y_hat_pls * 1 / pls_holdout_RMSE_mean,
+    "RandomForest" = y_hat_rf * 1 / rf_holdout_RMSE_mean,
     "Ridge" = y_hat_ridge / ridge_holdout_RMSE_mean,
     "Rpart" = y_hat_rpart * 1 / rpart_holdout_RMSE_mean,
     "SVM" = y_hat_svm * 1 / svm_holdout_RMSE_mean,
     "Tree" = y_hat_tree * 1 / tree_holdout_RMSE_mean,
-    "XGBoost" = y_hat_xgb * 1 / xgb_holdout_RMSE_mean,
-    row.names = NULL
+    "XGBoost" = y_hat_xgb * 1 / xgb_holdout_RMSE_mean
   )
 
   ensemble$Row_mean <- rowMeans(ensemble)
   ensemble$y_ensemble <- c(test$y, validation$y)
   y_ensemble <- c(test$y, validation$y)
 
-  if(sum(is.na(ensemble > 0))){
-    ensemble <- ensemble[stats::complete.cases(ensemble), ] # Removes rows with NAs
+  if(ensemble_reduction_method == 1){
+    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "exhaustive")
+
+    cols_sel <- ensemble_regsubsets |>
+      broom::tidy() |>
+      filter(BIC == min(BIC)) |>
+      dplyr::select(dplyr::where(~.x == TRUE)) |>
+      colnames()
+
+    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
+    ensemble <- cbind(ensemble, y_ensemble)
   }
 
-  ensemble <- Filter(function(x) var(x) != 0, ensemble) # Removes columns with no variation
+  if(ensemble_reduction_method == 2){
+    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "forward")
+
+    cols_sel <- ensemble_regsubsets |>
+      broom::tidy() |>
+      filter(BIC == min(BIC)) |>
+      dplyr::select(dplyr::where(~.x == TRUE)) |>
+      colnames()
+
+    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
+    ensemble <- cbind(ensemble, y_ensemble)
+  }
+
+  if(ensemble_reduction_method == 3){
+    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "backward")
+
+    cols_sel <- ensemble_regsubsets |>
+      broom::tidy() |>
+      filter(BIC == min(BIC)) |>
+      dplyr::select(dplyr::where(~.x == TRUE)) |>
+      colnames()
+
+    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
+    ensemble <- cbind(ensemble, y_ensemble)
+  }
+
+  if(ensemble_reduction_method == 4){
+    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "seqrep")
+
+    cols_sel <- ensemble_regsubsets |>
+      broom::tidy() |>
+      filter(BIC == min(BIC)) |>
+      dplyr::select(dplyr::where(~.x == TRUE)) |>
+      colnames()
+
+    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
+    ensemble <- cbind(ensemble, y_ensemble)
+  }
+
+  if(ensemble_reduction_method == 5){
+    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "exhaustive")
+
+    cols_sel <- ensemble_regsubsets |>
+      broom::tidy() |>
+      filter(mallows_cp == min(mallows_cp)) |>
+      dplyr::select(dplyr::where(~.x == TRUE)) |>
+      colnames()
+
+    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
+    ensemble <- cbind(ensemble, y_ensemble)
+  }
+
+
+  if(ensemble_reduction_method == 6){
+    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "forward")
+
+    cols_sel <- ensemble_regsubsets |>
+      broom::tidy() |>
+      filter(mallows_cp == min(mallows_cp)) |>
+      dplyr::select(dplyr::where(~.x == TRUE)) |>
+      colnames()
+
+    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
+    ensemble <- cbind(ensemble, y_ensemble)
+  }
+
+  if(ensemble_reduction_method == 7){
+    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "backward")
+
+    cols_sel <- ensemble_regsubsets |>
+      broom::tidy() |>
+      filter(mallows_cp == min(mallows_cp)) |>
+      dplyr::select(dplyr::where(~.x == TRUE)) |>
+      colnames()
+
+    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
+    ensemble <- cbind(ensemble, y_ensemble)
+  }
+
+  if(ensemble_reduction_method == 8){
+    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "seqrep")
+
+    cols_sel <- ensemble_regsubsets |>
+      broom::tidy() |>
+      filter(mallows_cp == min(mallows_cp)) |>
+      dplyr::select(dplyr::where(~.x == TRUE)) |>
+      colnames()
+
+    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
+    ensemble <- cbind(ensemble, y_ensemble)
+  }
 
   print(noquote(""))
   print("Working on the Ensembles section")
-  print(noquote(""))
-  print(paste0("Resampling number ", i, " of ", numresamples, sep = ','))
   print(noquote(""))
 
 
@@ -2093,6 +2524,65 @@ for (i in 1:numresamples) {
   ensemble_train <- ensemble[ensemble_idx == 1, ]
   ensemble_test <- ensemble[ensemble_idx == 2, ]
   ensemble_validation <- ensemble[ensemble_idx == 3, ]
+
+  #### Model 21: Ensemble Using Bagged Random Forest tuned ####
+  ensemble_bag_rf_start <- Sys.time()
+  ensemble_bag_rf_train_fit <- e1071::tune.randomForest(x = ensemble_train, y = ensemble_train$y_ensemble, mtry = ncol(ensemble_train) - 1)
+  ensemble_bag_rf_train_RMSE[i] <- Metrics::rmse(actual = ensemble_train$y_ensemble, predicted = predict(
+    object = ensemble_bag_rf_train_fit$best.model,
+    newdata = ensemble_train
+  ))
+  ensemble_bag_rf_train_RMSE_mean <- mean(ensemble_bag_rf_train_RMSE)
+  ensemble_bag_rf_test_RMSE[i] <- Metrics::rmse(actual = ensemble_test$y_ensemble, predicted = predict(
+    object = ensemble_bag_rf_train_fit$best.model,
+    newdata = ensemble_test
+  ))
+  ensemble_bag_rf_test_RMSE_mean <- mean(ensemble_bag_rf_test_RMSE)
+  ensemble_bag_rf_validation_RMSE[i] <- Metrics::rmse(
+    actual = ensemble_validation$y_ensemble,
+    predicted = predict(
+      object = ensemble_bag_rf_train_fit$best.model,
+      newdata = ensemble_validation
+    )
+  )
+  ensemble_bag_rf_validation_RMSE_mean <- mean(ensemble_bag_rf_validation_RMSE)
+  ensemble_bag_rf_holdout_RMSE[i] <- mean(c(ensemble_bag_rf_test_RMSE_mean, ensemble_bag_rf_validation_RMSE_mean))
+  ensemble_bag_rf_holdout_RMSE_mean <- mean(ensemble_bag_rf_holdout_RMSE)
+  ensemble_bag_rf_holdout_RMSE_sd_mean <- sd(c(ensemble_bag_rf_test_RMSE_mean, ensemble_bag_rf_validation_RMSE_mean))
+  ensemble_bag_rf_train_predict_value <- as.numeric(predict(object = ensemble_bag_rf_train_fit$best.model, newdata = ensemble_train))
+  ensemble_bag_rf_test_predict_value <- as.numeric(predict(object = ensemble_bag_rf_train_fit$best.model, newdata = ensemble_test))
+  ensemble_bag_rf_validation_predict_value <- as.numeric(predict(object = ensemble_bag_rf_train_fit$best.model, newdata = ensemble_validation))
+  ensemble_bag_rf_predict_value_mean <- mean(c(ensemble_bag_rf_test_predict_value, ensemble_bag_rf_validation_predict_value))
+  ensemble_bag_rf_sd[i] <- sd(c(ensemble_bag_rf_test_predict_value, ensemble_bag_rf_validation_predict_value))
+  ensemble_bag_rf_sd_mean <- mean(ensemble_bag_rf_sd)
+  ensemble_bag_rf_overfitting[i] <- ensemble_bag_rf_holdout_RMSE_mean / ensemble_bag_rf_train_RMSE_mean
+  ensemble_bag_rf_overfitting_mean <- mean(ensemble_bag_rf_overfitting)
+  ensemble_bag_rf_overfitting_range <- range(ensemble_bag_rf_overfitting)
+  ensemble_bag_rf_overfitting_sd <- sd(ensemble_bag_rf_overfitting)
+  ensemble_y_hat_bag_rf <- c(ensemble_bag_rf_test_predict_value, ensemble_bag_rf_validation_predict_value)
+  ensemble_bag_rf_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bag_rf_test_predict_value, ensemble_bag_rf_validation_predict_value))
+  ensemble_bag_rf_bias_mean <- mean(ensemble_bag_rf_bias)
+  ensemble_bag_rf_bias_sd <- sd(ensemble_bag_rf_bias)
+  ensemble_bag_rf_MAE[i] <- Metrics::mae(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bag_rf_test_predict_value, ensemble_bag_rf_validation_predict_value))
+  ensemble_bag_rf_MAE_mean <- mean(ensemble_bag_rf_MAE)
+  ensemble_bag_rf_MAE_sd <- sd(ensemble_bag_rf_MAE)
+  ensemble_bag_rf_MSE[i] <- Metrics::mse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bag_rf_test_predict_value, ensemble_bag_rf_validation_predict_value))
+  ensemble_bag_rf_MSE_mean <- mean(ensemble_bag_rf_MSE)
+  ensemble_bag_rf_MSE_sd <- sd(ensemble_bag_rf_MSE)
+  ensemble_bag_rf_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bag_rf_test_predict_value, ensemble_bag_rf_validation_predict_value))
+  ensemble_bag_rf_SSE_mean <- mean(ensemble_bag_rf_SSE)
+  ensemble_bag_rf_SSE_sd <- sd(ensemble_bag_rf_SSE)
+  ensemble_bag_rf_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_bag_rf, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+  ensemble_bag_rf_ks_p_value_mean <- mean(ensemble_bag_rf_ks_p_value)
+  ensemble_bag_rf_ks_p_value_sd <- sd(ensemble_bag_rf_ks_p_value)
+  ensemble_bag_rf_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_bag_rf, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+  ensemble_bag_rf_ks_stat_mean <- mean(ensemble_bag_rf_ks_stat)
+  ensemble_bag_rf_ks_test <- c(ensemble_bag_rf_ks_stat_mean, ensemble_bag_rf_ks_p_value_mean)
+
+  ensemble_bag_rf_end <- Sys.time()
+  ensemble_bag_rf_duration[i] <- ensemble_bag_rf_end - ensemble_bag_rf_start
+  ensemble_bag_rf_duration_mean <- mean(ensemble_bag_rf_duration)
+  ensemble_bag_rf_duration_sd <- sd(ensemble_bag_rf_duration)
 
   #### Model 22: Ensemble Using Bagging tuned ####
   ensemble_bagging_start <- Sys.time()
@@ -2140,7 +2630,7 @@ for (i in 1:numresamples) {
   ensemble_bagging_SSE_sd <- sd(ensemble_bagging_SSE)
   ensemble_bagging_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_bagging, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
   ensemble_bagging_ks_p_value_mean <- mean(ensemble_bagging_ks_p_value)
-  ensemble_bagging_ks_p_value_sd <- sd(ensemble_bagging_ks_p_value)
+  ensemble_bagging_ks_p_value_sd <- sd(ensemble_bag_rf_ks_p_value)
   ensemble_bagging_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_bagging, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
   ensemble_bagging_ks_stat_mean <- mean(ensemble_bagging_ks_stat)
   ensemble_bagging_ks_test <- c(ensemble_bagging_ks_stat_mean, ensemble_bagging_ks_p_value_mean)
@@ -2261,6 +2751,71 @@ for (i in 1:numresamples) {
   ensemble_bayesrnn_duration[i] <- ensemble_bayesrnn_end - ensemble_bayesrnn_start
   ensemble_bayesrnn_duration_mean <- mean(ensemble_bayesrnn_duration)
   ensemble_bayesrnn_duration_sd <- sd(ensemble_bayesrnn_duration)
+
+  #### Model 25: Ensemble Using Boosted Random Forest tuned ####
+  ensemble_boost_rf_start <- Sys.time()
+  ensemble_boost_rf_train_fit <- e1071::tune.randomForest(x = ensemble_train, y = ensemble_train$y_ensemble, mtry = ncol(ensemble_train) - 1)
+  ensemble_boost_rf_train_RMSE[i] <- Metrics::rmse(
+    actual = ensemble_train$y_ensemble,
+    predicted = predict(
+      object = ensemble_boost_rf_train_fit$best.model,
+      newdata = ensemble_train
+    )
+  )
+  ensemble_boost_rf_train_RMSE_mean <- mean(ensemble_boost_rf_train_RMSE)
+  ensemble_boost_rf_test_RMSE[i] <- Metrics::rmse(
+    actual = ensemble_test$y_ensemble,
+    predicted = predict(
+      object = ensemble_boost_rf_train_fit$best.model,
+      newdata = ensemble_test
+    )
+  )
+  ensemble_boost_rf_test_RMSE_mean <- mean(ensemble_boost_rf_test_RMSE)
+  ensemble_boost_rf_validation_RMSE[i] <- Metrics::rmse(
+    actual = ensemble_validation$y_ensemble,
+    predicted = predict(
+      object = ensemble_boost_rf_train_fit$best.model,
+      newdata = ensemble_validation
+    )
+  )
+  ensemble_boost_rf_validation_RMSE_mean <- mean(ensemble_boost_rf_validation_RMSE)
+  ensemble_boost_rf_holdout_RMSE[i] <- mean(c(ensemble_boost_rf_test_RMSE_mean, ensemble_boost_rf_validation_RMSE_mean))
+  ensemble_boost_rf_holdout_RMSE_mean <- mean(ensemble_boost_rf_holdout_RMSE)
+  ensemble_boost_rf_holdout_RMSE_sd_mean <- sd(c(ensemble_boost_rf_test_RMSE_mean, ensemble_boost_rf_validation_RMSE_mean))
+  ensemble_boost_rf_train_predict_value <- as.numeric(predict(object = ensemble_boost_rf_train_fit$best.model, newdata = ensemble_train))
+  ensemble_boost_rf_test_predict_value <- as.numeric(predict(object = ensemble_boost_rf_train_fit$best.model, newdata = ensemble_test))
+  ensemble_boost_rf_validation_predict_value <- as.numeric(predict(object = ensemble_boost_rf_train_fit$best.model, newdata = ensemble_validation))
+  ensemble_boost_rf_predict_value_mean <- mean(c(ensemble_boost_rf_test_predict_value, ensemble_boost_rf_validation_predict_value))
+  ensemble_boost_rf_sd[i] <- sd(c(ensemble_boost_rf_test_predict_value, ensemble_boost_rf_validation_predict_value))
+  ensemble_boost_rf_sd_mean <- mean(ensemble_boost_rf_sd)
+  ensemble_boost_rf_overfitting[i] <- ensemble_boost_rf_holdout_RMSE_mean / ensemble_boost_rf_train_RMSE_mean
+  ensemble_boost_rf_overfitting_mean <- mean(ensemble_boost_rf_overfitting)
+  ensemble_boost_rf_overfitting_range <- range(ensemble_boost_rf_overfitting)
+  ensemble_boost_rf_overfitting_sd <- sd(ensemble_boost_rf_overfitting)
+  ensemble_y_hat_boost_rf <- c(ensemble_boost_rf_test_predict_value, ensemble_boost_rf_validation_predict_value)
+  ensemble_boost_rf_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_boost_rf_test_predict_value, ensemble_boost_rf_validation_predict_value))
+  ensemble_boost_rf_bias_mean <- mean(ensemble_boost_rf_bias)
+  ensemble_boost_rf_bias_sd <- sd(ensemble_boost_rf_bias)
+  ensemble_boost_rf_MAE[i] <- Metrics::mae(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_boost_rf_test_predict_value, ensemble_boost_rf_validation_predict_value))
+  ensemble_boost_rf_MAE_mean <- mean(ensemble_boost_rf_MAE)
+  ensemble_boost_rf_MAE_sd <- sd(ensemble_boost_rf_MAE)
+  ensemble_boost_rf_MSE[i] <- Metrics::mse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_boost_rf_test_predict_value, ensemble_boost_rf_validation_predict_value))
+  ensemble_boost_rf_MSE_mean <- mean(ensemble_boost_rf_MSE)
+  ensemble_boost_rf_MSE_sd <- sd(ensemble_boost_rf_MSE)
+  ensemble_boost_rf_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_boost_rf_test_predict_value, ensemble_boost_rf_validation_predict_value))
+  ensemble_boost_rf_SSE_mean <- mean(ensemble_boost_rf_SSE)
+  ensemble_boost_rf_SSE_sd <- sd(ensemble_boost_rf_SSE)
+  ensemble_boost_rf_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_boost_rf, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+  ensemble_boost_rf_ks_p_value_mean <- mean(ensemble_boost_rf_ks_p_value)
+  ensemble_boost_rf_ks_p_value_sd <- sd(ensemble_boost_rf_ks_p_value)
+  ensemble_boost_rf_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_boost_rf, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+  ensemble_boost_rf_ks_stat_mean <- mean(ensemble_boost_rf_ks_stat)
+  ensemble_boost_rf_ks_test <- c(ensemble_boost_rf_ks_stat_mean, ensemble_boost_rf_ks_p_value_mean)
+
+  ensemble_boost_rf_end <- Sys.time()
+  ensemble_boost_rf_duration[i] <- ensemble_boost_rf_end - ensemble_boost_rf_start
+  ensemble_boost_rf_duration_mean <- mean(ensemble_boost_rf_duration)
+  ensemble_boost_rf_duration_sd <- sd(ensemble_boost_rf_duration)
 
   #### Model 26: Ensemble Using Cubist ####
   ensemble_cubist_start <- Sys.time()
@@ -2511,6 +3066,63 @@ for (i in 1:numresamples) {
   ensemble_gb_duration_mean <- mean(ensemble_gb_duration)
   ensemble_gb_duration_sd <- sd(ensemble_gb_duration)
 
+  #### Ensemble Using K-Nearest Neighbors ####
+  ensemble_knn_start <- Sys.time()
+
+  ensemble_knn_model <- e1071::tune.gknn(x = ensemble_train, y = ensemble_train$y_ensemble, k = c(1:25), scale = TRUE)
+  ensemble_knn_train_RMSE <- Metrics::rmse(actual = ensemble_train$y_ensemble, predicted = predict(object = ensemble_knn_model$best.model, k = ensemble_knn_model$best.model$k, newdata = ensemble_train))
+  ensemble_knn_train_RMSE_df <- rbind(ensemble_knn_train_RMSE_df, ensemble_knn_train_RMSE)
+  ensemble_knn_train_RMSE_mean <- mean(ensemble_knn_train_RMSE_df$ensemble_knn_train_RMSE[2:nrow(ensemble_knn_train_RMSE_df)])
+  ensemble_knn_test_RMSE <- Metrics::rmse(actual = ensemble_test$y_ensemble, predicted = predict(object = ensemble_knn_model$best.model, k = ensemble_knn_model$best.model$k, newdata = ensemble_test))
+  ensemble_knn_test_RMSE_df <- rbind(ensemble_knn_test_RMSE_df, ensemble_knn_test_RMSE)
+  ensemble_knn_test_RMSE_mean <- mean(ensemble_knn_test_RMSE_df$ensemble_knn_test_RMSE[2:nrow(ensemble_knn_test_RMSE_df)])
+  ensemble_knn_validation_RMSE <- Metrics::rmse(actual = ensemble_validation$y_ensemble, predicted = predict(object = ensemble_knn_model$best.model, k = ensemble_knn_model$best.model$k, newdata = ensemble_validation))
+  ensemble_knn_validation_RMSE_df <- rbind(ensemble_knn_validation_RMSE_df, ensemble_knn_validation_RMSE)
+  ensemble_knn_validation_RMSE_mean <- mean(ensemble_knn_validation_RMSE_df$ensemble_knn_validation_RMSE[2:nrow(ensemble_knn_validation_RMSE_df)])
+  ensemble_knn_holdout_RMSE[i] <- mean(c(ensemble_knn_test_RMSE, ensemble_knn_validation_RMSE))
+  ensemble_knn_holdout_RMSE_mean <- mean(ensemble_knn_holdout_RMSE)
+  ensemble_knn_holdout_RMSE_sd_mean <- mean(sd(c(ensemble_knn_test_RMSE, ensemble_knn_validation_RMSE)))
+  ensemble_knn_test_predict_value <- as.numeric(predict(object = ensemble_knn_model$best.model, k = ensemble_knn_model$best.model$k, newdata = ensemble_test))
+  ensemble_knn_test_predict_value_mean <- mean(ensemble_knn_test_predict_value)
+  ensemble_knn_validation_predict_value <- as.numeric(predict(object = ensemble_knn_model$best.model, k = ensemble_knn_model$best.model$k, newdata = ensemble_validation))
+  ensemble_knn_validation_predict_value_mean <- mean(ensemble_knn_validation_predict_value)
+  ensemble_knn_predict_value_mean <- mean(ensemble_knn_test_predict_value_mean, ensemble_knn_validation_predict_value_mean)
+  ensemble_knn_test_sd <- sd(ensemble_knn_test_predict_value)
+  ensemble_knn_test_sd_df <- rbind(ensemble_knn_test_sd_df, ensemble_knn_test_sd)
+  ensemble_knn_test_sd_mean <- mean(ensemble_knn_test_sd_df$ensemble_knn_test_sd[2:nrow(ensemble_knn_test_sd_df)])
+  ensemble_knn_validation_sd <- sd(ensemble_knn_validation_predict_value)
+  ensemble_knn_validation_sd_df <- rbind(ensemble_knn_validation_sd_df, ensemble_knn_validation_sd)
+  ensemble_knn_validation_sd_mean <- mean(ensemble_knn_validation_sd_df$ensemble_knn_validation_sd[2:nrow(ensemble_knn_validation_sd_df)])
+  ensemble_knn_sd_mean <- mean(c(ensemble_knn_test_sd_mean, ensemble_knn_validation_sd_mean))
+  ensemble_knn_overfitting[i] <- ensemble_knn_holdout_RMSE_mean / ensemble_knn_train_RMSE_mean
+  ensemble_knn_overfitting_mean <- mean(ensemble_knn_overfitting)
+  ensemble_knn_overfitting_range <- range(ensemble_knn_overfitting)
+  ensemble_knn_overfitting_sd <- sd(ensemble_knn_overfitting)
+  ensemble_y_hat_knn <- c(ensemble_knn_test_predict_value, ensemble_knn_validation_predict_value)
+  ensemble_knn_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_knn_test_predict_value, ensemble_knn_validation_predict_value))
+  ensemble_knn_bias_mean <- mean(ensemble_knn_bias)
+  ensemble_knn_bias_sd <- sd(ensemble_knn_bias)
+  ensemble_knn_MAE[i] <- Metrics::mae(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_knn_test_predict_value, ensemble_knn_validation_predict_value))
+  ensemble_knn_MAE_mean <- mean(ensemble_knn_MAE)
+  ensemble_knn_MAE_sd <- sd(ensemble_knn_MAE)
+  ensemble_knn_MSE[i] <- Metrics::mse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_knn_test_predict_value, ensemble_knn_validation_predict_value))
+  ensemble_knn_MSE_mean <- mean(ensemble_knn_MSE)
+  ensemble_knn_MSE_sd <- sd(ensemble_knn_MSE)
+  ensemble_knn_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_knn_test_predict_value, ensemble_knn_validation_predict_value))
+  ensemble_knn_SSE_mean <- mean(ensemble_knn_SSE)
+  ensemble_knn_SSE_sd <- sd(ensemble_knn_SSE)
+  ensemble_knn_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_knn, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+  ensemble_knn_ks_p_value_mean <- mean(ensemble_knn_ks_p_value)
+  ensemble_knn_ks_p_value_sd <- sd(ensemble_knn_ks_p_value)
+  ensemble_knn_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_knn, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+  ensemble_knn_ks_stat_mean <- mean(ensemble_knn_ks_stat)
+  ensemble_knn_ks_test <- c(ensemble_knn_ks_stat_mean, ensemble_knn_ks_p_value_mean)
+
+  ensemble_knn_end <- Sys.time()
+  ensemble_knn_duration[i] <- ensemble_knn_end - ensemble_knn_start
+  ensemble_knn_duration_mean <- mean(ensemble_knn_duration)
+  ensemble_knn_duration_sd <- sd(ensemble_knn_duration)
+
   #### Ensembles Using lasso ####
   ensemble_lasso_start <- Sys.time()
 
@@ -2592,11 +3204,11 @@ for (i in 1:numresamples) {
 
   #### Model 31: Ensembles Using Linear tuned ####
   ensemble_linear_start <- Sys.time()
-  ensemble_linear_train_fit <- lm(y_ensemble ~ ., data = ensemble_train)
+  ensemble_linear_train_fit <- e1071::tune.rpart(formula = y_ensemble ~ ., data = ensemble_train)
   ensemble_linear_train_RMSE[i] <- Metrics::rmse(
     actual = ensemble_train$y_ensemble,
     predicted = predict(
-      object = ensemble_linear_train_fit,
+      object = ensemble_linear_train_fit$best.model,
       newdata = ensemble_train
     )
   )
@@ -2604,7 +3216,7 @@ for (i in 1:numresamples) {
   ensemble_linear_test_RMSE[i] <- Metrics::rmse(
     actual = ensemble_test$y_ensemble,
     predicted = predict(
-      object = ensemble_linear_train_fit,
+      object = ensemble_linear_train_fit$best.model,
       newdata = ensemble_test
     )
   )
@@ -2612,7 +3224,7 @@ for (i in 1:numresamples) {
   ensemble_linear_validation_RMSE[i] <- Metrics::rmse(
     actual = ensemble_validation$y_ensemble,
     predicted = predict(
-      object = ensemble_linear_train_fit,
+      object = ensemble_linear_train_fit$best.model,
       newdata = ensemble_validation
     )
   )
@@ -2620,9 +3232,9 @@ for (i in 1:numresamples) {
   ensemble_linear_holdout_RMSE[i] <- mean(c(ensemble_linear_test_RMSE_mean, ensemble_linear_validation_RMSE_mean))
   ensemble_linear_holdout_RMSE_mean <- mean(ensemble_linear_holdout_RMSE)
   ensemble_linear_holdout_RMSE_sd_mean <- sd(c(ensemble_linear_test_RMSE_mean, ensemble_linear_validation_RMSE_mean))
-  ensemble_linear_train_predict_value <- as.numeric(predict(object = ensemble_linear_train_fit, newdata = ensemble_train))
-  ensemble_linear_test_predict_value <- as.numeric(predict(object = ensemble_linear_train_fit, newdata = ensemble_test))
-  ensemble_linear_validation_predict_value <- as.numeric(predict(object = ensemble_linear_train_fit, newdata = ensemble_validation))
+  ensemble_linear_train_predict_value <- as.numeric(predict(object = ensemble_linear_train_fit$best.model, newdata = ensemble_train))
+  ensemble_linear_test_predict_value <- as.numeric(predict(object = ensemble_linear_train_fit$best.model, newdata = ensemble_test))
+  ensemble_linear_validation_predict_value <- as.numeric(predict(object = ensemble_linear_train_fit$best.model, newdata = ensemble_validation))
   ensemble_linear_predict_value_mean <- mean(c(ensemble_linear_test_predict_value, ensemble_linear_validation_predict_value))
   ensemble_linear_sd[i] <- sd(c(ensemble_linear_test_predict_value, ensemble_linear_validation_predict_value))
   ensemble_linear_sd_mean <- mean(ensemble_linear_sd)
@@ -2655,61 +3267,71 @@ for (i in 1:numresamples) {
   ensemble_linear_duration_mean <- mean(ensemble_linear_duration)
   ensemble_linear_duration_sd <- sd(ensemble_linear_duration)
 
-  #### Model 26: Ensemble Using neuralnet ####
-  ensemble_neuralnet_start <- Sys.time()
-  ensemble_nnet_train_fit <- nnet::nnet(ensemble_train$y ~ ., data = ensemble_train, size = 0, linout = TRUE, skip = TRUE)
-  ensemble_neuralnet_train_RMSE[i] <- Metrics::rmse(actual = ensemble_train$y_ensemble, predicted = predict(
-    object = ensemble_nnet_train_fit,
-    newdata = ensemble_train
-  ))
-  ensemble_neuralnet_train_RMSE_mean <- mean(ensemble_neuralnet_train_RMSE)
-  ensemble_neuralnet_test_RMSE[i] <- Metrics::rmse(actual = ensemble_test$y_ensemble, predicted = predict(
-    object = ensemble_nnet_train_fit,
-    newdata = ensemble_test
-  ))
-  ensemble_neuralnet_test_RMSE_mean <- mean(ensemble_neuralnet_test_RMSE)
-  ensemble_neuralnet_validation_RMSE[i] <- Metrics::rmse(actual = ensemble_validation$y_ensemble, predicted = predict(
-    object = ensemble_nnet_train_fit,
-    newdata = ensemble_validation
-  ))
-  ensemble_neuralnet_validation_RMSE_mean <- mean(ensemble_neuralnet_validation_RMSE)
-  ensemble_neuralnet_holdout_RMSE[i] <- mean(c(ensemble_neuralnet_test_RMSE_mean, ensemble_neuralnet_validation_RMSE_mean))
-  ensemble_neuralnet_holdout_RMSE_mean <- mean(ensemble_neuralnet_holdout_RMSE)
-  ensemble_neuralnet_holdout_RMSE_sd_mean <- sd(c(ensemble_neuralnet_test_RMSE_mean, ensemble_neuralnet_validation_RMSE_mean))
-  ensemble_neuralnet_train_predict_value <- as.numeric(predict(object = ensemble_nnet_train_fit, newdata = ensemble_train))
-  ensemble_neuralnet_test_predict_value <- as.numeric(predict(object = ensemble_nnet_train_fit, newdata = ensemble_test))
-  ensemble_neuralnet_validation_predict_value <- as.numeric(predict(object = ensemble_nnet_train_fit, newdata = ensemble_validation))
-  ensemble_neuralnet_predict_value_mean <- mean(c(ensemble_neuralnet_test_predict_value, ensemble_neuralnet_validation_predict_value))
-  ensemble_neuralnet_sd[i] <- sd(c(ensemble_neuralnet_test_predict_value, ensemble_neuralnet_validation_predict_value))
-  ensemble_neuralnet_sd_mean <- mean(ensemble_neuralnet_sd)
-  ensemble_neuralnet_overfitting[i] <- ensemble_neuralnet_holdout_RMSE_mean / ensemble_neuralnet_train_RMSE_mean
-  ensemble_neuralnet_overfitting_mean <- mean(ensemble_neuralnet_overfitting)
-  ensemble_neuralnet_overfitting_range <- range(ensemble_neuralnet_overfitting)
-  ensemble_neuralnet_overfitting_sd <- sd(ensemble_neuralnet_overfitting)
-  ensemble_y_hat_neuralnet <- c(ensemble_neuralnet_test_predict_value, ensemble_neuralnet_validation_predict_value)
-  ensemble_neuralnet_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_neuralnet_test_predict_value, ensemble_neuralnet_validation_predict_value))
-  ensemble_neuralnet_bias_mean <- mean(ensemble_neuralnet_bias)
-  ensemble_neuralnet_bias_sd <- sd(ensemble_neuralnet_bias)
-  ensemble_neuralnet_MAE[i] <- Metrics::mae(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_neuralnet_test_predict_value, ensemble_neuralnet_validation_predict_value))
-  ensemble_neuralnet_MAE_mean <- mean(ensemble_neuralnet_MAE)
-  ensemble_neuralnet_MAE_sd <- sd(ensemble_neuralnet_MAE)
-  ensemble_neuralnet_MSE[i] <- Metrics::mse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_neuralnet_test_predict_value, ensemble_neuralnet_validation_predict_value))
-  ensemble_neuralnet_MSE_mean <- mean(ensemble_neuralnet_MSE)
-  ensemble_neuralnet_MSE_sd <- sd(ensemble_neuralnet_MSE)
-  ensemble_neuralnet_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_neuralnet_test_predict_value, ensemble_neuralnet_validation_predict_value))
-  ensemble_neuralnet_SSE_mean <- mean(ensemble_neuralnet_SSE)
-  ensemble_neuralnet_SSE_sd <- sd(ensemble_neuralnet_SSE)
-  ensemble_neuralnet_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_neuralnet, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
-  ensemble_neuralnet_ks_p_value_mean <- mean(ensemble_neuralnet_ks_p_value)
-  ensemble_neuralnet_ks_p_value_sd <- sd(ensemble_neuralnet_ks_p_value)
-  ensemble_neuralnet_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_neuralnet, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
-  ensemble_neuralnet_ks_stat_mean <- mean(ensemble_neuralnet_ks_stat)
-  ensemble_neuralnet_ks_test <- c(ensemble_neuralnet_ks_stat_mean, ensemble_neuralnet_ks_p_value_mean)
 
-  ensemble_neuralnet_end <- Sys.time()
-  ensemble_neuralnet_duration[i] <- ensemble_neuralnet_end - ensemble_neuralnet_start
-  ensemble_neuralnet_duration_mean <- mean(ensemble_neuralnet_duration)
-  ensemble_neuralnet_duration_sd <- sd(ensemble_neuralnet_duration)
+  #### Model 34: Ensembles Using Random Forest tuned ####
+  ensemble_rf_start <- Sys.time()
+  ensemble_rf_train_fit <- e1071::tune.randomForest(x = ensemble_train, y = ensemble_train$y_ensemble, data = ensemble_train)
+  ensemble_rf_train_RMSE[i] <- Metrics::rmse(
+    actual = ensemble_train$y_ensemble,
+    predicted = predict(
+      object = ensemble_rf_train_fit$best.model,
+      newdata = ensemble_train
+    )
+  )
+  ensemble_rf_train_RMSE_mean <- mean(ensemble_rf_train_RMSE)
+  ensemble_rf_test_RMSE[i] <- Metrics::rmse(
+    actual = ensemble_test$y_ensemble,
+    predicted = predict(
+      object = ensemble_rf_train_fit$best.model,
+      newdata = ensemble_test
+    )
+  )
+  ensemble_rf_test_RMSE_mean <- mean(ensemble_rf_test_RMSE)
+  ensemble_rf_validation_RMSE[i] <- Metrics::rmse(
+    actual = ensemble_validation$y_ensemble,
+    predicted = predict(
+      object = ensemble_rf_train_fit$best.model,
+      newdata = ensemble_validation
+    )
+  )
+  ensemble_rf_validation_RMSE_mean <- mean(ensemble_rf_validation_RMSE)
+  ensemble_rf_holdout_RMSE[i] <- mean(c(ensemble_rf_test_RMSE_mean, ensemble_rf_validation_RMSE_mean))
+  ensemble_rf_holdout_RMSE_mean <- mean(ensemble_rf_holdout_RMSE)
+  ensemble_rf_holdout_RMSE_sd_mean <- sd(c(ensemble_rf_test_RMSE_mean, ensemble_rf_validation_RMSE_mean))
+  ensemble_rf_train_predict_value <- predict(object = ensemble_rf_train_fit$best.model, newdata = ensemble_train)
+  ensemble_rf_test_predict_value <- predict(object = ensemble_rf_train_fit$best.model, newdata = ensemble_test)
+  ensemble_rf_validation_predict_value <- predict(object = ensemble_rf_train_fit$best.model, newdata = ensemble_validation)
+  ensemble_rf_predict_value_mean <- mean(c(ensemble_rf_test_predict_value, ensemble_rf_validation_predict_value))
+  ensemble_rf_sd_mean <- sd(c(ensemble_rf_test_predict_value, ensemble_rf_validation_predict_value))
+  ensemble_rf_overfitting[i] <- ensemble_rf_holdout_RMSE_mean / ensemble_rf_train_RMSE_mean
+  ensemble_rf_overfitting_mean <- mean(ensemble_rf_overfitting)
+  ensemble_rf_overfitting_range <- range(ensemble_rf_overfitting)
+  ensemble_rf_overfitting_sd <- sd(ensemble_rf_overfitting)
+  ensemble_y_hat_rf <- c(ensemble_rf_test_predict_value, ensemble_rf_validation_predict_value)
+  ensemble_rf_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_rf_test_predict_value, ensemble_rf_validation_predict_value))
+  ensemble_rf_bias_mean <- mean(ensemble_rf_bias)
+  ensemble_rf_bias_sd <- sd(ensemble_rf_bias)
+  ensemble_rf_MAE[i] <- Metrics::mae(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_rf_test_predict_value, ensemble_rf_validation_predict_value))
+  ensemble_rf_MAE_mean <- mean(ensemble_rf_MAE)
+  ensemble_rf_MAE_sd <- sd(ensemble_rf_MAE)
+  ensemble_rf_MSE[i] <- Metrics::mse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_rf_test_predict_value, ensemble_rf_validation_predict_value))
+  ensemble_rf_MSE_mean <- mean(ensemble_rf_MSE)
+  ensemble_rf_MSE_sd <- sd(ensemble_rf_MSE)
+  ensemble_rf_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_rf_test_predict_value, ensemble_rf_validation_predict_value))
+  ensemble_rf_SSE_mean <- mean(ensemble_rf_SSE)
+  ensemble_rf_SSE_sd <- sd(ensemble_rf_SSE)
+  ensemble_rf_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_rf, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+  ensemble_rf_ks_p_value_mean <- mean(ensemble_rf_ks_p_value)
+  ensemble_rf_ks_p_value_sd <- sd(ensemble_rf_ks_p_value)
+  ensemble_rf_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_rf, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+  ensemble_rf_ks_stat_mean <- mean(ensemble_rf_ks_stat)
+  ensemble_rf_ks_test <- c(ensemble_rf_ks_stat_mean, ensemble_rf_ks_p_value_mean)
+
+  ensemble_rf_end <- Sys.time()
+  ensemble_rf_duration[i] <- ensemble_rf_end - ensemble_rf_start
+  ensemble_rf_duration_mean <- mean(ensemble_rf_duration)
+  ensemble_rf_duration_sd <- sd(ensemble_rf_duration)
+
 
   #### Ensembles Using Ridge ####
   ensemble_ridge_start <- Sys.time()
@@ -3047,337 +3669,335 @@ for (i in 1:numresamples) {
 
 summary_results <- data.frame(
   "Model" = c(
-    "Actual data", "Bagging", "BayesGLM", "BayesRNN",
-    "Cubist", "Earth", "Elastic", "GAM", "Gradient Boosted", "Lasso", "Linear", "Neuralnet", "PLS",
-    "PCR", "Ridge", "Rpart", "SVM", "Tree", "XGBoost",
-    "Ensemble Bagging", "Ensemble Elastic", "Ensemble Gradient Boosted",
+    "Actual data", "Bagged Random Forest", "Bagging", "BayesGLM", "BayesRNN",
+    "BoostRF", "Cubist", "Earth", "Elastic", "GAM", "Gradient Boosted", "KNN", "Lasso", "Linear", "Neuralnet", "PLS",
+    "PCR", "RF", "Ridge", "Rpart", "SVM", "Tree", "XGBoost", "Ensemble Bagged Random Forest",
+    "Ensemble Bagging", "Ensemble Elastic", "Ensemble Gradient Boosted", "Ensemble K-Nearest Neighbors",
     "Ensemble Lasso", "Ensemble Linear", "Ensemble BayesGLM", "Ensemble BayesRNN",
-    "Ensemble Cubist", "Ensemble Earth", "Ensemble Neuralnet", "Ensemble Ridge", "Ensemble Rpart",
+    "Ensemble Boosted RF", "Ensemble Cubist", "Ensemble Earth", "Ensemble RF", "Ensemble Ridge", "Ensemble Rpart",
     "Ensemble SVM", "Ensemble Trees", "Ensemble XGBoost"
   ),
   "Mean_holdout_RMSE" = round(c(
-    actual_RMSE, bagging_holdout_RMSE_mean, bayesglm_holdout_RMSE_mean,
-    bayesrnn_holdout_RMSE_mean, cubist_holdout_RMSE_mean, earth_holdout_RMSE_mean, elastic_holdout_RMSE_mean,
-    gam_holdout_RMSE_mean, gb_holdout_RMSE_mean, lasso_holdout_RMSE_mean, linear_holdout_RMSE_mean, nnet_holdout_RMSE_mean,
-    pls_holdout_RMSE_mean, pcr_holdout_RMSE_mean,
+    actual_RMSE, bag_rf_holdout_RMSE_mean, bagging_holdout_RMSE_mean, bayesglm_holdout_RMSE_mean,
+    bayesrnn_holdout_RMSE_mean, boost_rf_holdout_RMSE_mean, cubist_holdout_RMSE_mean, earth_holdout_RMSE_mean, elastic_holdout_RMSE_mean,
+    gam_holdout_RMSE_mean, gb_holdout_RMSE_mean, knn_holdout_RMSE_mean, lasso_holdout_RMSE_mean, linear_holdout_RMSE_mean,
+    neuralnet_holdout_RMSE_mean, pls_holdout_RMSE_mean, pcr_holdout_RMSE_mean, rf_holdout_RMSE_mean,
     ridge_holdout_RMSE_mean, rpart_holdout_RMSE_mean, svm_holdout_RMSE_mean, tree_holdout_RMSE_mean, xgb_holdout_RMSE_mean,
-    ensemble_bagging_holdout_RMSE_mean, ensemble_elastic_holdout_RMSE_mean, ensemble_gb_holdout_RMSE_mean,
-    ensemble_lasso_holdout_RMSE_mean, ensemble_linear_holdout_RMSE_mean, ensemble_bayesglm_holdout_RMSE_mean,
-    ensemble_bayesrnn_holdout_RMSE_mean, ensemble_cubist_holdout_RMSE_mean, ensemble_earth_holdout_RMSE_mean, ensemble_neuralnet_holdout_RMSE_mean,
-    ensemble_ridge_holdout_RMSE_mean, ensemble_rpart_holdout_RMSE_mean,
+    ensemble_bag_rf_holdout_RMSE_mean, ensemble_bagging_holdout_RMSE_mean, ensemble_elastic_holdout_RMSE_mean, ensemble_gb_holdout_RMSE_mean,
+    ensemble_knn_holdout_RMSE_mean, ensemble_lasso_holdout_RMSE_mean, ensemble_linear_holdout_RMSE_mean, ensemble_bayesglm_holdout_RMSE_mean,
+    ensemble_bayesrnn_holdout_RMSE_mean, ensemble_boost_rf_holdout_RMSE_mean, ensemble_cubist_holdout_RMSE_mean, ensemble_earth_holdout_RMSE_mean,
+    ensemble_rf_holdout_RMSE_mean, ensemble_ridge_holdout_RMSE_mean, ensemble_rpart_holdout_RMSE_mean,
     ensemble_svm_holdout_RMSE_mean, ensemble_tree_holdout_RMSE_mean, ensemble_xgb_holdout_RMSE_mean
   ), 4),
   "Std_Deviation_of_holdout_RMSE" = round(c(
-    actual_RMSE, bagging_holdout_RMSE_sd_mean, bayesglm_holdout_RMSE_sd_mean,
-    bayesrnn_holdout_RMSE_sd_mean, cubist_holdout_RMSE_sd_mean, earth_holdout_RMSE_sd_mean, elastic_holdout_RMSE_sd_mean,
-    gam_holdout_RMSE_sd_mean, gb_holdout_RMSE_sd_mean, lasso_holdout_RMSE_sd_mean, linear_holdout_RMSE_sd_mean, nnet_holdout_RMSE_sd_mean,
-    pls_holdout_RMSE_sd_mean, pcr_holdout_RMSE_sd_mean,
+    actual_RMSE, bag_rf_holdout_RMSE_sd_mean, bagging_holdout_RMSE_sd_mean, bayesglm_holdout_RMSE_sd_mean,
+    bayesrnn_holdout_RMSE_sd_mean, boost_rf_holdout_RMSE_sd_mean, cubist_holdout_RMSE_sd_mean, earth_holdout_RMSE_sd_mean, elastic_holdout_RMSE_sd_mean,
+    gam_holdout_RMSE_sd_mean, gb_holdout_RMSE_sd_mean, knn_holdout_RMSE_sd_mean, lasso_holdout_RMSE_sd_mean, linear_holdout_RMSE_sd_mean,
+    neuralnet_holdout_RMSE_sd_mean, pls_holdout_RMSE_sd_mean, pcr_holdout_RMSE_sd_mean, rf_holdout_RMSE_sd_mean,
     ridge_holdout_RMSE_sd_mean, rpart_holdout_RMSE_sd_mean, svm_holdout_RMSE_sd_mean, tree_holdout_RMSE_sd_mean, xgb_holdout_RMSE_sd_mean,
-    ensemble_bagging_holdout_RMSE_sd_mean, ensemble_elastic_holdout_RMSE_sd_mean, ensemble_gb_holdout_RMSE_sd_mean,
-    ensemble_lasso_holdout_RMSE_sd_mean, ensemble_linear_holdout_RMSE_sd_mean, ensemble_bayesglm_holdout_RMSE_sd_mean,
-    ensemble_bayesrnn_holdout_RMSE_sd_mean, ensemble_cubist_holdout_RMSE_sd_mean, ensemble_earth_holdout_RMSE_sd_mean, ensemble_neuralnet_holdout_RMSE_sd_mean,
-    ensemble_ridge_holdout_RMSE_sd_mean, ensemble_rpart_holdout_RMSE_sd_mean,
+    ensemble_bag_rf_holdout_RMSE_sd_mean, ensemble_bagging_holdout_RMSE_sd_mean, ensemble_elastic_holdout_RMSE_sd_mean, ensemble_gb_holdout_RMSE_sd_mean,
+    ensemble_knn_holdout_RMSE_sd_mean, ensemble_lasso_holdout_RMSE_sd_mean, ensemble_linear_holdout_RMSE_sd_mean, ensemble_bayesglm_holdout_RMSE_sd_mean,
+    ensemble_bayesrnn_holdout_RMSE_sd_mean, ensemble_boost_rf_holdout_RMSE_sd_mean, ensemble_cubist_holdout_RMSE_sd_mean, ensemble_earth_holdout_RMSE_sd_mean,
+    ensemble_rf_holdout_RMSE_sd_mean, ensemble_ridge_holdout_RMSE_sd_mean, ensemble_rpart_holdout_RMSE_sd_mean,
     ensemble_svm_holdout_RMSE_sd_mean, ensemble_tree_holdout_RMSE_sd_mean, ensemble_xgb_holdout_RMSE_sd_mean
   ), 4),
   "KS_Test_Stat_mean" = round(c(
-    0, bagging_ks_stat_mean, bayesglm_ks_stat_mean,
-    bayesrnn_ks_stat_mean, cubist_ks_stat_mean, earth_ks_stat_mean, elastic_ks_stat_mean,
-    gam_ks_stat_mean, gb_ks_stat_mean, lasso_ks_stat_mean, linear_ks_stat_mean, nnet_ks_stat_mean,
-    pls_ks_stat_mean, pcr_ks_stat_mean,
+    0, bag_rf_ks_stat_mean, bagging_ks_stat_mean, bayesglm_ks_stat_mean,
+    bayesrnn_ks_stat_mean, boost_rf_ks_stat_mean, cubist_ks_stat_mean, earth_ks_stat_mean, elastic_ks_stat_mean,
+    gam_ks_stat_mean, gb_ks_stat_mean, knn_ks_stat_mean, lasso_ks_stat_mean, linear_ks_stat_mean,
+    neuralnet_ks_stat_mean, pls_ks_stat_mean, pcr_ks_stat_mean, rf_ks_stat_mean,
     ridge_ks_stat_mean, rpart_ks_stat_mean, svm_ks_stat_mean, tree_ks_stat_mean, xgb_ks_stat_mean,
-    ensemble_bagging_ks_stat_mean, ensemble_elastic_ks_stat_mean, ensemble_gb_ks_stat_mean,
-    ensemble_lasso_ks_stat_mean, ensemble_linear_ks_stat_mean, ensemble_bayesglm_ks_stat_mean,
-    ensemble_bayesrnn_ks_stat_mean, ensemble_cubist_ks_stat_mean, ensemble_earth_ks_stat_mean, ensemble_neuralnet_ks_stat_mean,
-    ensemble_ridge_ks_stat_mean, ensemble_rpart_ks_stat_mean,
+    ensemble_bag_rf_ks_stat_mean, ensemble_bagging_ks_stat_mean, ensemble_elastic_ks_stat_mean, ensemble_gb_ks_stat_mean,
+    ensemble_knn_ks_stat_mean, ensemble_lasso_ks_stat_mean, ensemble_linear_ks_stat_mean, ensemble_bayesglm_ks_stat_mean,
+    ensemble_bayesrnn_ks_stat_mean, ensemble_boost_rf_ks_stat_mean, ensemble_cubist_ks_stat_mean, ensemble_earth_ks_stat_mean,
+    ensemble_rf_ks_stat_mean, ensemble_ridge_ks_stat_mean, ensemble_rpart_ks_stat_mean,
     ensemble_svm_ks_stat_mean, ensemble_tree_ks_stat_mean, ensemble_xgb_ks_stat_mean
   ), 4),
   "KS_Test_P_Value_mean" = round(c(
-    0, bagging_ks_p_value_mean, bayesglm_ks_p_value_mean,
-    bayesrnn_ks_p_value_mean, cubist_ks_p_value_mean, earth_ks_p_value_mean, elastic_ks_p_value_mean,
-    gam_ks_p_value_mean, gb_ks_p_value_mean, lasso_ks_p_value_mean, linear_ks_p_value_mean, nnet_ks_p_value_mean,
-    pls_ks_p_value_mean, pcr_ks_p_value_mean,
+    0, bag_rf_ks_p_value_mean, bagging_ks_p_value_mean, bayesglm_ks_p_value_mean,
+    bayesrnn_ks_p_value_mean, boost_rf_ks_p_value_mean, cubist_ks_p_value_mean, earth_ks_p_value_mean, elastic_ks_p_value_mean,
+    gam_ks_p_value_mean, gb_ks_p_value_mean, knn_ks_p_value_mean, lasso_ks_p_value_mean, linear_ks_p_value_mean,
+    neuralnet_ks_p_value_mean, pls_ks_p_value_mean, pcr_ks_p_value_mean, rf_ks_p_value_mean,
     ridge_ks_p_value_mean, rpart_ks_p_value_mean, svm_ks_p_value_mean, tree_ks_p_value_mean, xgb_ks_p_value_mean,
-    ensemble_bagging_ks_p_value_mean, ensemble_elastic_ks_p_value_mean, ensemble_gb_ks_p_value_mean,
-    ensemble_lasso_ks_p_value_mean, ensemble_linear_ks_p_value_mean, ensemble_bayesglm_ks_p_value_mean,
-    ensemble_bayesrnn_ks_p_value_mean, ensemble_cubist_ks_p_value_mean, ensemble_earth_ks_p_value_mean, ensemble_neuralnet_ks_p_value_mean,
-    ensemble_ridge_ks_p_value_mean, ensemble_rpart_ks_p_value_mean,
+    ensemble_bag_rf_ks_p_value_mean, ensemble_bagging_ks_p_value_mean, ensemble_elastic_ks_p_value_mean, ensemble_gb_ks_p_value_mean,
+    ensemble_knn_ks_p_value_mean, ensemble_lasso_ks_p_value_mean, ensemble_linear_ks_p_value_mean, ensemble_bayesglm_ks_p_value_mean,
+    ensemble_bayesrnn_ks_p_value_mean, ensemble_boost_rf_ks_p_value_mean, ensemble_cubist_ks_p_value_mean, ensemble_earth_ks_p_value_mean,
+    ensemble_rf_ks_p_value_mean, ensemble_ridge_ks_p_value_mean, ensemble_rpart_ks_p_value_mean,
     ensemble_svm_ks_p_value_mean, ensemble_tree_ks_p_value_mean, ensemble_xgb_ks_p_value_mean
   ), 4),
   "KS_Test_P_Value_std_dev" = round(c(
-    0, bagging_ks_p_value_sd, bayesglm_ks_p_value_sd,
-    bayesrnn_ks_p_value_sd, cubist_ks_p_value_sd, earth_ks_p_value_sd, elastic_ks_p_value_sd,
-    gam_ks_p_value_sd, gb_ks_p_value_sd, lasso_ks_p_value_sd, linear_ks_p_value_sd, nnet_ks_p_value_sd,
-    pls_ks_p_value_sd, pcr_ks_p_value_sd,
+    0, bag_rf_ks_p_value_sd, bagging_ks_p_value_sd, bayesglm_ks_p_value_sd,
+    bayesrnn_ks_p_value_sd, boost_rf_ks_p_value_sd, cubist_ks_p_value_sd, earth_ks_p_value_sd, elastic_ks_p_value_sd,
+    gam_ks_p_value_sd, gb_ks_p_value_sd, knn_ks_p_value_sd, lasso_ks_p_value_sd, linear_ks_p_value_sd,
+    neuralnet_ks_p_value_sd, pls_ks_p_value_sd, pcr_ks_p_value_sd, rf_ks_p_value_sd,
     ridge_ks_p_value_sd, rpart_ks_p_value_sd, svm_ks_p_value_sd, tree_ks_p_value_sd, xgb_ks_p_value_sd,
-    ensemble_bagging_ks_p_value_sd, ensemble_elastic_ks_p_value_sd, ensemble_gb_ks_p_value_sd,
-    ensemble_lasso_ks_p_value_sd, ensemble_linear_ks_p_value_sd, ensemble_bayesglm_ks_p_value_sd,
-    ensemble_bayesrnn_ks_p_value_sd, ensemble_cubist_ks_p_value_sd, ensemble_earth_ks_p_value_sd, ensemble_neuralnet_ks_p_value_sd,
-    ensemble_ridge_ks_p_value_sd, ensemble_rpart_ks_p_value_sd,
+    ensemble_bag_rf_ks_p_value_sd, ensemble_bagging_ks_p_value_sd, ensemble_elastic_ks_p_value_sd, ensemble_gb_ks_p_value_sd,
+    ensemble_knn_ks_p_value_sd, ensemble_lasso_ks_p_value_sd, ensemble_linear_ks_p_value_sd, ensemble_bayesglm_ks_p_value_sd,
+    ensemble_bayesrnn_ks_p_value_sd, ensemble_boost_rf_ks_p_value_sd, ensemble_cubist_ks_p_value_sd, ensemble_earth_ks_p_value_sd,
+    ensemble_rf_ks_p_value_sd, ensemble_ridge_ks_p_value_sd, ensemble_rpart_ks_p_value_sd,
     ensemble_svm_ks_p_value_sd, ensemble_tree_ks_p_value_sd, ensemble_xgb_ks_p_value_sd
   ), 4),
   "Bias" = round(c(
-    0, bagging_bias_mean, bayesglm_bias_mean,
-    bayesrnn_bias_mean, cubist_bias_mean, earth_bias_mean, elastic_bias_mean,
-    gam_bias_mean, gb_bias_mean, lasso_bias_mean, linear_bias_mean, nnet_bias_mean,
-    pls_bias_mean, pcr_bias_mean,
+    0, bag_rf_bias_mean, bagging_bias_mean, bayesglm_bias_mean,
+    bayesrnn_bias_mean, boost_rf_bias_mean, cubist_bias_mean, earth_bias_mean, elastic_bias_mean,
+    gam_bias_mean, gb_bias_mean, knn_bias_mean, lasso_bias_mean, linear_bias_mean,
+    neuralnet_bias_mean, pls_bias_mean, pcr_bias_mean, rf_bias_mean,
     ridge_bias_mean, rpart_bias_mean, svm_bias_mean, tree_bias_mean, xgb_bias_mean,
-    ensemble_bagging_bias_mean, ensemble_elastic_bias_mean, ensemble_gb_bias_mean,
-    ensemble_lasso_bias_mean, ensemble_linear_bias_mean, ensemble_bayesglm_bias_mean,
-    ensemble_bayesrnn_bias_mean, ensemble_cubist_bias_mean, ensemble_earth_bias_mean, ensemble_neuralnet_bias_mean,
-    ensemble_ridge_bias_mean, ensemble_rpart_bias_mean,
+    ensemble_bag_rf_bias_mean, ensemble_bagging_bias_mean, ensemble_elastic_bias_mean, ensemble_gb_bias_mean,
+    ensemble_knn_bias_mean, ensemble_lasso_bias_mean, ensemble_linear_bias_mean, ensemble_bayesglm_bias_mean,
+    ensemble_bayesrnn_bias_mean, ensemble_boost_rf_bias_mean, ensemble_cubist_bias_mean, ensemble_earth_bias_mean,
+    ensemble_rf_bias_mean, ensemble_ridge_bias_mean, ensemble_rpart_bias_mean,
     ensemble_svm_bias_mean, ensemble_tree_bias_mean, ensemble_xgb_bias_mean
   ), 4),
   "Bias_sd" = round(c(
-    0, bagging_bias_sd, bayesglm_bias_sd,
-    bayesrnn_bias_sd, cubist_bias_sd, earth_bias_sd, elastic_bias_sd,
-    gam_bias_sd, gb_bias_sd, lasso_bias_sd, linear_bias_sd, nnet_bias_sd,
-    pls_bias_sd, pcr_bias_sd,
+    0, bag_rf_bias_sd, bagging_bias_sd, bayesglm_bias_sd,
+    bayesrnn_bias_sd, boost_rf_bias_sd, cubist_bias_sd, earth_bias_sd, elastic_bias_sd,
+    gam_bias_sd, gb_bias_sd, knn_bias_sd, lasso_bias_sd, linear_bias_sd,
+    neuralnet_bias_sd, pls_bias_sd, pcr_bias_sd, rf_bias_sd,
     ridge_bias_sd, rpart_bias_sd, svm_bias_sd, tree_bias_sd, xgb_bias_sd,
-    ensemble_bagging_bias_sd, ensemble_elastic_bias_sd, ensemble_gb_bias_sd,
-    ensemble_lasso_bias_sd, ensemble_linear_bias_sd, ensemble_bayesglm_bias_sd,
-    ensemble_bayesrnn_bias_sd, ensemble_cubist_bias_sd, ensemble_earth_bias_sd, ensemble_neuralnet_bias_sd,
-    ensemble_ridge_bias_sd, ensemble_rpart_bias_sd,
+    ensemble_bag_rf_bias_sd, ensemble_bagging_bias_sd, ensemble_elastic_bias_sd, ensemble_gb_bias_sd,
+    ensemble_knn_bias_sd, ensemble_lasso_bias_sd, ensemble_linear_bias_sd, ensemble_bayesglm_bias_sd,
+    ensemble_bayesrnn_bias_sd, ensemble_boost_rf_bias_sd, ensemble_cubist_bias_sd, ensemble_earth_bias_sd,
+    ensemble_rf_bias_sd, ensemble_ridge_bias_sd, ensemble_rpart_bias_sd,
     ensemble_svm_bias_sd, ensemble_tree_bias_sd, ensemble_xgb_bias_sd
   ), 4),
   "Mean_MAE" = round(c(
-    0, bagging_MAE_mean, bayesglm_MAE_mean,
-    bayesrnn_MAE_mean, cubist_MAE_mean, earth_MAE_mean, elastic_MAE_mean,
-    gam_MAE_mean, gb_MAE_mean, lasso_MAE_mean, linear_MAE_mean, nnet_MAE_mean,
-    pls_MAE_mean, pcr_MAE_mean,
+    0, bag_rf_MAE_mean, bagging_MAE_mean, bayesglm_MAE_mean,
+    bayesrnn_MAE_mean, boost_rf_MAE_mean, cubist_MAE_mean, earth_MAE_mean, elastic_MAE_mean,
+    gam_MAE_mean, gb_MAE_mean, knn_MAE_mean, lasso_MAE_mean, linear_MAE_mean,
+    neuralnet_MAE_mean, pls_MAE_mean, pcr_MAE_mean, rf_MAE_mean,
     ridge_MAE_mean, rpart_MAE_mean, svm_MAE_mean, tree_MAE_mean, xgb_MAE_mean,
-    ensemble_bagging_MAE_mean, ensemble_elastic_MAE_mean, ensemble_gb_MAE_mean,
-    ensemble_lasso_MAE_mean, ensemble_linear_MAE_mean, ensemble_bayesglm_MAE_mean,
-    ensemble_bayesrnn_MAE_mean, ensemble_cubist_MAE_mean, ensemble_earth_MAE_mean, ensemble_neuralnet_MAE_mean,
-    ensemble_ridge_MAE_mean, ensemble_rpart_MAE_mean,
+    ensemble_bag_rf_MAE_mean, ensemble_bagging_MAE_mean, ensemble_elastic_MAE_mean, ensemble_gb_MAE_mean,
+    ensemble_knn_MAE_mean, ensemble_lasso_MAE_mean, ensemble_linear_MAE_mean, ensemble_bayesglm_MAE_mean,
+    ensemble_bayesrnn_MAE_mean, ensemble_boost_rf_MAE_mean, ensemble_cubist_MAE_mean, ensemble_earth_MAE_mean,
+    ensemble_rf_MAE_mean, ensemble_ridge_MAE_mean, ensemble_rpart_MAE_mean,
     ensemble_svm_MAE_mean, ensemble_tree_MAE_mean, ensemble_xgb_MAE_mean
   ), 4),
   "Mean_MAE_sd" = round(c(
-    0, bagging_MAE_sd, bayesglm_MAE_sd,
-    bayesrnn_MAE_sd, cubist_MAE_sd, earth_MAE_sd, elastic_MAE_sd,
-    gam_MAE_sd, gb_MAE_sd, lasso_MAE_sd, linear_MAE_sd, nnet_MAE_sd,
-    pls_MAE_sd, pcr_MAE_sd,
+    0, bag_rf_MAE_sd, bagging_MAE_sd, bayesglm_MAE_sd,
+    bayesrnn_MAE_sd, boost_rf_MAE_sd, cubist_MAE_sd, earth_MAE_sd, elastic_MAE_sd,
+    gam_MAE_sd, gb_MAE_sd, knn_MAE_sd, lasso_MAE_sd, linear_MAE_sd,
+    neuralnet_MAE_sd, pls_MAE_sd, pcr_MAE_sd, rf_MAE_sd,
     ridge_MAE_sd, rpart_MAE_sd, svm_MAE_sd, tree_MAE_sd, xgb_MAE_sd,
-    ensemble_bagging_MAE_sd, ensemble_elastic_MAE_sd, ensemble_gb_MAE_sd,
-    ensemble_lasso_MAE_sd, ensemble_linear_MAE_sd, ensemble_bayesglm_MAE_sd,
-    ensemble_bayesrnn_MAE_sd, ensemble_cubist_MAE_sd, ensemble_earth_MAE_sd, ensemble_neuralnet_MAE_sd,
-    ensemble_ridge_MAE_sd, ensemble_rpart_MAE_sd,
+    ensemble_bag_rf_MAE_sd, ensemble_bagging_MAE_sd, ensemble_elastic_MAE_sd, ensemble_gb_MAE_sd,
+    ensemble_knn_MAE_sd, ensemble_lasso_MAE_sd, ensemble_linear_MAE_sd, ensemble_bayesglm_MAE_sd,
+    ensemble_bayesrnn_MAE_sd, ensemble_boost_rf_MAE_sd, ensemble_cubist_MAE_sd, ensemble_earth_MAE_sd,
+    ensemble_rf_MAE_sd, ensemble_ridge_MAE_sd, ensemble_rpart_MAE_sd,
     ensemble_svm_MAE_sd, ensemble_tree_MAE_sd, ensemble_xgb_MAE_sd
   ), 4),
   "Mean_MSE" = round(c(
-    0, bagging_MSE_mean, bayesglm_MSE_mean,
-    bayesrnn_MSE_mean, cubist_MSE_mean, earth_MSE_mean, elastic_MSE_mean,
-    gam_MSE_mean, gb_MSE_mean, lasso_MSE_mean, linear_MSE_mean, nnet_MSE_mean,
-    pls_MSE_mean, pcr_MSE_mean,
+    0, bag_rf_MSE_mean, bagging_MSE_mean, bayesglm_MSE_mean,
+    bayesrnn_MSE_mean, boost_rf_MSE_mean, cubist_MSE_mean, earth_MSE_mean, elastic_MSE_mean,
+    gam_MSE_mean, gb_MSE_mean, knn_MSE_mean, lasso_MSE_mean, linear_MSE_mean,
+    neuralnet_MSE_mean, pls_MSE_mean, pcr_MSE_mean, rf_MSE_mean,
     ridge_MSE_mean, rpart_MSE_mean, svm_MSE_mean, tree_MSE_mean, xgb_MSE_mean,
-    ensemble_bagging_MSE_mean, ensemble_elastic_MSE_mean, ensemble_gb_MSE_mean,
-    ensemble_lasso_MSE_mean, ensemble_linear_MSE_mean, ensemble_bayesglm_MSE_mean,
-    ensemble_bayesrnn_MSE_mean, ensemble_cubist_MSE_mean, ensemble_earth_MSE_mean, ensemble_neuralnet_MSE_mean,
-    ensemble_ridge_MSE_mean, ensemble_rpart_MSE_mean,
+    ensemble_bag_rf_MSE_mean, ensemble_bagging_MSE_mean, ensemble_elastic_MSE_mean, ensemble_gb_MSE_mean,
+    ensemble_knn_MSE_mean, ensemble_lasso_MSE_mean, ensemble_linear_MSE_mean, ensemble_bayesglm_MSE_mean,
+    ensemble_bayesrnn_MSE_mean, ensemble_boost_rf_MSE_mean, ensemble_cubist_MSE_mean, ensemble_earth_MSE_mean,
+    ensemble_rf_MSE_mean, ensemble_ridge_MSE_mean, ensemble_rpart_MSE_mean,
     ensemble_svm_MSE_mean, ensemble_tree_MSE_mean, ensemble_xgb_MSE_mean
   ), 4),
   "Mean_MSE_sd" = round(c(
-    0, bagging_MSE_sd, bayesglm_MSE_sd,
-    bayesrnn_MSE_sd, cubist_MSE_sd, earth_MSE_sd, elastic_MSE_sd,
-    gam_MSE_sd, gb_MSE_sd, lasso_MSE_sd, linear_MSE_sd, nnet_MSE_mean,
-    pls_MSE_sd, pcr_MSE_sd,
+    0, bag_rf_MSE_sd, bagging_MSE_sd, bayesglm_MSE_sd,
+    bayesrnn_MSE_sd, boost_rf_MSE_sd, cubist_MSE_sd, earth_MSE_sd, elastic_MSE_sd,
+    gam_MSE_sd, gb_MSE_sd, knn_MSE_sd, lasso_MSE_sd, linear_MSE_sd,
+    neuralnet_MSE_sd, pls_MSE_sd, pcr_MSE_sd, rf_MSE_sd,
     ridge_MSE_sd, rpart_MSE_sd, svm_MSE_sd, tree_MSE_sd, xgb_MSE_sd,
-    ensemble_bagging_MSE_sd, ensemble_elastic_MSE_sd, ensemble_gb_MSE_sd,
-    ensemble_lasso_MSE_sd, ensemble_linear_MSE_sd, ensemble_bayesglm_MSE_sd,
-    ensemble_bayesrnn_MSE_sd, ensemble_cubist_MSE_sd, ensemble_earth_MSE_sd, ensemble_neuralnet_MSE_sd,
-    ensemble_ridge_MSE_sd, ensemble_rpart_MSE_sd,
+    ensemble_bag_rf_MSE_sd, ensemble_bagging_MSE_sd, ensemble_elastic_MSE_sd, ensemble_gb_MSE_sd,
+    ensemble_knn_MSE_sd, ensemble_lasso_MSE_sd, ensemble_linear_MSE_sd, ensemble_bayesglm_MSE_sd,
+    ensemble_bayesrnn_MSE_sd, ensemble_boost_rf_MSE_sd, ensemble_cubist_MSE_sd, ensemble_earth_MSE_sd,
+    ensemble_rf_MSE_sd, ensemble_ridge_MSE_sd, ensemble_rpart_MSE_sd,
     ensemble_svm_MSE_sd, ensemble_tree_MSE_sd, ensemble_xgb_MSE_sd
   ), 4),
   "Mean_SSE" = round(c(
-    0, bagging_SSE_mean, bayesglm_SSE_mean,
-    bayesrnn_SSE_mean, cubist_SSE_mean, earth_SSE_mean, elastic_SSE_mean,
-    gam_SSE_mean, gb_SSE_mean, lasso_SSE_mean, linear_SSE_mean, nnet_SSE_mean,
-    pls_SSE_mean, pcr_SSE_mean,
+    0, bag_rf_SSE_mean, bagging_SSE_mean, bayesglm_SSE_mean,
+    bayesrnn_SSE_mean, boost_rf_SSE_mean, cubist_SSE_mean, earth_SSE_mean, elastic_SSE_mean,
+    gam_SSE_mean, gb_SSE_mean, knn_SSE_mean, lasso_SSE_mean, linear_SSE_mean,
+    neuralnet_SSE_mean, pls_SSE_mean, pcr_SSE_mean, rf_SSE_mean,
     ridge_SSE_mean, rpart_SSE_mean, svm_SSE_mean, tree_SSE_mean, xgb_SSE_mean,
-    ensemble_bagging_SSE_mean, ensemble_elastic_SSE_mean, ensemble_gb_SSE_mean,
-    ensemble_lasso_SSE_mean, ensemble_linear_SSE_mean, ensemble_bayesglm_SSE_mean,
-    ensemble_bayesrnn_SSE_mean, ensemble_cubist_SSE_mean, ensemble_earth_SSE_mean, ensemble_neuralnet_SSE_mean,
-    ensemble_ridge_SSE_mean, ensemble_rpart_SSE_mean,
+    ensemble_bag_rf_SSE_mean, ensemble_bagging_SSE_mean, ensemble_elastic_SSE_mean, ensemble_gb_SSE_mean,
+    ensemble_knn_SSE_mean, ensemble_lasso_SSE_mean, ensemble_linear_SSE_mean, ensemble_bayesglm_SSE_mean,
+    ensemble_bayesrnn_SSE_mean, ensemble_boost_rf_SSE_mean, ensemble_cubist_SSE_mean, ensemble_earth_SSE_mean,
+    ensemble_rf_SSE_mean, ensemble_ridge_SSE_mean, ensemble_rpart_SSE_mean,
     ensemble_svm_SSE_mean, ensemble_tree_SSE_mean, ensemble_xgb_SSE_mean
   ), 4),
   "Mean_SSE_sd" = round(c(
-    0, bagging_SSE_sd, bayesglm_SSE_sd,
-    bayesrnn_SSE_sd, cubist_SSE_sd, earth_SSE_sd, elastic_SSE_sd,
-    gam_SSE_sd, gb_SSE_sd, lasso_SSE_sd, linear_SSE_sd, nnet_SSE_sd,
-    pls_SSE_sd, pcr_SSE_sd,
+    0, bag_rf_SSE_sd, bagging_SSE_sd, bayesglm_SSE_sd,
+    bayesrnn_SSE_sd, boost_rf_SSE_sd, cubist_SSE_sd, earth_SSE_sd, elastic_SSE_sd,
+    gam_SSE_sd, gb_SSE_sd, knn_SSE_sd, lasso_SSE_sd, linear_SSE_sd,
+    neuralnet_SSE_sd, pls_SSE_sd, pcr_SSE_sd, rf_SSE_sd,
     ridge_SSE_sd, rpart_SSE_sd, svm_SSE_sd, tree_SSE_sd, xgb_SSE_sd,
-    ensemble_bagging_SSE_sd, ensemble_elastic_SSE_sd, ensemble_gb_SSE_sd,
-    ensemble_lasso_SSE_sd, ensemble_linear_SSE_sd, ensemble_bayesglm_SSE_sd,
-    ensemble_bayesrnn_SSE_sd, ensemble_cubist_SSE_sd, ensemble_earth_SSE_sd, ensemble_neuralnet_SSE_sd,
-    ensemble_ridge_SSE_sd, ensemble_rpart_SSE_sd,
+    ensemble_bag_rf_SSE_sd, ensemble_bagging_SSE_sd, ensemble_elastic_SSE_sd, ensemble_gb_SSE_sd,
+    ensemble_knn_SSE_sd, ensemble_lasso_SSE_sd, ensemble_linear_SSE_sd, ensemble_bayesglm_SSE_sd,
+    ensemble_bayesrnn_SSE_sd, ensemble_boost_rf_SSE_sd, ensemble_cubist_SSE_sd, ensemble_earth_SSE_sd,
+    ensemble_rf_SSE_sd, ensemble_ridge_SSE_sd, ensemble_rpart_SSE_sd,
     ensemble_svm_SSE_sd, ensemble_tree_SSE_sd, ensemble_xgb_SSE_sd
   ), 4),
   "Mean_data" = round(c(
-    actual_mean, bagging_predict_value_mean, bayesglm_predict_value_mean,
-    bayesrnn_predict_value_mean, cubist_predict_value_mean, earth_predict_value_mean, elastic_test_predict_value_mean,
-    gam_predict_value_mean, gb_predict_value_mean, lasso_predict_value_mean, linear_predict_value_mean, nnet_predict_value_mean,
-    pls_predict_value_mean, pcr_predict_value_mean,
+    actual_mean, bag_rf_predict_value_mean, bagging_predict_value_mean, bayesglm_predict_value_mean,
+    bayesrnn_predict_value_mean, boost_rf_predict_value_mean, cubist_predict_value_mean, earth_predict_value_mean, elastic_test_predict_value_mean,
+    gam_predict_value_mean, gb_predict_value_mean, knn_predict_value_mean, lasso_predict_value_mean, linear_predict_value_mean,
+    neuralnet_test_predict_value_mean, pls_predict_value_mean, pcr_predict_value_mean, rf_predict_value_mean,
     ridge_test_predict_value_mean, rpart_predict_value_mean, svm_predict_value_mean, tree_predict_value_mean, xgb_predict_value_mean,
-    ensemble_bagging_predict_value_mean, ensemble_elastic_predict_value_mean,
-    ensemble_gb_predict_value_mean, ensemble_lasso_predict_value_mean,
+    ensemble_bag_rf_predict_value_mean, ensemble_bagging_predict_value_mean, ensemble_elastic_predict_value_mean,
+    ensemble_gb_predict_value_mean, ensemble_knn_predict_value_mean, ensemble_lasso_predict_value_mean,
     ensemble_linear_predict_value_mean, ensemble_bayesglm_predict_value_mean, ensemble_bayesglm_predict_value_mean,
-    ensemble_cubist_predict_value_mean, ensemble_earth_predict_value_mean, ensemble_neuralnet_predict_value_mean,
+    ensemble_boost_rf_predict_value_mean, ensemble_cubist_predict_value_mean, ensemble_earth_predict_value_mean, ensemble_rf_predict_value_mean,
     ensemble_ridge_predict_value_mean, ensemble_rpart_predict_value_mean, ensemble_svm_predict_value_mean,
     ensemble_tree_predict_value_mean, ensemble_xgb_predict_value_mean
   ), 4),
   "Std_Dev_of_the_model" = round(c(
-    actual_sd, bagging_sd_mean, bayesglm_sd_mean, bayesrnn_sd_mean,
-    cubist_sd_mean, earth_sd_mean, elastic_sd_mean, gam_sd_mean, gb_sd_mean, lasso_sd_mean,
-    linear_sd_mean, nnet_sd_mean, pls_sd_mean, pcr_sd_mean, ridge_sd_mean,
+    actual_sd, bag_rf_sd_mean, bagging_sd_mean, bayesglm_sd_mean, bayesrnn_sd_mean,
+    boost_rf_sd_mean, cubist_sd_mean, earth_sd_mean, elastic_sd_mean, gam_sd_mean, gb_sd_mean, knn_sd_mean, lasso_sd_mean,
+    linear_sd_mean, neuralnet_sd_mean, pls_sd_mean, pcr_sd_mean, rf_sd_mean, ridge_sd_mean,
     rpart_sd_mean, svm_sd_mean, tree_sd_mean, xgb_sd_mean,
-    ensemble_bagging_sd_mean, ensemble_elastic_sd_mean, ensemble_gb_sd_mean,
+    ensemble_bag_rf_sd_mean, ensemble_bagging_sd_mean, ensemble_elastic_sd_mean, ensemble_gb_sd_mean, ensemble_knn_sd_mean,
     ensemble_lasso_sd_mean, ensemble_linear_sd_mean, ensemble_bayesglm_sd_mean, ensemble_bayesrnn_sd_mean,
-    ensemble_cubist_sd_mean, ensemble_earth_sd_mean, ensemble_neuralnet_sd_mean, ensemble_ridge_sd_mean,
+    ensemble_boost_rf_sd_mean, ensemble_cubist_sd_mean, ensemble_earth_sd_mean, ensemble_rf_sd_mean, ensemble_ridge_sd_mean,
     ensemble_rpart_sd_mean, ensemble_svm_sd_mean, ensemble_tree_sd_mean, ensemble_xgb_sd_mean
   ), 4),
   "Mean_train_RMSE" = round(c(
-    0, bagging_train_RMSE_mean, bayesglm_train_RMSE_mean, bayesrnn_train_RMSE_mean,
-    cubist_train_RMSE_mean, earth_train_RMSE_mean, elastic_train_RMSE_mean, gam_train_RMSE_mean, gb_train_RMSE_mean,
-    lasso_train_RMSE_mean, linear_train_RMSE_mean, nnet_train_RMSE_mean,
-    pls_train_RMSE_mean, pcr_train_RMSE_mean, ridge_train_RMSE_mean,
+    0, bag_rf_train_RMSE_mean, bagging_train_RMSE_mean, bayesglm_train_RMSE_mean, bayesrnn_train_RMSE_mean,
+    boost_rf_train_RMSE_mean, cubist_train_RMSE_mean, earth_train_RMSE_mean, elastic_train_RMSE_mean, gam_train_RMSE_mean, gb_train_RMSE_mean,
+    knn_train_RMSE_mean, lasso_train_RMSE_mean, linear_train_RMSE_mean, neuralnet_train_RMSE_mean,
+    pls_train_RMSE_mean, pcr_train_RMSE_mean, rf_train_RMSE_mean, ridge_train_RMSE_mean,
     rpart_train_RMSE_mean, svm_train_RMSE_mean, tree_train_RMSE_mean, xgb_train_RMSE_mean,
-    ensemble_bagging_train_RMSE_mean, ensemble_elastic_train_RMSE_mean,
-    ensemble_gb_train_RMSE_mean, ensemble_lasso_train_RMSE_mean,
+    ensemble_bag_rf_train_RMSE_mean, ensemble_bagging_train_RMSE_mean, ensemble_elastic_train_RMSE_mean,
+    ensemble_gb_train_RMSE_mean, ensemble_knn_train_RMSE_mean, ensemble_lasso_train_RMSE_mean,
     ensemble_linear_train_RMSE_mean, ensemble_bayesglm_train_RMSE_mean, ensemble_bayesrnn_train_RMSE_mean,
-    ensemble_cubist_train_RMSE_mean, ensemble_earth_train_RMSE_mean, ensemble_neuralnet_train_RMSE_mean,
-    ensemble_ridge_train_RMSE_mean,
+    ensemble_boost_rf_train_RMSE_mean, ensemble_cubist_train_RMSE_mean, ensemble_earth_train_RMSE_mean,
+    ensemble_rf_train_RMSE_mean, ensemble_ridge_train_RMSE_mean,
     ensemble_rpart_train_RMSE_mean, ensemble_svm_train_RMSE_mean,
     ensemble_tree_train_RMSE_mean, ensemble_xgb_train_RMSE_mean
   ), 4),
   "Mean_test_RMSE" = round(c(
-    0, bagging_test_RMSE_mean, bayesglm_test_RMSE_mean,
-    bayesrnn_test_RMSE_mean, cubist_test_RMSE_mean, earth_test_RMSE_mean, elastic_test_RMSE_mean,
-    gam_test_RMSE_mean, gb_test_RMSE_mean, lasso_test_RMSE_mean, linear_test_RMSE_mean, nnet_test_RMSE_mean,
-    pls_test_RMSE_mean, pcr_test_RMSE_mean, ridge_test_RMSE_mean,
+    0, bag_rf_test_RMSE_mean, bagging_test_RMSE_mean, bayesglm_test_RMSE_mean,
+    bayesrnn_test_RMSE_mean, boost_rf_test_RMSE_mean, cubist_test_RMSE_mean, earth_test_RMSE_mean, elastic_test_RMSE_mean,
+    gam_test_RMSE_mean, gb_test_RMSE_mean, knn_test_RMSE_mean, lasso_test_RMSE_mean, linear_test_RMSE_mean,
+    neuralnet_test_RMSE_mean, pls_test_RMSE_mean, pcr_test_RMSE_mean, rf_test_RMSE_mean, ridge_test_RMSE_mean,
     rpart_test_RMSE_mean, svm_test_RMSE_mean, tree_test_RMSE_mean, xgb_test_RMSE_mean,
-    ensemble_bagging_test_RMSE_mean, ensemble_elastic_test_RMSE_mean, ensemble_gb_test_RMSE_mean,
-    ensemble_lasso_test_RMSE_mean, ensemble_linear_test_RMSE_mean, ensemble_bayesglm_test_RMSE_mean,
-    ensemble_bayesrnn_test_RMSE_mean, ensemble_cubist_test_RMSE_mean, ensemble_earth_test_RMSE_mean, ensemble_neuralnet_test_RMSE_mean,
-    ensemble_ridge_test_RMSE, ensemble_rpart_test_RMSE_mean, ensemble_svm_test_RMSE_mean,
+    ensemble_bag_rf_test_RMSE_mean, ensemble_bagging_test_RMSE_mean, ensemble_elastic_test_RMSE_mean, ensemble_gb_test_RMSE_mean,
+    ensemble_knn_test_RMSE_mean, ensemble_lasso_test_RMSE_mean, ensemble_linear_test_RMSE_mean, ensemble_bayesglm_test_RMSE_mean,
+    ensemble_bayesrnn_test_RMSE_mean, ensemble_boost_rf_test_RMSE_mean, ensemble_cubist_test_RMSE_mean, ensemble_earth_test_RMSE_mean,
+    ensemble_rf_test_RMSE_mean, ensemble_ridge_test_RMSE, ensemble_rpart_test_RMSE_mean, ensemble_svm_test_RMSE_mean,
     ensemble_tree_test_RMSE_mean, ensemble_xgb_test_RMSE_mean
   ), 4),
   "Mean_validation_RMSE" = round(c(
-    0, bagging_validation_RMSE_mean, bayesglm_validation_RMSE_mean,
-    bayesrnn_validation_RMSE_mean, cubist_validation_RMSE_mean, earth_validation_RMSE_mean, elastic_validation_RMSE_mean,
-    gam_validation_RMSE_mean, gb_validation_RMSE_mean, lasso_validation_RMSE_mean,
-    linear_validation_RMSE_mean, nnet_validation_RMSE_mean, pls_validation_RMSE_mean,
-    pcr_validation_RMSE_mean, ridge_validation_RMSE_mean,
+    0, bag_rf_validation_RMSE_mean, bagging_validation_RMSE_mean, bayesglm_validation_RMSE_mean,
+    bayesrnn_validation_RMSE_mean, boost_rf_validation_RMSE_mean, cubist_validation_RMSE_mean, earth_validation_RMSE_mean, elastic_validation_RMSE_mean,
+    gam_validation_RMSE_mean, gb_validation_RMSE_mean, knn_validation_RMSE_mean, lasso_validation_RMSE_mean,
+    linear_validation_RMSE_mean, neuralnet_validation_RMSE_mean, pls_validation_RMSE_mean,
+    pcr_validation_RMSE_mean, rf_validation_RMSE_mean, ridge_validation_RMSE_mean,
     rpart_validation_RMSE_mean, svm_validation_RMSE_mean, tree_validation_RMSE_mean, xgb_validation_RMSE_mean,
-    ensemble_bagging_validation_RMSE_mean, ensemble_elastic_validation_RMSE_mean,
-    ensemble_gb_validation_RMSE_mean, ensemble_lasso_validation_RMSE_mean,
+    ensemble_bag_rf_validation_RMSE_mean, ensemble_bagging_validation_RMSE_mean, ensemble_elastic_validation_RMSE_mean,
+    ensemble_gb_validation_RMSE_mean, ensemble_knn_validation_RMSE_mean, ensemble_lasso_validation_RMSE_mean,
     ensemble_linear_validation_RMSE_mean, ensemble_bayesglm_validation_RMSE_mean, ensemble_bayesrnn_validation_RMSE_mean,
-    ensemble_cubist_validation_RMSE_mean, ensemble_earth_validation_RMSE_mean, ensemble_neuralnet_validation_RMSE_mean,
-    ensemble_ridge_validation_RMSE_mean,
+    ensemble_boost_rf_validation_RMSE_mean, ensemble_cubist_validation_RMSE_mean, ensemble_cubist_validation_RMSE_mean,
+    ensemble_rf_validation_RMSE_mean, ensemble_ridge_validation_RMSE_mean,
     ensemble_rpart_validation_RMSE_mean, ensemble_svm_validation_RMSE_mean,
     ensemble_tree_validation_RMSE_mean, ensemble_xgb_validation_RMSE_mean
   ), 4),
   "Overfitting_mean" = round(c(
-    0, bagging_overfitting_mean, bayesglm_overfitting_mean, bayesrnn_overfitting_mean,
-    cubist_overfitting_mean, earth_overfitting_mean, elastic_overfitting_mean, gam_overfitting_mean, gb_overfitting_mean,
-    lasso_overfitting_mean, linear_overfitting_mean, nnet_overfitting_mean,
-    pls_overfitting_mean, pcr_overfitting_mean, ridge_overfitting_mean,
+    0, bag_rf_overfitting_mean, bagging_overfitting_mean, bayesglm_overfitting_mean, bayesrnn_overfitting_mean,
+    boost_rf_overfitting_mean, cubist_overfitting_mean, earth_overfitting_mean, elastic_overfitting_mean, gam_overfitting_mean, gb_overfitting_mean,
+    knn_overfitting_mean, lasso_overfitting_mean, linear_overfitting_mean, neuralnet_overfitting_mean,
+    pls_overfitting_mean, pcr_overfitting_mean, rf_overfitting_mean, ridge_overfitting_mean,
     rpart_overfitting_mean, svm_overfitting_mean, tree_overfitting_mean, xgb_overfitting_mean,
-    ensemble_bagging_overfitting_mean, ensemble_elastic_overfitting_mean, ensemble_gb_overfitting_mean,
-    ensemble_lasso_overfitting_mean, ensemble_linear_overfitting_mean,
-    ensemble_bayesglm_overfitting_mean, ensemble_bayesrnn_overfitting_mean, ensemble_cubist_overfitting_mean,
-    ensemble_earth_overfitting_mean, ensemble_neuralnet_overfitting_mean,
-    ensemble_ridge_overfitting_mean, ensemble_rpart_overfitting_mean,
+    ensemble_bag_rf_overfitting_mean, ensemble_bagging_overfitting_mean, ensemble_elastic_overfitting_mean, ensemble_gb_overfitting_mean,
+    ensemble_knn_overfitting_mean, ensemble_lasso_overfitting_mean, ensemble_linear_overfitting_mean,
+    ensemble_bayesglm_overfitting_mean, ensemble_bayesrnn_overfitting_mean, ensemble_boost_rf_overfitting_mean, ensemble_cubist_overfitting_mean,
+    ensemble_earth_overfitting_mean,
+    ensemble_rf_overfitting_mean, ensemble_ridge_overfitting_mean, ensemble_rpart_overfitting_mean,
     ensemble_svm_overfitting_mean, ensemble_tree_overfitting_mean, ensemble_xgb_overfitting_mean
   ), 4),
 
   "Overfitting_sd" = round(c(
-    0, bagging_overfitting_sd, bayesglm_overfitting_sd, bayesrnn_overfitting_sd,
-    cubist_overfitting_sd, earth_overfitting_sd, elastic_overfitting_sd, gam_overfitting_sd, gb_overfitting_sd,
-    lasso_overfitting_sd, linear_overfitting_sd, nnet_overfitting_sd,
-    pls_overfitting_sd, pcr_overfitting_sd, ridge_overfitting_sd,
+    0, bag_rf_overfitting_sd, bagging_overfitting_sd, bayesglm_overfitting_sd, bayesrnn_overfitting_sd,
+    boost_rf_overfitting_sd, cubist_overfitting_sd, earth_overfitting_sd, elastic_overfitting_sd, gam_overfitting_sd, gb_overfitting_sd,
+    knn_overfitting_sd, lasso_overfitting_sd, linear_overfitting_sd, neuralnet_overfitting_sd,
+    pls_overfitting_sd, pcr_overfitting_sd, rf_overfitting_sd, ridge_overfitting_sd,
     rpart_overfitting_sd, svm_overfitting_sd, tree_overfitting_sd, xgb_overfitting_sd,
-    ensemble_bagging_overfitting_sd, ensemble_elastic_overfitting_sd, ensemble_gb_overfitting_sd,
-    ensemble_lasso_overfitting_sd, ensemble_linear_overfitting_sd,
-    ensemble_bayesglm_overfitting_sd, ensemble_bayesrnn_overfitting_sd, ensemble_cubist_overfitting_sd,
-    ensemble_earth_overfitting_sd, ensemble_neuralnet_overfitting_sd,
-    ensemble_ridge_overfitting_sd, ensemble_rpart_overfitting_sd,
+    ensemble_bag_rf_overfitting_sd, ensemble_bagging_overfitting_sd, ensemble_elastic_overfitting_sd, ensemble_gb_overfitting_sd,
+    ensemble_knn_overfitting_sd, ensemble_lasso_overfitting_sd, ensemble_linear_overfitting_sd,
+    ensemble_bayesglm_overfitting_sd, ensemble_bayesrnn_overfitting_sd, ensemble_boost_rf_overfitting_sd, ensemble_cubist_overfitting_sd,
+    ensemble_earth_overfitting_sd,
+    ensemble_rf_overfitting_sd, ensemble_ridge_overfitting_sd, ensemble_rpart_overfitting_sd,
     ensemble_svm_overfitting_sd, ensemble_tree_overfitting_sd, ensemble_xgb_overfitting_sd
   ), 4),
   "Duration" = round(c(
-    0, bagging_duration_mean, bayesglm_duration_mean, bayesrnn_duration_mean,
-    cubist_duration_mean, earth_duration_mean, elastic_duration_mean, gam_duration_mean, gb_duration_mean,
-    lasso_duration_mean, linear_duration_mean, nnet_duration_mean,
-    pls_duration_mean, pcr_duration_mean, ridge_duration_mean,
+    0, bag_rf_duration_mean, bagging_duration_mean, bayesglm_duration_mean, bayesrnn_duration_mean,
+    boost_rf_duration_mean, cubist_duration_mean, earth_duration_mean, elastic_duration_mean, gam_duration_mean, gb_duration_mean,
+    knn_duration_mean, lasso_duration_mean, linear_duration_mean, neuralnet_duration_mean,
+    pls_duration_mean, pcr_duration_mean, rf_duration_mean, ridge_duration_mean,
     rpart_duration_mean, svm_duration_mean, tree_duration_mean, xgb_duration_mean,
-    ensemble_bagging_duration_mean, ensemble_elastic_duration_mean, ensemble_gb_duration_mean,
-    ensemble_lasso_duration_mean, ensemble_linear_duration_mean,
-    ensemble_bayesglm_duration_mean, ensemble_bayesrnn_duration_mean,
-    ensemble_cubist_duration_mean, ensemble_earth_duration_mean, ensemble_neuralnet_duration_mean, ensemble_ridge_duration_mean,
+    ensemble_bag_rf_duration_mean, ensemble_bagging_duration_mean, ensemble_elastic_duration_mean, ensemble_gb_duration_mean,
+    ensemble_knn_duration_mean, ensemble_lasso_duration_mean, ensemble_linear_duration_mean,
+    ensemble_bayesglm_duration_mean, ensemble_bayesrnn_duration_mean, ensemble_boost_rf_duration_mean,
+    ensemble_cubist_duration_mean, ensemble_earth_duration_mean, ensemble_rf_duration_mean, ensemble_ridge_duration_mean,
     ensemble_rpart_duration_mean, ensemble_svm_duration_mean, ensemble_tree_duration_mean, ensemble_xgb_duration_mean
   ), 4),
   "Duration_sd" = round(c(
-    0, bagging_duration_sd, bayesglm_duration_sd, bayesrnn_duration_sd,
-    cubist_duration_sd, earth_duration_sd, elastic_duration_sd, gam_duration_sd, gb_duration_sd,
-    lasso_duration_sd, linear_duration_sd, nnet_duration_sd,
-    pls_duration_sd, pcr_duration_sd, ridge_duration_sd,
+    0, bag_rf_duration_sd, bagging_duration_sd, bayesglm_duration_sd, bayesrnn_duration_sd,
+    boost_rf_duration_sd, cubist_duration_sd, earth_duration_sd, elastic_duration_sd, gam_duration_sd, gb_duration_sd,
+    knn_duration_sd, lasso_duration_sd, linear_duration_sd, neuralnet_duration_sd,
+    pls_duration_sd, pcr_duration_sd, rf_duration_sd, ridge_duration_sd,
     rpart_duration_sd, svm_duration_sd, tree_duration_sd, xgb_duration_sd,
-    ensemble_bagging_duration_sd, ensemble_elastic_duration_sd, ensemble_gb_duration_sd,
-    ensemble_lasso_duration_sd, ensemble_linear_duration_sd,
-    ensemble_bayesglm_duration_sd, ensemble_bayesrnn_duration_sd,
-    ensemble_cubist_duration_sd, ensemble_earth_duration_sd, ensemble_neuralnet_duration_sd, ensemble_ridge_duration_sd,
+    ensemble_bag_rf_duration_sd, ensemble_bagging_duration_sd, ensemble_elastic_duration_sd, ensemble_gb_duration_sd,
+    ensemble_knn_duration_sd, ensemble_lasso_duration_sd, ensemble_linear_duration_sd,
+    ensemble_bayesglm_duration_sd, ensemble_bayesrnn_duration_sd, ensemble_boost_rf_duration_sd,
+    ensemble_cubist_duration_sd, ensemble_earth_duration_sd, ensemble_rf_duration_sd, ensemble_ridge_duration_sd,
     ensemble_rpart_duration_sd, ensemble_svm_duration_sd, ensemble_tree_duration_sd, ensemble_xgb_duration_sd
   ), 4)
 )
-
-summary_results <- summary_results[complete.cases(summary_results), ]
 
 overfitting_data <-
   data.frame(
     "count" = 1:numresamples,
     "model" = c(
-      c(rep("Bagging", numresamples)), c(rep("BayesGLM", numresamples)),
-      c(rep("BayesRNN", numresamples)),
+      rep("Bagged Random Forest", numresamples), c(rep("Bagging", numresamples)), c(rep("BayesGLM", numresamples)),
+      c(rep("BayesRNN", numresamples)), c(rep("Boost Random Forest", numresamples)),
       c(rep("Cubist", numresamples)), c(rep("Earth", numresamples)), c(rep("Elastic", numresamples)), c(rep("Generalized Additive Models (GAM)", numresamples)),
-      c(rep("Gradient Boosted", numresamples)), c(rep("Lasso", numresamples)), c(rep("Linear", numresamples)),
+      c(rep("Gradient Boosted", numresamples)), c(rep("K-Nearest Neighbors", numresamples)), c(rep("Lasso", numresamples)), c(rep("Linear", numresamples)),
       c(rep("Neuralnet", numresamples)), c(rep("Principal Components Regression", numresamples)), c(rep("Partial Least Squares", numresamples)),
-      c(rep("Ridge", numresamples)), c(rep("RPart", numresamples)),
+      c(rep("Random Forest", numresamples)), c(rep("Ridge", numresamples)), c(rep("RPart", numresamples)),
       c(rep("Support Vector Machines", numresamples)), c(rep("Trees", numresamples)), c(rep("XGBoost", numresamples)),
-      c(rep("Ensemble Bagging", numresamples)), c(rep("Ensemble Elastic", numresamples)),
+      c(rep("Ensemble Bagged Random Forest", numresamples)), c(rep("Ensemble Bagging", numresamples)), c(rep("Ensemble Elastic", numresamples)),
       c(rep("Ensemble BayesGLM", numresamples)), c(rep("Ensemble BayesRNN", numresamples)),
-      c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)), c(rep("Ensemble Neuralnet", numresamples)),
-      c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble Lasso", numresamples)),
-      c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Ridge", numresamples)),
+      c(rep("Ensemble Boosted Random Forest", numresamples)), c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)),
+      c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble K-Nearest Neighbors", numresamples)), c(rep("Ensemble Lasso", numresamples)),
+      c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Random Forest", numresamples)), c(rep("Ensemble Ridge", numresamples)),
       c(rep("Ensemble RPart", numresamples)), c(rep("Ensemble Support Vector Machines", numresamples)),
       c(rep("Ensemble Trees", numresamples)), c(rep("Ensemble XGBoost", numresamples))
     ),
     "data" = c(
-      bagging_overfitting, bayesglm_overfitting,
-      bayesrnn_overfitting,
+      bag_rf_overfitting, bagging_overfitting, bayesglm_overfitting,
+      bayesrnn_overfitting, boost_rf_overfitting,
       cubist_overfitting, earth_overfitting, elastic_overfitting_df$elastic_overfitting[2:nrow(elastic_overfitting_df)], gam_overfitting,
-      gb_overfitting, lasso_overfitting_df$lasso_overfitting[2:nrow(lasso_overfitting_df)], linear_overfitting,
-      nnet_overfitting, pcr_overfitting, pls_overfitting,
-      ridge_overfitting_df$ridge_overfitting[2:nrow(ridge_overfitting_df)], rpart_overfitting,
+      gb_overfitting, knn_overfitting, lasso_overfitting_df$lasso_overfitting[2:nrow(lasso_overfitting_df)], linear_overfitting,
+      neuralnet_overfitting, pcr_overfitting, pls_overfitting,
+      rf_overfitting, ridge_overfitting_df$ridge_overfitting[2:nrow(ridge_overfitting_df)], rpart_overfitting,
       svm_overfitting, tree_overfitting, xgb_overfitting,
-      ensemble_bagging_overfitting, ensemble_ridge_overfitting_df$ensemble_ridge_overfitting[2:nrow(ensemble_ridge_overfitting_df)],
+      ensemble_bag_rf_overfitting, ensemble_bagging_overfitting, ensemble_ridge_overfitting_df$ensemble_ridge_overfitting[2:nrow(ensemble_ridge_overfitting_df)],
       ensemble_bayesglm_overfitting, ensemble_bayesrnn_overfitting,
-      ensemble_cubist_overfitting, ensemble_earth_overfitting, ensemble_neuralnet_overfitting,
-      ensemble_gb_overfitting, ensemble_lasso_overfitting_df$ensemble_lasso_overfitting[2:nrow(ensemble_lasso_overfitting_df)],
-      ensemble_linear_overfitting, ensemble_ridge_overfitting_df$ensemble_ridge_overfitting[2:nrow(ensemble_ridge_overfitting_df)],
+      ensemble_boost_rf_overfitting, ensemble_cubist_overfitting, ensemble_earth_overfitting,
+      ensemble_gb_overfitting, ensemble_knn_overfitting, ensemble_lasso_overfitting_df$ensemble_lasso_overfitting[2:nrow(ensemble_lasso_overfitting_df)],
+      ensemble_linear_overfitting, ensemble_rf_overfitting, ensemble_ridge_overfitting_df$ensemble_ridge_overfitting[2:nrow(ensemble_ridge_overfitting_df)],
       ensemble_rpart_overfitting, ensemble_svm_overfitting,
       ensemble_tree_overfitting, ensemble_xgb_overfitting_df$ensemble_xgb_overfitting[2:nrow(ensemble_xgb_overfitting_df)]
     ),
     "mean" = rep(c(
-      bagging_overfitting_mean, bayesglm_overfitting_mean,
-      bayesrnn_overfitting_mean,
+      bag_rf_overfitting_mean, bagging_overfitting_mean, bayesglm_overfitting_mean,
+      bayesrnn_overfitting_mean, boost_rf_overfitting_mean,
       cubist_overfitting_mean, earth_overfitting_mean, elastic_overfitting_mean, gam_overfitting_mean,
-      gb_overfitting_mean, lasso_overfitting_mean, linear_overfitting_mean,
-      nnet_overfitting_mean, pcr_overfitting_mean, pls_overfitting_mean,
-      ridge_overfitting_mean, rpart_overfitting_mean,
+      gb_overfitting_mean, knn_overfitting_mean, lasso_overfitting_mean, linear_overfitting_mean,
+      neuralnet_overfitting_mean, pcr_overfitting_mean, pls_overfitting_mean,
+      rf_overfitting_mean, ridge_overfitting_mean, rpart_overfitting_mean,
       svm_overfitting_mean, tree_overfitting_mean, xgb_overfitting_mean,
-      ensemble_bagging_overfitting_mean, ensemble_elastic_overfitting_mean,
+      ensemble_bag_rf_overfitting_mean, ensemble_bagging_overfitting_mean, ensemble_elastic_overfitting_mean,
       ensemble_bayesglm_overfitting_mean, ensemble_bayesrnn_overfitting_mean,
-      ensemble_cubist_overfitting_mean, ensemble_earth_overfitting_mean, ensemble_neuralnet_overfitting_mean,
-      ensemble_gb_overfitting_mean, ensemble_lasso_overfitting_mean, ensemble_linear_overfitting_mean,
-      ensemble_ridge_overfitting_mean,
+      ensemble_boost_rf_overfitting_mean, ensemble_cubist_overfitting_mean, ensemble_earth_overfitting_mean,
+      ensemble_gb_overfitting_mean, ensemble_knn_overfitting_mean, ensemble_lasso_overfitting_mean, ensemble_linear_overfitting_mean,
+      ensemble_rf_overfitting_mean, ensemble_ridge_overfitting_mean,
       ensemble_rpart_overfitting_mean, ensemble_svm_overfitting_mean,
       ensemble_tree_overfitting_mean, ensemble_xgb_overfitting_mean
     ), each = numresamples)
@@ -3389,7 +4009,17 @@ overfitting_plot <- ggplot2::ggplot(data = overfitting_data, mapping = ggplot2::
   ggplot2::geom_hline(aes(yintercept = mean)) +
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
   ggplot2::facet_wrap(~model, ncol = 5) +
-  ggplot2::ggtitle("Overfitting data\nOverfitting by model, closer to one is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 1.") +
+  ggplot2::ggtitle("Overfitting data\nOverfitting by model, fixed scales, closer to one is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 1.") +
+  ggplot2::labs(y = "Overfitting, closer to one is better \n The black horizontal line is the mean of the results, the red line is 1.") +
+  ggplot2::theme(legend.position = "none")
+
+overfitting_plot2 <- ggplot2::ggplot(data = overfitting_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+  ggplot2::geom_line(mapping = aes(x = count, y = data)) +
+  ggplot2::geom_point(mapping = aes(x = count, y = data)) +
+  ggplot2::geom_hline(aes(yintercept = mean)) +
+  ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
+  ggplot2::facet_wrap(~model, ncol = 5, scales = "free") +
+  ggplot2::ggtitle("Overfitting data\nOverfitting by model, free scales, closer to one is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 1.") +
   ggplot2::labs(y = "Overfitting, closer to one is better \n The black horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 
@@ -3397,34 +4027,34 @@ bias_data <-
   data.frame(
     "count" = 1:numresamples,
     "model" = c(
-      c(rep("Bagging", numresamples)), c(rep("BayesGLM", numresamples)),
-      c(rep("BayesRNN", numresamples)),
+      rep("Bagged Random Forest", numresamples), c(rep("Bagging", numresamples)), c(rep("BayesGLM", numresamples)),
+      c(rep("BayesRNN", numresamples)), c(rep("Boost Random Forest", numresamples)),
       c(rep("Cubist", numresamples)), c(rep("Earth", numresamples)), c(rep("Elastic", numresamples)), c(rep("Generalized Additive Models (GAM)", numresamples)),
-      c(rep("Gradient Boosted", numresamples)), c(rep("Lasso", numresamples)), c(rep("Linear", numresamples)),
+      c(rep("Gradient Boosted", numresamples)), c(rep("K-Nearest Neighbors", numresamples)), c(rep("Lasso", numresamples)), c(rep("Linear", numresamples)),
       c(rep("Neuralnet", numresamples)), c(rep("Principal Components Regression", numresamples)), c(rep("Partial Least Squares", numresamples)),
-      c(rep("Ridge", numresamples)), c(rep("RPart", numresamples)),
+      c(rep("Random Forest", numresamples)), c(rep("Ridge", numresamples)), c(rep("RPart", numresamples)),
       c(rep("Support Vector Machines", numresamples)), c(rep("Trees", numresamples)), c(rep("XGBoost", numresamples)),
-      c(rep("Ensemble Bagging", numresamples)), c(rep("Ensemble Elastic", numresamples)),
+      c(rep("Ensemble Bagged Random Forest", numresamples)), c(rep("Ensemble Bagging", numresamples)), c(rep("Ensemble Elastic", numresamples)),
       c(rep("Ensemble BayesGLM", numresamples)), c(rep("Ensemble BayesRNN", numresamples)),
-      c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)), c(rep("Ensemble Neuralnet", numresamples)),
-      c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble Lasso", numresamples)),
-      c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Ridge", numresamples)),
+      c(rep("Ensemble Boosted Random Forest", numresamples)), c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)),
+      c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble K-Nearest Neighbors", numresamples)), c(rep("Ensemble Lasso", numresamples)),
+      c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Random Forest", numresamples)), c(rep("Ensemble Ridge", numresamples)),
       c(rep("Ensemble RPart", numresamples)), c(rep("Ensemble Support Vector Machines", numresamples)),
       c(rep("Ensemble Trees", numresamples)), c(rep("Ensemble XGBoost", numresamples))
     ),
     "data" = c(
-      bagging_bias_mean, bayesglm_bias_mean,
-      bayesrnn_bias_mean,
+      bag_rf_bias_mean, bagging_bias_mean, bayesglm_bias_mean,
+      bayesrnn_bias_mean, boost_rf_bias_mean,
       cubist_bias_mean, earth_bias_mean, elastic_bias_mean, gam_bias_mean,
-      gb_bias_mean, lasso_bias_mean, linear_bias_mean,
-      nnet_bias_mean, pcr_bias_mean, pls_bias_mean,
-      ridge_bias_mean, rpart_bias_mean,
+      gb_bias_mean, knn_bias_mean, lasso_bias_mean, linear_bias_mean,
+      neuralnet_bias_mean, pcr_bias_mean, pls_bias_mean,
+      rf_bias_mean, ridge_bias_mean, rpart_bias_mean,
       svm_bias_mean, tree_bias_mean, xgb_bias_mean,
-      ensemble_bagging_bias_mean, ensemble_ridge_bias_mean,
+      ensemble_bag_rf_bias_mean, ensemble_bagging_bias_mean, ensemble_ridge_bias_mean,
       ensemble_bayesglm_bias_mean, ensemble_bayesrnn_bias_mean,
-      ensemble_cubist_bias_mean, ensemble_earth_bias_mean, ensemble_neuralnet_bias_mean,
-      ensemble_gb_bias_mean, ensemble_lasso_bias_mean,
-      ensemble_linear_bias_mean, ensemble_ridge_bias_mean,
+      ensemble_boost_rf_bias_mean, ensemble_cubist_bias_mean, ensemble_earth_bias_mean,
+      ensemble_gb_bias_mean, ensemble_knn_bias_mean, ensemble_lasso_bias_mean,
+      ensemble_linear_bias_mean, ensemble_rf_bias_mean, ensemble_ridge_bias_mean,
       ensemble_rpart_bias_mean, ensemble_svm_bias_mean,
       ensemble_tree_bias_mean, ensemble_xgb_bias_mean
     )
@@ -3443,34 +4073,34 @@ MAE_data <-
   data.frame(
     "count" = 1:numresamples,
     "model" = c(
-      c(rep("Bagging", numresamples)), c(rep("BayesGLM", numresamples)),
-      c(rep("BayesRNN", numresamples)),
+      rep("Bagged Random Forest", numresamples), c(rep("Bagging", numresamples)), c(rep("BayesGLM", numresamples)),
+      c(rep("BayesRNN", numresamples)), c(rep("Boost Random Forest", numresamples)),
       c(rep("Cubist", numresamples)), c(rep("Earth", numresamples)), c(rep("Elastic", numresamples)), c(rep("Generalized Additive Models (GAM)", numresamples)),
-      c(rep("Gradient Boosted", numresamples)), c(rep("Lasso", numresamples)), c(rep("Linear", numresamples)),
+      c(rep("Gradient Boosted", numresamples)), c(rep("K-Nearest Neighbors", numresamples)), c(rep("Lasso", numresamples)), c(rep("Linear", numresamples)),
       c(rep("Neuralnet", numresamples)), c(rep("Principal Components Regression", numresamples)), c(rep("Partial Least Squares", numresamples)),
-      c(rep("Ridge", numresamples)), c(rep("RPart", numresamples)),
+      c(rep("Random Forest", numresamples)), c(rep("Ridge", numresamples)), c(rep("RPart", numresamples)),
       c(rep("Support Vector Machines", numresamples)), c(rep("Trees", numresamples)), c(rep("XGBoost", numresamples)),
-      c(rep("Ensemble Bagging", numresamples)), c(rep("Ensemble Elastic", numresamples)),
+      c(rep("Ensemble Bagged Random Forest", numresamples)), c(rep("Ensemble Bagging", numresamples)), c(rep("Ensemble Elastic", numresamples)),
       c(rep("Ensemble BayesGLM", numresamples)), c(rep("Ensemble BayesRNN", numresamples)),
-      c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)), c(rep("Ensemble Neuralnet", numresamples)),
-      c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble Lasso", numresamples)),
-      c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Ridge", numresamples)),
+      c(rep("Ensemble Boosted Random Forest", numresamples)), c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)),
+      c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble K-Nearest Neighbors", numresamples)), c(rep("Ensemble Lasso", numresamples)),
+      c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Random Forest", numresamples)), c(rep("Ensemble Ridge", numresamples)),
       c(rep("Ensemble RPart", numresamples)), c(rep("Ensemble Support Vector Machines", numresamples)),
       c(rep("Ensemble Trees", numresamples)), c(rep("Ensemble XGBoost", numresamples))
     ),
     "data" = c(
-      bagging_MAE_mean, bayesglm_MAE_mean,
-      bayesrnn_MAE_mean,
+      bag_rf_MAE_mean, bagging_MAE_mean, bayesglm_MAE_mean,
+      bayesrnn_MAE_mean, boost_rf_MAE_mean,
       cubist_MAE_mean, earth_MAE_mean, elastic_MAE_mean, gam_MAE_mean,
-      gb_MAE_mean, lasso_MAE_mean, linear_MAE_mean,
-      nnet_MAE_mean, pcr_MAE_mean, pls_MAE_mean,
-      ridge_MAE_mean, rpart_MAE_mean,
+      gb_MAE_mean, knn_MAE_mean, lasso_MAE_mean, linear_MAE_mean,
+      neuralnet_MAE_mean, pcr_MAE_mean, pls_MAE_mean,
+      rf_MAE_mean, ridge_MAE_mean, rpart_MAE_mean,
       svm_MAE_mean, tree_MAE_mean, xgb_MAE_mean,
-      ensemble_bagging_MAE_mean, ensemble_ridge_MAE_mean,
+      ensemble_bag_rf_MAE_mean, ensemble_bagging_MAE_mean, ensemble_ridge_MAE_mean,
       ensemble_bayesglm_MAE_mean, ensemble_bayesrnn_MAE_mean,
-      ensemble_cubist_MAE_mean, ensemble_earth_MAE_mean, ensemble_neuralnet_MAE_mean,
-      ensemble_gb_MAE_mean, ensemble_lasso_MAE_mean,
-      ensemble_linear_MAE_mean, ensemble_ridge_MAE_mean,
+      ensemble_boost_rf_MAE_mean, ensemble_cubist_MAE_mean, ensemble_earth_MAE_mean,
+      ensemble_gb_MAE_mean, ensemble_knn_MAE_mean, ensemble_lasso_MAE_mean,
+      ensemble_linear_MAE_mean, ensemble_rf_MAE_mean, ensemble_ridge_MAE_mean,
       ensemble_rpart_MAE_mean, ensemble_svm_MAE_mean,
       ensemble_tree_MAE_mean, ensemble_xgb_MAE_mean
     )
@@ -3489,34 +4119,34 @@ MSE_data <-
   data.frame(
     "count" = 1:numresamples,
     "model" = c(
-      c(rep("Bagging", numresamples)), c(rep("BayesGLM", numresamples)),
-      c(rep("BayesRNN", numresamples)),
+      rep("Bagged Random Forest", numresamples), c(rep("Bagging", numresamples)), c(rep("BayesGLM", numresamples)),
+      c(rep("BayesRNN", numresamples)), c(rep("Boost Random Forest", numresamples)),
       c(rep("Cubist", numresamples)), c(rep("Earth", numresamples)), c(rep("Elastic", numresamples)), c(rep("Generalized Additive Models (GAM)", numresamples)),
-      c(rep("Gradient Boosted", numresamples)), c(rep("Lasso", numresamples)), c(rep("Linear", numresamples)),
+      c(rep("Gradient Boosted", numresamples)), c(rep("K-Nearest Neighbors", numresamples)), c(rep("Lasso", numresamples)), c(rep("Linear", numresamples)),
       c(rep("Neuralnet", numresamples)), c(rep("Principal Components Regression", numresamples)), c(rep("Partial Least Squares", numresamples)),
-      c(rep("Ridge", numresamples)), c(rep("RPart", numresamples)),
+      c(rep("Random Forest", numresamples)), c(rep("Ridge", numresamples)), c(rep("RPart", numresamples)),
       c(rep("Support Vector Machines", numresamples)), c(rep("Trees", numresamples)), c(rep("XGBoost", numresamples)),
-      c(rep("Ensemble Bagging", numresamples)), c(rep("Ensemble Elastic", numresamples)),
+      c(rep("Ensemble Bagged Random Forest", numresamples)), c(rep("Ensemble Bagging", numresamples)), c(rep("Ensemble Elastic", numresamples)),
       c(rep("Ensemble BayesGLM", numresamples)), c(rep("Ensemble BayesRNN", numresamples)),
-      c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)), c(rep("Ensemble Neuralnet", numresamples)),
-      c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble Lasso", numresamples)),
-      c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Ridge", numresamples)),
+      c(rep("Ensemble Boosted Random Forest", numresamples)), c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)),
+      c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble K-Nearest Neighbors", numresamples)), c(rep("Ensemble Lasso", numresamples)),
+      c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Random Forest", numresamples)), c(rep("Ensemble Ridge", numresamples)),
       c(rep("Ensemble RPart", numresamples)), c(rep("Ensemble Support Vector Machines", numresamples)),
       c(rep("Ensemble Trees", numresamples)), c(rep("Ensemble XGBoost", numresamples))
     ),
     "data" = c(
-      bagging_MSE_mean, bayesglm_MSE_mean,
-      bayesrnn_MSE_mean,
+      bag_rf_MSE_mean, bagging_MSE_mean, bayesglm_MSE_mean,
+      bayesrnn_MSE_mean, boost_rf_MSE_mean,
       cubist_MSE_mean, earth_MSE_mean, elastic_MSE_mean, gam_MSE_mean,
-      gb_MSE_mean, lasso_MSE_mean, linear_MSE_mean,
-      nnet_MSE_mean, pcr_MSE_mean, pls_MSE_mean,
-      ridge_MSE_mean, rpart_MSE_mean,
+      gb_MSE_mean, knn_MSE_mean, lasso_MSE_mean, linear_MSE_mean,
+      neuralnet_MSE_mean, pcr_MSE_mean, pls_MSE_mean,
+      rf_MSE_mean, ridge_MSE_mean, rpart_MSE_mean,
       svm_MSE_mean, tree_MSE_mean, xgb_MSE_mean,
-      ensemble_bagging_MSE_mean, ensemble_ridge_MSE_mean,
+      ensemble_bag_rf_MSE_mean, ensemble_bagging_MSE_mean, ensemble_ridge_MSE_mean,
       ensemble_bayesglm_MSE_mean, ensemble_bayesrnn_MSE_mean,
-      ensemble_cubist_MSE_mean, ensemble_earth_test_RMSE_mean, ensemble_neuralnet_test_RMSE_mean,
-      ensemble_gb_MSE_mean, ensemble_lasso_MSE_mean,
-      ensemble_linear_MSE_mean, ensemble_ridge_MSE_mean,
+      ensemble_boost_rf_MSE_mean, ensemble_cubist_MSE_mean, ensemble_earth_test_RMSE_mean,
+      ensemble_gb_MSE_mean, ensemble_knn_MSE_mean, ensemble_lasso_MSE_mean,
+      ensemble_linear_MSE_mean, ensemble_rf_MSE_mean, ensemble_ridge_MSE_mean,
       ensemble_rpart_MSE_mean, ensemble_svm_MSE_mean,
       ensemble_tree_MSE_mean, ensemble_xgb_MSE_mean
     )
@@ -3535,34 +4165,34 @@ SSE_data <-
   data.frame(
     "count" = 1:numresamples,
     "model" = c(
-      c(rep("Bagging", numresamples)), c(rep("BayesGLM", numresamples)),
-      c(rep("BayesRNN", numresamples)),
+      rep("Bagged Random Forest", numresamples), c(rep("Bagging", numresamples)), c(rep("BayesGLM", numresamples)),
+      c(rep("BayesRNN", numresamples)), c(rep("Boost Random Forest", numresamples)),
       c(rep("Cubist", numresamples)), c(rep("Earth", numresamples)), c(rep("Elastic", numresamples)), c(rep("Generalized Additive Models (GAM)", numresamples)),
-      c(rep("Gradient Boosted", numresamples)), c(rep("Lasso", numresamples)), c(rep("Linear", numresamples)),
+      c(rep("Gradient Boosted", numresamples)), c(rep("K-Nearest Neighbors", numresamples)), c(rep("Lasso", numresamples)), c(rep("Linear", numresamples)),
       c(rep("Neuralnet", numresamples)), c(rep("Principal Components Regression", numresamples)), c(rep("Partial Least Squares", numresamples)),
-      c(rep("Ridge", numresamples)), c(rep("RPart", numresamples)),
+      c(rep("Random Forest", numresamples)), c(rep("Ridge", numresamples)), c(rep("RPart", numresamples)),
       c(rep("Support Vector Machines", numresamples)), c(rep("Trees", numresamples)), c(rep("XGBoost", numresamples)),
-      c(rep("Ensemble Bagging", numresamples)), c(rep("Ensemble Elastic", numresamples)),
+      c(rep("Ensemble Bagged Random Forest", numresamples)), c(rep("Ensemble Bagging", numresamples)), c(rep("Ensemble Elastic", numresamples)),
       c(rep("Ensemble BayesGLM", numresamples)), c(rep("Ensemble BayesRNN", numresamples)),
-      c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)), c(rep("Ensemble Neuralnet", numresamples)),
-      c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble Lasso", numresamples)),
-      c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Ridge", numresamples)),
+      c(rep("Ensemble Boosted Random Forest", numresamples)), c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)),
+      c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble K-Nearest Neighbors", numresamples)), c(rep("Ensemble Lasso", numresamples)),
+      c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Random Forest", numresamples)), c(rep("Ensemble Ridge", numresamples)),
       c(rep("Ensemble RPart", numresamples)), c(rep("Ensemble Support Vector Machines", numresamples)),
       c(rep("Ensemble Trees", numresamples)), c(rep("Ensemble XGBoost", numresamples))
     ),
     "data" = c(
-      bagging_SSE_mean, bayesglm_SSE_mean,
-      bayesrnn_SSE_mean,
+      bag_rf_SSE_mean, bagging_SSE_mean, bayesglm_SSE_mean,
+      bayesrnn_SSE_mean, boost_rf_SSE_mean,
       cubist_SSE_mean, earth_SSE_mean, elastic_SSE_mean, gam_SSE_mean,
-      gb_SSE_mean, lasso_SSE_mean, linear_SSE_mean,
-      nnet_SSE_mean, pcr_SSE_mean, pls_SSE_mean,
-      ridge_SSE_mean, rpart_SSE_mean,
+      gb_SSE_mean, knn_SSE_mean, lasso_SSE_mean, linear_SSE_mean,
+      neuralnet_SSE_mean, pcr_SSE_mean, pls_SSE_mean,
+      rf_SSE_mean, ridge_SSE_mean, rpart_SSE_mean,
       svm_SSE_mean, tree_SSE_mean, xgb_SSE_mean,
-      ensemble_bagging_SSE_mean, ensemble_ridge_SSE_mean,
+      ensemble_bag_rf_SSE_mean, ensemble_bagging_SSE_mean, ensemble_ridge_SSE_mean,
       ensemble_bayesglm_SSE_mean, ensemble_bayesrnn_SSE_mean,
-      ensemble_cubist_SSE_mean, ensemble_earth_SSE_mean, ensemble_neuralnet_SSE_mean,
-      ensemble_gb_SSE_mean, ensemble_lasso_SSE_mean,
-      ensemble_linear_SSE_mean, ensemble_ridge_SSE_mean,
+      ensemble_boost_rf_SSE_mean, ensemble_cubist_SSE_mean, ensemble_earth_SSE_mean,
+      ensemble_gb_SSE_mean, ensemble_knn_SSE_mean, ensemble_lasso_SSE_mean,
+      ensemble_linear_SSE_mean, ensemble_rf_SSE_mean, ensemble_ridge_SSE_mean,
       ensemble_rpart_SSE_mean, ensemble_svm_SSE_mean,
       ensemble_tree_SSE_mean, ensemble_xgb_SSE_mean
     )
@@ -3589,6 +4219,30 @@ final_results <- reactable::reactable(summary_results,
 
 #### <-----------------------------------------  8. Summary data visualizations ----------------------------------------------------> ####
 
+#### Bagged random forest visualizations ####
+bag_rf_df <- data.frame(
+  actual = c(test$y, validation$y), predicted = as.numeric(y_hat_bag_rf),
+  residuals = c(test$y, validation$y) - y_hat_bag_rf
+)
+
+bag_rf_pred_vs_actual <- ggplot2::ggplot(bag_rf_df, mapping = aes(x = actual, y = as.numeric(y_hat_bag_rf))) +
+  ggplot2::geom_point() +
+  ggplot2::geom_abline(intercept = 0, slope = 1, color = "red") +
+  ggplot2::labs(title = "Bagged Random Forest model: Predicted vs actual", x = "Actual", y = "Predicted")
+
+bag_rf_resid_vs_actual <- ggplot2::ggplot(bag_rf_df, mapping = aes(x = actual, y = residuals)) +
+  ggplot2::geom_point() +
+  ggplot2::geom_hline(yintercept = 0, color = "red") +
+  ggplot2::labs(title = "Bagged Random Forest model: Residuals", x = "Actual", y = "Predicted")
+
+bag_rf_hist_residuals <- ggplot2::ggplot(bag_rf_df, mapping = aes(x = residuals)) +
+  ggplot2::geom_histogram(bins = round(nrow(df) / 10)) +
+  ggplot2::geom_vline(xintercept = 0, color = "red") +
+  ggplot2::labs(title = "Bagged Random Forest model: Histogram of residuals, each bar = 10 rows of data")
+
+bag_rf_qq <- ggplot2::ggplot(bag_rf_df, aes(sample = as.numeric(y_hat_bag_rf))) + ggplot2::stat_qq() +
+  ggplot2::labs(title = "Bagged Random forest model: Q-Q plot") +
+  ggplot2::stat_qq_line(color = "red")
 
 #### bagging data visualizations ####
 bagging_df <- data.frame(
@@ -3663,6 +4317,32 @@ bayesrnn_hist_residuals <- ggplot2::ggplot(bayesrnn_df, mapping = aes(x = residu
 
 bayesrnn_qq <- ggplot2::ggplot(bayesrnn_df, aes(sample = as.numeric(y_hat_bayesrnn))) + ggplot2::stat_qq() +
   ggplot2::labs(title = "BayesRNN model: Q-Q plot") +
+  ggplot2::stat_qq_line(color = "red")
+
+
+#### BoostRF visualizations ####
+boost_rf_df <- data.frame(
+  actual = c(test$y, validation$y), predicted = as.numeric(y_hat_boost_rf),
+  residuals = c(test$y, validation$y) - y_hat_boost_rf
+)
+
+boost_rf_pred_vs_actual <- ggplot2::ggplot(boost_rf_df, mapping = aes(x = actual, y = as.numeric(y_hat_boost_rf))) +
+  ggplot2::geom_point() +
+  ggplot2::geom_abline(intercept = 0, slope = 1, color = "red") +
+  ggplot2::labs(title = "Boost_rf model: Predicted vs actual", x = "Actual", y = "Predicted")
+
+boost_rf_resid_vs_actual <- ggplot2::ggplot(boost_rf_df, mapping = aes(x = actual, y = residuals)) +
+  ggplot2::geom_point() +
+  ggplot2::geom_hline(yintercept = 0, color = "red") +
+  ggplot2::labs(title = "Boost_rf model: Residuals", x = "Actual", y = "Predicted")
+
+boost_rf_hist_residuals <- ggplot2::ggplot(boost_rf_df, mapping = aes(x = residuals)) +
+  ggplot2::geom_histogram(bins = round(nrow(df) / 10)) +
+  ggplot2::geom_vline(xintercept = 0, color = "red") +
+  ggplot2::labs(title = "Boost_rf model: Histogram of residuals, each bar = 10 rows of data")
+
+boost_rf_qq <- ggplot2::ggplot(boost_rf_df, aes(sample = as.numeric(y_hat_boost_rf))) + ggplot2::stat_qq() +
+  ggplot2::labs(title = "Boost Random Forest model: Q-Q plot") +
   ggplot2::stat_qq_line(color = "red")
 
 #### Cubist visualizations
@@ -3792,6 +4472,31 @@ gb_qq <- ggplot2::ggplot(gb_df, aes(sample = as.numeric(y_hat_gb))) + ggplot2::s
   ggplot2::labs(title = "Gradient Boosted model: Q-Q plot") +
   ggplot2::stat_qq_line(color = "red")
 
+#### K-Nearest Neighbors visualizations ####
+knn_df <- data.frame(
+  actual = c(test$y, validation$y), predicted = as.numeric(y_hat_knn),
+  residuals = c(test$y, validation$y) - y_hat_knn
+)
+
+knn_pred_vs_actual <- ggplot2::ggplot(knn_df, mapping = aes(x = actual, y = as.numeric(y_hat_knn))) +
+  ggplot2::geom_point() +
+  ggplot2::geom_abline(intercept = 0, slope = 1, color = "red") +
+  ggplot2::labs(title = "K-Nearest Neighbors model: Predicted vs actual", x = "Actual", y = "Predicted")
+
+knn_resid_vs_actual <- ggplot2::ggplot(knn_df, mapping = aes(x = actual, y = residuals)) +
+  ggplot2::geom_point() +
+  ggplot2::geom_hline(yintercept = 0, color = "red") +
+  ggplot2::labs(title = "K-Nearest Neighbors model: Residuals", x = "Actual", y = "Predicted")
+
+knn_hist_residuals <- ggplot2::ggplot(knn_df, mapping = aes(x = residuals)) +
+  ggplot2::geom_histogram(bins = round(nrow(df) / 10)) +
+  ggplot2::geom_vline(xintercept = 0, color = "red") +
+  ggplot2::labs(title = "K-Nearest Neighbors model: Histogram of residuals, each bar = 10 rows of data")
+
+knn_qq <- ggplot2::ggplot(knn_df, aes(sample = as.numeric(y_hat_knn))) + ggplot2::stat_qq() +
+  ggplot2::labs(title = "KNN model: Q-Q plot") +
+  ggplot2::stat_qq_line(color = "red")
+
 #### lasso data visualizations ####
 lasso_df <- data.frame(
   actual = c(test$y, validation$y), predicted = as.numeric(y_hat_lasso),
@@ -3843,28 +4548,28 @@ linear_qq <- ggplot2::ggplot(linear_df, aes(sample = as.numeric(y_hat_linear))) 
   ggplot2::labs(title = "Linear model: Q-Q plot") +
   ggplot2::stat_qq_line(color = "red")
 
-####  Neuralnet visualizations ####
-Neuralnet_df <- data.frame(
+#### Neuralnet data visualizations ####
+neuralnet_df <- data.frame(
   actual = c(test$y, validation$y), predicted = as.numeric(y_hat_neuralnet),
   residuals = c(test$y, validation$y) - y_hat_neuralnet
 )
 
-neuralnet_pred_vs_actual <- ggplot2::ggplot(Neuralnet_df, mapping = aes(x = actual, y = predicted)) +
+neuralnet_pred_vs_actual <- ggplot2::ggplot(neuralnet_df, mapping = aes(x = actual, y = as.numeric(y_hat_neuralnet))) +
   ggplot2::geom_point() +
   ggplot2::geom_abline(intercept = 0, slope = 1, color = "red") +
   ggplot2::labs(title = "Neuralnet model: Predicted vs actual", x = "Actual", y = "Predicted")
 
-neuralnet_resid_vs_actual <- ggplot2::ggplot(Neuralnet_df, mapping = aes(x = actual, y = residuals)) +
+neuralnet_resid_vs_actual <- ggplot2::ggplot(neuralnet_df, mapping = aes(x = actual, y = residuals)) +
   ggplot2::geom_point() +
   ggplot2::geom_hline(yintercept = 0, color = "red") +
   ggplot2::labs(title = "Neuralnet model: Residuals", x = "Actual", y = "Predicted")
 
-neuralnet_hist_residuals <- ggplot2::ggplot(Neuralnet_df, mapping = aes(x = residuals)) +
+neuralnet_hist_residuals <- ggplot2::ggplot(neuralnet_df, mapping = aes(x = residuals)) +
   ggplot2::geom_histogram(bins = round(nrow(df) / 10)) +
   ggplot2::geom_vline(xintercept = 0, color = "red") +
   ggplot2::labs(title = "Neuralnet model: Histogram of residuals, each bar = 10 rows of data")
 
-neuralnet_qq <- ggplot2::ggplot(Neuralnet_df, aes(sample = as.numeric(y_hat_neuralnet))) + ggplot2::stat_qq() +
+neuralnet_qq <- ggplot2::ggplot(neuralnet_df, aes(sample = as.numeric(y_hat_neuralnet))) + ggplot2::stat_qq() +
   ggplot2::labs(title = "Neuralnet model: Q-Q plot") +
   ggplot2::stat_qq_line(color = "red")
 
@@ -3916,6 +4621,31 @@ pcr_hist_residuals <- ggplot2::ggplot(pcr_df, mapping = aes(x = residuals)) +
 
 pcr_qq <- ggplot2::ggplot(pcr_df, aes(sample = as.numeric(y_hat_pcr))) + ggplot2::stat_qq() +
   ggplot2::labs(title = "PCR model: Q-Q plot") +
+  ggplot2::stat_qq_line(color = "red")
+
+#### Random Forest visualizations ####
+rf_df <- data.frame(
+  actual = c(test$y, validation$y), predicted = as.numeric(y_hat_rf),
+  residuals = c(test$y, validation$y) - y_hat_rf
+)
+
+rf_pred_vs_actual <- ggplot2::ggplot(rf_df, mapping = aes(x = actual, y = as.numeric(y_hat_rf))) +
+  ggplot2::geom_point() +
+  ggplot2::geom_abline(intercept = 0, slope = 1, color = "red") +
+  ggplot2::labs(title = "Random Forest model: Predicted vs actual", x = "Actual", y = "Predicted")
+
+rf_resid_vs_actual <- ggplot2::ggplot(rf_df, mapping = aes(x = actual, y = residuals)) +
+  ggplot2::geom_point() +
+  ggplot2::geom_hline(yintercept = 0, color = "red") +
+  ggplot2::labs(title = "Random Forest model: Residuals", x = "Actual", y = "Predicted")
+
+rf_hist_residuals <- ggplot2::ggplot(rf_df, mapping = aes(x = residuals)) +
+  ggplot2::geom_histogram(bins = round(nrow(df) / 10)) +
+  ggplot2::geom_vline(xintercept = 0, color = "red") +
+  ggplot2::labs(title = "Random Forest model: Histogram of residuals, each bar = 10 rows of data")
+
+rf_qq <- ggplot2::ggplot(rf_df, aes(sample = as.numeric(y_hat_rf))) + ggplot2::stat_qq() +
+  ggplot2::labs(title = "Random Forest model: Q-Q plot") +
   ggplot2::stat_qq_line(color = "red")
 
 #### Ridge data visualizations ####
@@ -4044,6 +4774,31 @@ xgb_qq <- ggplot2::ggplot(xgb_df, aes(sample = as.numeric(y_hat_xgb))) + ggplot2
   ggplot2::labs(title = "XGBoost model: Q-Q plot") +
   ggplot2::stat_qq_line(color = "red")
 
+### Ensemble Bagged Random Forest Visualizations ####
+ensemble_bag_rf_df <- data.frame(
+  actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble),
+  predicted = as.numeric(c(ensemble_bag_rf_test_predict_value, ensemble_bag_rf_validation_predict_value)),
+  residuals = as.numeric(c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble)) - ensemble_y_hat_bag_rf
+)
+
+ensemble_bag_rf_pred_vs_actual <- ggplot2::ggplot(ensemble_bag_rf_df, mapping = aes(x = actual, y = as.numeric(predicted))) +
+  ggplot2::geom_point() +
+  ggplot2::geom_abline(intercept = 0, slope = 1, color = "red") +
+  ggplot2::labs(title = "Ensemble Bagged Random Forest model: Predicted vs actual", x = "Actual", y = "Predicted")
+
+ensemble_bag_rf_resid_vs_actual <- ggplot2::ggplot(ensemble_bag_rf_df, mapping = aes(x = actual, y = residuals)) +
+  ggplot2::geom_point() +
+  ggplot2::geom_hline(yintercept = 0, color = "red") +
+  ggplot2::labs(title = "Ensemble Bagged Random Forest model: Residuals", x = "Actual", y = "Predicted")
+
+ensemble_bag_rf_hist_residuals <- ggplot2::ggplot(ensemble_bag_rf_df, mapping = aes(x = residuals)) +
+  ggplot2::geom_histogram(bins = round(nrow(df) / 10)) +
+  ggplot2::geom_vline(xintercept = 0, color = "red") +
+  ggplot2::labs(title = "Ensemble Bagged Random Forest model: Histogram of residuals, each bar = 10 rows of data")
+
+ensemble_bag_rf_qq <- ggplot2::ggplot(ensemble_bag_rf_df, aes(sample = as.numeric(ensemble_y_hat_bag_rf))) + ggplot2::stat_qq() +
+  ggplot2::labs(title = "Ensemble Bagged Random Forest model: Q-Q plot") +
+  ggplot2::stat_qq_line(color = "red")
 
 #### Ensemble Bagging Visualizations ####
 ensemble_bagging_df <- data.frame(
@@ -4121,6 +4876,32 @@ ensemble_bayesrnn_hist_residuals <- ggplot2::ggplot(ensemble_bayesrnn_df, mappin
 
 ensemble_bayesrnn_qq <- ggplot2::ggplot(ensemble_bayesrnn_df, aes(sample = as.numeric(ensemble_y_hat_bayesrnn))) + ggplot2::stat_qq() +
   ggplot2::labs(title = "Ensemble BayesRNN model: Q-Q plot") +
+  ggplot2::stat_qq_line(color = "red")
+
+#### Ensemble Boosted Random Forest Visualizations ####
+ensemble_boost_rf_df <- data.frame(
+  actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble),
+  predicted = as.numeric(c(ensemble_boost_rf_test_predict_value, ensemble_boost_rf_validation_predict_value)),
+  residuals = as.numeric(c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble)) - ensemble_y_hat_boost_rf
+)
+
+ensemble_boost_rf_pred_vs_actual <- ggplot2::ggplot(ensemble_boost_rf_df, mapping = aes(x = actual, y = as.numeric(predicted))) +
+  ggplot2::geom_point() +
+  ggplot2::geom_abline(intercept = 0, slope = 1, color = "red") +
+  ggplot2::labs(title = "Ensemble Boosted Random Forest model: Predicted vs actual", x = "Actual", y = "Predicted")
+
+ensemble_boost_rf_resid_vs_actual <- ggplot2::ggplot(ensemble_boost_rf_df, mapping = aes(x = actual, y = residuals)) +
+  ggplot2::geom_point() +
+  ggplot2::geom_hline(yintercept = 0, color = "red") +
+  ggplot2::labs(title = "Ensemble Boosted Random Forest model: Residuals", x = "Actual", y = "Predicted")
+
+ensemble_boost_rf_hist_residuals <- ggplot2::ggplot(ensemble_boost_rf_df, mapping = aes(x = residuals)) +
+  ggplot2::geom_histogram(bins = round(nrow(df) / 10)) +
+  ggplot2::geom_vline(xintercept = 0, color = "red") +
+  ggplot2::labs(title = "Ensemble Boosted Random Forest model: Histogram of residuals, each bar = 10 rows of data")
+
+ensemble_boost_rf_qq <- ggplot2::ggplot(ensemble_boost_rf_df, aes(sample = as.numeric(ensemble_y_hat_boost_rf))) + ggplot2::stat_qq() +
+  ggplot2::labs(title = "Ensemble Boosted Random Forest model: Q-Q plot") +
   ggplot2::stat_qq_line(color = "red")
 
 ### Ensemble Cubist Visualizations ####
@@ -4228,6 +5009,31 @@ ensemble_gb_qq <- ggplot2::ggplot(ensemble_gb_df, aes(sample = as.numeric(ensemb
   ggplot2::labs(title = "Ensemble Gradient Boosted model: Q-Q plot") +
   ggplot2::stat_qq_line(color = "red")
 
+#### Ensemble KNN data visualizations ####
+ensemble_knn_df <- data.frame(
+  actual = c(ensemble_test$y, ensemble_validation$y), predicted = as.numeric(ensemble_y_hat_knn),
+  residuals = c(ensemble_test$y, ensemble_validation$y) - ensemble_y_hat_knn
+)
+
+ensemble_knn_pred_vs_actual <- ggplot2::ggplot(ensemble_knn_df, mapping = aes(x = actual, y = as.numeric(ensemble_y_hat_knn))) +
+  ggplot2::geom_point() +
+  ggplot2::geom_abline(intercept = 0, slope = 1, color = "red") +
+  ggplot2::labs(title = "Ensemble KNN model: Predicted vs actual", x = "Actual", y = "Predicted")
+
+ensemble_knn_resid_vs_actual <- ggplot2::ggplot(ensemble_knn_df, mapping = aes(x = actual, y = residuals)) +
+  ggplot2::geom_point() +
+  ggplot2::geom_hline(yintercept = 0, color = "red") +
+  ggplot2::labs(title = "Ensemble KNN model: Residuals", x = "Actual", y = "Predicted")
+
+ensemble_knn_hist_residuals <- ggplot2::ggplot(ensemble_knn_df, mapping = aes(x = residuals)) +
+  ggplot2::geom_histogram(bins = round(nrow(df) / 10)) +
+  ggplot2::geom_vline(xintercept = 0, color = "red") +
+  ggplot2::labs(title = "Ensemble KNN model: Histogram of residuals, each bar = 10 rows of data")
+
+ensemble_knn_qq <- ggplot2::ggplot(ensemble_knn_df, aes(sample = as.numeric(ensemble_y_hat_knn))) + ggplot2::stat_qq() +
+  ggplot2::labs(title = "Ensemble KNN model: Q-Q plot") +
+  ggplot2::stat_qq_line(color = "red")
+
 #### Ensemble Lasso data visualizations ####
 ensemble_lasso_df <- data.frame(
   actual = c(ensemble_test$y, ensemble_validation$y), predicted = as.numeric(y_hat_ensemble_lasso),
@@ -4280,30 +5086,31 @@ ensemble_linear_qq <- ggplot2::ggplot(ensemble_linear_df, aes(sample = as.numeri
   ggplot2::labs(title = "Ensemble Linear model: Q-Q plot") +
   ggplot2::stat_qq_line(color = "red")
 
-#### Ensemble Neuralnet Visualizations ####
-ensemble_neuralnet_df <- data.frame(
+
+#### Ensemble Random Forest Visualizations ####
+ensemble_rf_df <- data.frame(
   actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble),
-  predicted = as.numeric(c(ensemble_neuralnet_test_predict_value, ensemble_neuralnet_validation_predict_value)),
-  residuals = as.numeric(c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble)) - ensemble_y_hat_neuralnet
+  predicted = as.numeric(c(ensemble_rf_test_predict_value, ensemble_rf_validation_predict_value)),
+  residuals = as.numeric(c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble)) - ensemble_y_hat_rf
 )
 
-ensemble_neuralnet_pred_vs_actual <- ggplot2::ggplot(ensemble_neuralnet_df, mapping = aes(x = actual, y = predicted)) +
+ensemble_rf_pred_vs_actual <- ggplot2::ggplot(ensemble_rf_df, mapping = aes(x = actual, y = as.numeric(predicted))) +
   ggplot2::geom_point() +
   ggplot2::geom_abline(intercept = 0, slope = 1, color = "red") +
-  ggplot2::labs(title = "Ensemble neuralnet Model: Predicted vs actual", x = "Actual", y = "Predicted")
+  ggplot2::labs(title = "Ensemble Random Forest Regression model: Predicted vs actual", x = "Actual", y = "Predicted")
 
-ensemble_neuralnet_resid_vs_actual <- ggplot2::ggplot(ensemble_neuralnet_df, mapping = aes(x = actual, y = residuals)) +
+ensemble_rf_resid_vs_actual <- ggplot2::ggplot(ensemble_rf_df, mapping = aes(x = actual, y = residuals)) +
   ggplot2::geom_point() +
   ggplot2::geom_hline(yintercept = 0, color = "red") +
-  ggplot2::labs(title = "Ensemble neuralnet Model: Residuals", x = "Actual", y = "Residuals")
+  ggplot2::labs(title = "Ensemble Random Forest Regression model: Residuals", x = "Actual", y = "Predicted")
 
-ensemble_neuralnet_hist_residuals <- ggplot2::ggplot(ensemble_neuralnet_df, mapping = aes(x = residuals)) +
+ensemble_rf_hist_residuals <- ggplot2::ggplot(ensemble_rf_df, mapping = aes(x = residuals)) +
   ggplot2::geom_histogram(bins = round(nrow(df) / 10)) +
   ggplot2::geom_vline(xintercept = 0, color = "red") +
-  ggplot2::labs(title = "Ensemble neuralnet Model: Histogram of residuals, each bar = 10 rows of data")
+  ggplot2::labs(title = "Ensemble Random Forest Regression model: Histogram of residuals, each bar = 10 rows of data")
 
-ensemble_neuralnet_qq <- ggplot2::ggplot(ensemble_neuralnet_df, aes(sample = as.numeric(ensemble_y_hat_neuralnet))) + ggplot2::stat_qq() +
-  ggplot2::labs(title = "Ensemble neuralnet model: Q-Q plot") +
+ensemble_rf_qq <- ggplot2::ggplot(ensemble_rf_df, aes(sample = as.numeric(ensemble_y_hat_rf))) + ggplot2::stat_qq() +
+  ggplot2::labs(title = "Ensemble Random Forest model: Q-Q plot") +
   ggplot2::stat_qq_line(color = "red")
 
 #### Ensemble Ridge data visualizations ####
@@ -4452,6 +5259,7 @@ k_s_test_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, KS_
   ggplot2::geom_hline(yintercept = c(0.05, 0.10), linetype='dashed', color=c('blue', 'blue')) +
   ggplot2::geom_errorbar(aes(x = Model, ymin = KS_Test_P_Value_mean - KS_Test_P_Value_std_dev, ymax = KS_Test_P_Value_mean + KS_Test_P_Value_std_dev))
 
+
 overfitting_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Overfitting_mean), y = Overfitting_mean)) +
   ggplot2::geom_col(width = 0.5)+
   ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1, hjust=1)) +
@@ -4502,6 +5310,14 @@ SSE_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_SSE
 
 data_visualizations <- summary_results[2, 1]
 
+if (data_visualizations[1] == "Bagged Random Forest") {
+  gridExtra::grid.arrange(bag_rf_pred_vs_actual, bag_rf_resid_vs_actual, bag_rf_hist_residuals, bag_rf_qq, ncol = 2)
+  gridExtra::grid.arrange(bag_rf_pred_vs_actual)
+  gridExtra::grid.arrange(bag_rf_resid_vs_actual)
+  gridExtra::grid.arrange(bag_rf_hist_residuals)
+  gridExtra::grid.arrange(bag_rf_qq)
+}
+
 if (data_visualizations[1] == "Bagging") {
   grid.arrange(bagging_pred_vs_actual, bagging_resid_vs_actual, bagging_hist_residuals, bagging_qq, ncol = 2)
   gridExtra::grid.arrange(bagging_pred_vs_actual)
@@ -4524,6 +5340,14 @@ if (data_visualizations[1] == "BayesRNN") {
   gridExtra::grid.arrange(bayesrnn_resid_vs_actual)
   gridExtra::grid.arrange(bayesrnn_hist_residuals)
   gridExtra::grid.arrange(bayesrnn_qq)
+}
+
+if (data_visualizations[1] == "Boost_rf") {
+  grid.arrange(boost_rf_pred_vs_actual, boost_rf_resid_vs_actual, boost_rf_hist_residuals, boost_rf_qq, ncol = 2)
+  gridExtra::grid.arrange(boost_rf_pred_vs_actual)
+  gridExtra::grid.arrange(boost_rf_resid_vs_actual)
+  gridExtra::grid.arrange(boost_rf_hist_residuals)
+  gridExtra::grid.arrange(boost_rf_qq)
 }
 
 if (data_visualizations[1] == "Cubist") {
@@ -4567,6 +5391,14 @@ if (data_visualizations[1] == "Gradient Boosted") {
   gridExtra::grid.arrange(gb_qq)
 }
 
+if (data_visualizations[1] == "KNN") {
+  grid.arrange(knn_pred_vs_actual, knn_resid_vs_actual, knn_hist_residuals, knn_qq, ncol = 2)
+  gridExtra::grid.arrange(knn_pred_vs_actual)
+  gridExtra::grid.arrange(knn_resid_vs_actual)
+  gridExtra::grid.arrange(knn_hist_residuals)
+  gridExtra::grid.arrange(knn_qq)
+}
+
 if (data_visualizations[1] == "Lasso") {
   grid.arrange(lasso_pred_vs_actual, lasso_resid_vs_actual, lasso_hist_residuals, lasso_qq, ncol = 2)
   gridExtra::grid.arrange(lasso_pred_vs_actual)
@@ -4574,6 +5406,7 @@ if (data_visualizations[1] == "Lasso") {
   gridExtra::grid.arrange(lasso_hist_residuals)
   gridExtra::grid.arrange(lasso_qq)
 }
+
 
 if (data_visualizations[1] == "Linear") {
   gridExtra::grid.arrange(linear_pred_vs_actual, linear_resid_vs_actual, linear_hist_residuals, linear_qq, ncol = 2)
@@ -4584,7 +5417,7 @@ if (data_visualizations[1] == "Linear") {
 }
 
 if (data_visualizations[1] == "Neuralnet") {
-  gridExtra::grid.arrange(neuralnet_pred_vs_actual, neuralnet_resid_vs_actual, neuralnet_hist_residuals, neuralnet_qq, ncol = 2)
+  grid.arrange(neuralnet_pred_vs_actual, neuralnet_resid_vs_actual, neuralnet_hist_residuals, neuralnet_qq, ncol = 2)
   gridExtra::grid.arrange(neuralnet_pred_vs_actual)
   gridExtra::grid.arrange(neuralnet_resid_vs_actual)
   gridExtra::grid.arrange(neuralnet_hist_residuals)
@@ -4605,6 +5438,14 @@ if (data_visualizations[1] == "PCR") {
   gridExtra::grid.arrange(pcr_resid_vs_actual)
   gridExtra::grid.arrange(pcr_hist_residuals)
   gridExtra::grid.arrange(pcr_qq)
+}
+
+if (data_visualizations[1] == "RF") {
+  grid.arrange(rf_pred_vs_actual, rf_resid_vs_actual, rf_hist_residuals, rf_qq, ncol = 2)
+  gridExtra::grid.arrange(rf_pred_vs_actual)
+  gridExtra::grid.arrange(rf_resid_vs_actual)
+  gridExtra::grid.arrange(rf_hist_residuals)
+  gridExtra::grid.arrange(rf_qq)
 }
 
 if (data_visualizations[1] == "Ridge") {
@@ -4647,6 +5488,14 @@ if (data_visualizations[1] == "XGBoost") {
   gridExtra::grid.arrange(xgb_qq)
 }
 
+if (data_visualizations[1] == "Ensemble Bagged Random Forest") {
+  gridExtra::grid.arrange(ensemble_bag_rf_pred_vs_actual, ensemble_bag_rf_resid_vs_actual, ensemble_bag_rf_hist_residuals, ensemble_bag_rf_qq, ncol = 2)
+  gridExtra::grid.arrange(ensemble_bag_rf_pred_vs_actual)
+  gridExtra::grid.arrange(ensemble_bag_rf_resid_vs_actual)
+  gridExtra::grid.arrange(ensemble_bag_rf_hist_residuals)
+  gridExtra::grid.arrange(ensemble_bag_rf_qq)
+}
+
 if (data_visualizations[1] == "Ensemble Bagging") {
   gridExtra::grid.arrange(ensemble_bagging_pred_vs_actual, ensemble_bagging_resid_vs_actual, ensemble_bagging_hist_residuals, ensemble_bagging_qq, ncol = 2)
   gridExtra::grid.arrange(ensemble_bagging_pred_vs_actual)
@@ -4669,6 +5518,14 @@ if (data_visualizations[1] == "Ensemble BayesRNN") {
   gridExtra::grid.arrange(ensemble_bayesrnn_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_bayesrnn_hist_residuals)
   gridExtra::grid.arrange(ensemble_bayesrnn_qq)
+}
+
+if (data_visualizations[1] == "Ensemble Boosted RF") {
+  gridExtra::grid.arrange(ensemble_boost_rf_pred_vs_actual, ensemble_boost_rf_resid_vs_actual, ensemble_boost_rf_hist_residuals, ensemble_boost_rf_qq, ncol = 2)
+  gridExtra::grid.arrange(ensemble_boost_rf_pred_vs_actual)
+  gridExtra::grid.arrange(ensemble_boost_rf_resid_vs_actual)
+  gridExtra::grid.arrange(ensemble_boost_rf_hist_residuals)
+  gridExtra::grid.arrange(ensemble_boost_rf_qq)
 }
 
 if (data_visualizations[1] == "Ensemble Cubist") {
@@ -4704,6 +5561,14 @@ if (data_visualizations[1] == "Ensemble Gradient Boosted") {
   gridExtra::grid.arrange(ensemble_gb_qq)
 }
 
+if (data_visualizations[1] == "Ensemble K-Nearest Neighbors") {
+  grid.arrange(ensemble_knn_pred_vs_actual, ensemble_knn_resid_vs_actual, ensemble_knn_hist_residuals, ensemble_knn_qq, ncol = 2)
+  gridExtra::grid.arrange(ensemble_knn_pred_vs_actual)
+  gridExtra::grid.arrange(ensemble_knn_resid_vs_actual)
+  gridExtra::grid.arrange(ensemble_knn_hist_residuals)
+  gridExtra::grid.arrange(ensemble_knn_qq)
+}
+
 if (data_visualizations[1] == "Ensemble_Lasso") {
   grid.arrange(ensemble_lasso_pred_vs_actual, ensemble_lasso_resid_vs_actual, ensemble_lasso_hist_residuals, ensemble_lasso_qq, ncol = 2)
   gridExtra::grid.arrange(ensemble_lasso_pred_vs_actual)
@@ -4720,12 +5585,12 @@ if (data_visualizations[1] == "Ensemble Linear") {
   gridExtra::grid.arrange(ensemble_linear_qq)
 }
 
-if (data_visualizations[1] == "Ensemble Neuralnet") {
-  gridExtra::grid.arrange(ensemble_neuralnet_pred_vs_actual, ensemble_neuralnet_resid_vs_actual, ensemble_neuralnet_hist_residuals, ensemble_neuralnet_qq, ncol = 2)
-  gridExtra::grid.arrange(ensemble_neuralnet_pred_vs_actual)
-  gridExtra::grid.arrange(ensemble_neuralnet_resid_vs_actual)
-  gridExtra::grid.arrange(ensemble_neuralnet_hist_residuals)
-  gridExtra::grid.arrange(ensemble_neuralnet_qq)
+if (data_visualizations[1] == "Ensemble RF") {
+  gridExtra::grid.arrange(ensemble_rf_pred_vs_actual, ensemble_rf_resid_vs_actual, ensemble_rf_hist_residuals, ensemble_rf_qq, ncol = 2)
+  gridExtra::grid.arrange(ensemble_rf_pred_vs_actual)
+  gridExtra::grid.arrange(ensemble_rf_resid_vs_actual)
+  gridExtra::grid.arrange(ensemble_rf_hist_residuals)
+  gridExtra::grid.arrange(ensemble_rf_qq)
 }
 
 if (data_visualizations[1] == "Ensemble_Ridge") {
@@ -4764,50 +5629,50 @@ accuracy_data <-
   data.frame(
     "count" = 1:numresamples,
     "model" = c(
-      c(rep("Bagging", numresamples)), c(rep("BayesGLM", numresamples)),
-      c(rep("BayesRNN", numresamples)),
+      rep("Bagged Random Forest", numresamples), c(rep("Bagging", numresamples)), c(rep("BayesGLM", numresamples)),
+      c(rep("BayesRNN", numresamples)), c(rep("Boost Random Forest", numresamples)),
       c(rep("Cubist", numresamples)), c(rep("Earth", numresamples)), c(rep("Elastic", numresamples)), c(rep("Generalized Additive Models (GAM)", numresamples)),
-      c(rep("Gradient Boosted", numresamples)), c(rep("Lasso", numresamples)), c(rep("Linear", numresamples)),
+      c(rep("Gradient Boosted", numresamples)), c(rep("K-Nearest Neighbors", numresamples)), c(rep("Lasso", numresamples)), c(rep("Linear", numresamples)),
       c(rep("Neuralnet", numresamples)), c(rep("Principal Components Regression", numresamples)), c(rep("Partial Least Squares", numresamples)),
-      c(rep("Ridge", numresamples)), c(rep("RPart", numresamples)),
+      c(rep("Random Forest", numresamples)), c(rep("Ridge", numresamples)), c(rep("RPart", numresamples)),
       c(rep("Support Vector Machines", numresamples)), c(rep("Trees", numresamples)), c(rep("XGBoost", numresamples)),
-      c(rep("Ensemble Bagging", numresamples)), c(rep("Ensemble Elastic", numresamples)),
+      c(rep("Ensemble Bagged Random Forest", numresamples)), c(rep("Ensemble Bagging", numresamples)), c(rep("Ensemble Elastic", numresamples)),
       c(rep("Ensemble BayesGLM", numresamples)), c(rep("Ensemble BayesRNN", numresamples)),
-      c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)),
-      c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble Lasso", numresamples)),
-      c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Neuralnet", numresamples)), c(rep("Ensemble Ridge", numresamples)),
+      c(rep("Ensemble Boosted Random Forest", numresamples)), c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)),
+      c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble K-Nearest Neighbors", numresamples)), c(rep("Ensemble Lasso", numresamples)),
+      c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Random Forest", numresamples)), c(rep("Ensemble Ridge", numresamples)),
       c(rep("Ensemble RPart", numresamples)), c(rep("Ensemble Support Vector Machines", numresamples)),
       c(rep("Ensemble Trees", numresamples)), c(rep("Ensemble XGBoost", numresamples))
     ),
     "data" = c(
-      bagging_holdout_RMSE, bayesglm_holdout_RMSE,
-      bayesrnn_holdout_RMSE,
+      bag_rf_holdout_RMSE, bagging_holdout_RMSE, bayesglm_holdout_RMSE,
+      bayesrnn_holdout_RMSE, boost_rf_holdout_RMSE,
       cubist_holdout_RMSE, earth_holdout_RMSE, elastic_holdout_RMSE_df$elastic_holdout_RMSE[2:nrow(elastic_holdout_RMSE_df)], gam_holdout_RMSE,
-      gb_holdout_RMSE, lasso_holdout_RMSE_df$lasso_holdout_RMSE[2:nrow(lasso_holdout_RMSE_df)], linear_holdout_RMSE,
-      nnet_holdout_RMSE, pcr_holdout_RMSE, pls_holdout_RMSE,
-      ridge_holdout_RMSE_df$ridge_holdout_RMSE[2:nrow(ridge_holdout_RMSE_df)], rpart_holdout_RMSE,
+      gb_holdout_RMSE, knn_holdout_RMSE, lasso_holdout_RMSE_df$lasso_holdout_RMSE[2:nrow(lasso_holdout_RMSE_df)], linear_holdout_RMSE,
+      neuralnet_holdout_RMSE, pcr_holdout_RMSE, pls_holdout_RMSE,
+      rf_holdout_RMSE, ridge_holdout_RMSE_df$ridge_holdout_RMSE[2:nrow(ridge_holdout_RMSE_df)], rpart_holdout_RMSE,
       svm_holdout_RMSE, tree_holdout_RMSE, xgb_holdout_RMSE,
-      ensemble_bagging_holdout_RMSE, ensemble_elastic_holdout_RMSE,
+      ensemble_bag_rf_holdout_RMSE, ensemble_bagging_holdout_RMSE, ensemble_elastic_holdout_RMSE,
       ensemble_bayesglm_holdout_RMSE, ensemble_bayesrnn_holdout_RMSE,
-      ensemble_cubist_holdout_RMSE, ensemble_earth_holdout_RMSE, ensemble_neuralnet_holdout_RMSE,
-      ensemble_gb_holdout_RMSE, ensemble_lasso_holdout_RMSE,
-      ensemble_linear_holdout_RMSE, ensemble_ridge_holdout_RMSE,
+      ensemble_boost_rf_holdout_RMSE, ensemble_cubist_holdout_RMSE, ensemble_earth_holdout_RMSE,
+      ensemble_gb_holdout_RMSE, ensemble_knn_holdout_RMSE, ensemble_lasso_holdout_RMSE,
+      ensemble_linear_holdout_RMSE, ensemble_rf_holdout_RMSE, ensemble_ridge_holdout_RMSE,
       ensemble_rpart_holdout_RMSE, ensemble_svm_holdout_RMSE,
       ensemble_tree_holdout_RMSE, ensemble_xgb_holdout_RMSE
     ),
     "mean" = rep(c(
-      bagging_holdout_RMSE_mean, bayesglm_holdout_RMSE_mean,
-      bayesrnn_holdout_RMSE_mean,
+      bag_rf_holdout_RMSE_mean, bagging_holdout_RMSE_mean, bayesglm_holdout_RMSE_mean,
+      bayesrnn_holdout_RMSE_mean, boost_rf_test_RMSE_mean,
       cubist_holdout_RMSE_mean, earth_holdout_RMSE_mean, elastic_holdout_RMSE_mean, gam_holdout_RMSE_mean,
-      gb_holdout_RMSE_mean, lasso_holdout_RMSE_mean, linear_holdout_RMSE_mean,
-      nnet_holdout_RMSE_mean, pcr_holdout_RMSE_mean, pls_holdout_RMSE_mean,
-      ridge_holdout_RMSE_mean, rpart_holdout_RMSE_mean,
+      gb_holdout_RMSE_mean, knn_holdout_RMSE_mean, lasso_holdout_RMSE_mean, linear_holdout_RMSE_mean,
+      neuralnet_holdout_RMSE_mean, pcr_holdout_RMSE_mean, pls_holdout_RMSE_mean,
+      rf_holdout_RMSE_mean, ridge_holdout_RMSE_mean, rpart_holdout_RMSE_mean,
       svm_holdout_RMSE_mean, tree_holdout_RMSE_mean, xgb_holdout_RMSE_mean,
-      ensemble_bagging_holdout_RMSE_mean, ensemble_elastic_holdout_RMSE_mean,
+      ensemble_bag_rf_holdout_RMSE_mean, ensemble_bagging_holdout_RMSE_mean, ensemble_elastic_holdout_RMSE_mean,
       ensemble_bayesglm_holdout_RMSE_mean, ensemble_bayesrnn_holdout_RMSE_mean,
-      ensemble_cubist_holdout_RMSE_mean, ensemble_earth_holdout_RMSE_mean, ensemble_neuralnet_holdout_RMSE_mean,
-      ensemble_gb_holdout_RMSE_mean, ensemble_lasso_holdout_RMSE_mean, ensemble_linear_holdout_RMSE_mean,
-      ensemble_ridge_holdout_RMSE_mean,
+      ensemble_boost_rf_holdout_RMSE_mean, ensemble_cubist_holdout_RMSE_mean, ensemble_earth_holdout_RMSE_mean,
+      ensemble_gb_holdout_RMSE_mean, ensemble_knn_holdout_RMSE_mean, ensemble_lasso_holdout_RMSE_mean, ensemble_linear_holdout_RMSE_mean,
+      ensemble_rf_holdout_RMSE_mean, ensemble_ridge_holdout_RMSE_mean,
       ensemble_rpart_holdout_RMSE_mean, ensemble_svm_holdout_RMSE_mean,
       ensemble_tree_holdout_RMSE_mean, ensemble_xgb_holdout_RMSE_mean
     ), each = numresamples)
@@ -4819,7 +5684,17 @@ accuracy_plot <- ggplot2::ggplot(data = accuracy_data, mapping = ggplot2::aes(x 
   ggplot2::geom_hline(aes(yintercept = mean)) +
   ggplot2::geom_hline(aes(yintercept = 0, color = "red")) +
   ggplot2::facet_wrap(~model, ncol = 5) +
-  ggplot2::ggtitle("Accuracy data\nRoot Mean Squared Error by model, lower is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 0.") +
+  ggplot2::ggtitle("Accuracy data, fixed scales\nRoot Mean Squared Error by model, lower is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 0.") +
+  ggplot2::labs(y = "Root Mean Squared Error (RMSE), lower is better \n The horizontal line is the mean of the results, the red line is 0.") +
+  ggplot2::theme(legend.position = "none")
+
+accuracy_plot2 <- ggplot2::ggplot(data = accuracy_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+  ggplot2::geom_line(mapping = aes(x = count, y = data)) +
+  ggplot2::geom_point(mapping = aes(x = count, y = data)) +
+  ggplot2::geom_hline(aes(yintercept = mean)) +
+  ggplot2::geom_hline(aes(yintercept = 0, color = "red")) +
+  ggplot2::facet_wrap(~model, ncol = 5, scales = "free") +
+  ggplot2::ggtitle("Accuracy data free scales\nRoot Mean Squared Error by model, lower is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 0.") +
   ggplot2::labs(y = "Root Mean Squared Error (RMSE), lower is better \n The horizontal line is the mean of the results, the red line is 0.") +
   ggplot2::theme(legend.position = "none")
 
@@ -4828,53 +5703,53 @@ total_data <-
     "count" = 1:numresamples,
     "model" =
       c(
-        c(rep("Bagging", numresamples)), c(rep("BayesGLM", numresamples)),
-        c(rep("BayesRNN", numresamples)),
+        rep("Bagged Random Forest", numresamples), c(rep("Bagging", numresamples)), c(rep("BayesGLM", numresamples)),
+        c(rep("BayesRNN", numresamples)), c(rep("Boost Random Forest", numresamples)),
         c(rep("Cubist", numresamples)), c(rep("Earth", numresamples)), c(rep("Elastic", numresamples)), c(rep("Generalized Additive Models (GAM)", numresamples)),
-        c(rep("Gradient Boosted", numresamples)), c(rep("Lasso", numresamples)), c(rep("Linear", numresamples)),
+        c(rep("Gradient Boosted", numresamples)), c(rep("K-Nearest Neighbors", numresamples)), c(rep("Lasso", numresamples)), c(rep("Linear", numresamples)),
         c(rep("Neuralnet", numresamples)), c(rep("Principal Components Regression", numresamples)), c(rep("Partial Least Squares", numresamples)),
-        c(rep("Ridge", numresamples)), c(rep("RPart", numresamples)),
+        c(rep("Random Forest", numresamples)), c(rep("Ridge", numresamples)), c(rep("RPart", numresamples)),
         c(rep("Support Vector Machines", numresamples)), c(rep("Trees", numresamples)), c(rep("XGBoost", numresamples)),
-        c(rep("Ensemble Bagging", numresamples)), c(rep("Ensemble Elastic", numresamples)),
+        c(rep("Ensemble Bagged Random Forest", numresamples)), c(rep("Ensemble Bagging", numresamples)), c(rep("Ensemble Elastic", numresamples)),
         c(rep("Ensemble BayesGLM", numresamples)), c(rep("Ensemble BayesRNN", numresamples)),
-        c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)), c(rep("Ensemble Neuralnet", numresamples)),
-        c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble Lasso", numresamples)),
-        c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Ridge", numresamples)),
+        c(rep("Ensemble Boosted Random Forest", numresamples)), c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)),
+        c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble K-Nearest Neighbors", numresamples)), c(rep("Ensemble Lasso", numresamples)),
+        c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Random Forest", numresamples)), c(rep("Ensemble Ridge", numresamples)),
         c(rep("Ensemble RPart", numresamples)), c(rep("Ensemble Support Vector Machines", numresamples)),
         c(rep("Ensemble Trees", numresamples)), c(rep("Ensemble XGBoost", numresamples))
       ),
     "train" = c(
-      bagging_train_RMSE, bayesglm_train_RMSE,
-      bayesrnn_train_RMSE,
+      bag_rf_train_RMSE, bagging_train_RMSE, bayesglm_train_RMSE,
+      bayesrnn_train_RMSE, boost_rf_train_RMSE,
       cubist_train_RMSE, earth_train_RMSE, elastic_train_RMSE_df$elastic_train_RMSE[2:nrow(elastic_train_RMSE_df)], gam_train_RMSE,
-      gb_train_RMSE, lasso_train_RMSE_df$lasso_train_RMSE[2:nrow(lasso_train_RMSE_df)], linear_train_RMSE,
-      nnet_train_RMSE, pcr_train_RMSE, pls_train_RMSE,
-      ridge_train_RMSE_df$ridge_train_RMSE[2:nrow(ridge_train_RMSE_df)], rpart_train_RMSE,
+      gb_train_RMSE, knn_train_RMSE, lasso_train_RMSE_df$lasso_train_RMSE[2:nrow(lasso_train_RMSE_df)], linear_train_RMSE,
+      neuralnet_train_RMSE, pcr_train_RMSE, pls_train_RMSE,
+      rf_train_RMSE, ridge_train_RMSE_df$ridge_train_RMSE[2:nrow(ridge_train_RMSE_df)], rpart_train_RMSE,
       svm_train_RMSE, tree_train_RMSE, xgb_train_RMSE,
-      ensemble_bagging_train_RMSE, ensemble_elastic_train_RMSE_df$ensemble_elastic_train_RMSE[2:nrow(ensemble_elastic_train_RMSE_df)],
+      ensemble_bag_rf_train_RMSE, ensemble_bagging_train_RMSE, ensemble_elastic_train_RMSE_df$ensemble_elastic_train_RMSE[2:nrow(ensemble_elastic_train_RMSE_df)],
       ensemble_bayesglm_train_RMSE, ensemble_bayesrnn_train_RMSE,
-      ensemble_cubist_train_RMSE, ensemble_earth_train_RMSE, ensemble_neuralnet_train_RMSE,
-      ensemble_gb_train_RMSE,
+      ensemble_boost_rf_train_RMSE, ensemble_cubist_train_RMSE, ensemble_earth_train_RMSE,
+      ensemble_gb_train_RMSE, ensemble_knn_train_RMSE_df$ensemble_knn_train_RMSE[2:nrow(ensemble_knn_train_RMSE_df)],
       ensemble_lasso_train_RMSE_df$ensemble_lasso_train_RMSE[2:nrow(ensemble_lasso_train_RMSE_df)],
-      ensemble_linear_train_RMSE,
+      ensemble_linear_train_RMSE, ensemble_rf_train_RMSE,
       ensemble_ridge_train_RMSE_df$ensemble_ridge_train_RMSE[2:nrow(ensemble_ridge_train_RMSE_df)],
       ensemble_rpart_train_RMSE, ensemble_svm_train_RMSE,
       ensemble_tree_train_RMSE, ensemble_xgb_train_RMSE
     ),
 
     "holdout" = c(
-      bagging_holdout_RMSE, bayesglm_holdout_RMSE,
-      bayesrnn_holdout_RMSE,
+      bag_rf_holdout_RMSE, bagging_holdout_RMSE, bayesglm_holdout_RMSE,
+      bayesrnn_holdout_RMSE, boost_rf_holdout_RMSE,
       cubist_holdout_RMSE, earth_holdout_RMSE, elastic_holdout_RMSE_df$elastic_holdout_RMSE[2:nrow(elastic_holdout_RMSE_df)], gam_holdout_RMSE,
-      gb_holdout_RMSE, lasso_holdout_RMSE_df$lasso_holdout_RMSE[2:nrow(lasso_holdout_RMSE_df)], linear_holdout_RMSE,
-      nnet_holdout_RMSE, pcr_holdout_RMSE, pls_holdout_RMSE,
-      ridge_holdout_RMSE_df$ridge_holdout_RMSE[2:nrow(ridge_holdout_RMSE_df)], rpart_holdout_RMSE,
+      gb_holdout_RMSE, knn_holdout_RMSE, lasso_holdout_RMSE_df$lasso_holdout_RMSE[2:nrow(lasso_holdout_RMSE_df)], linear_holdout_RMSE,
+      neuralnet_holdout_RMSE, pcr_holdout_RMSE, pls_holdout_RMSE,
+      rf_holdout_RMSE, ridge_holdout_RMSE_df$ridge_holdout_RMSE[2:nrow(ridge_holdout_RMSE_df)], rpart_holdout_RMSE,
       svm_holdout_RMSE, tree_holdout_RMSE, xgb_holdout_RMSE,
-      ensemble_bagging_holdout_RMSE, ensemble_elastic_holdout_RMSE,
+      ensemble_bag_rf_holdout_RMSE, ensemble_bagging_holdout_RMSE, ensemble_elastic_holdout_RMSE,
       ensemble_bayesglm_holdout_RMSE, ensemble_bayesrnn_holdout_RMSE,
-      ensemble_cubist_holdout_RMSE, ensemble_earth_holdout_RMSE, ensemble_neuralnet_holdout_RMSE,
-      ensemble_gb_holdout_RMSE, ensemble_lasso_holdout_RMSE,
-      ensemble_linear_holdout_RMSE, ensemble_ridge_holdout_RMSE,
+      ensemble_boost_rf_holdout_RMSE, ensemble_cubist_holdout_RMSE, ensemble_earth_holdout_RMSE,
+      ensemble_gb_holdout_RMSE, ensemble_knn_holdout_RMSE, ensemble_lasso_holdout_RMSE,
+      ensemble_linear_holdout_RMSE, ensemble_rf_holdout_RMSE, ensemble_ridge_holdout_RMSE,
       ensemble_rpart_holdout_RMSE, ensemble_svm_holdout_RMSE,
       ensemble_tree_holdout_RMSE, ensemble_xgb_holdout_RMSE
     )
@@ -4886,12 +5761,28 @@ total_plot <- ggplot2::ggplot(data = total_data, mapping = ggplot2::aes(x = coun
   ggplot2::geom_line(mapping = aes(x = count, y = holdout, color = "holdout")) +
   ggplot2::geom_point(mapping = aes(x = count, y = holdout)) +
   ggplot2::geom_hline(aes(yintercept = 0, color = "optimal")) +
-  ggplot2::facet_wrap(~model, ncol = 5) +
-  ggplot2::ggtitle("Train vs holdout data by resample and model. \nRoot Mean Squared Error by model, lower is better. \nThe black horizontal line is 0.") +
+  ggplot2::facet_wrap(~model, ncol = 5, scales = "free") +
+  ggplot2::ggtitle("Train vs holdout data by resample and model. Free scales \nRoot Mean Squared Error by model, lower is better. \nThe black horizontal line is 0.") +
   ggplot2::labs(y = "Root Mean Squared Error (RMSE), lower is better \nthe black line is 0.\n") +
   ggplot2::scale_color_manual(
     name = "Total Results",
-    breaks = c("train", "holdout"),
+    breaks = c("holdout", "train"),
+    values = c(
+      "train" = "blue", "holdout" = "red")
+  )
+
+total_plot2 <- ggplot2::ggplot(data = total_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+  ggplot2::geom_line(mapping = aes(x = count, y = train, color = "train")) +
+  ggplot2::geom_point(mapping = aes(x = count, y = train)) +
+  ggplot2::geom_line(mapping = aes(x = count, y = holdout, color = "holdout")) +
+  ggplot2::geom_point(mapping = aes(x = count, y = holdout)) +
+  ggplot2::geom_hline(aes(yintercept = 0, color = "optimal")) +
+  ggplot2::facet_wrap(~model, ncol = 5) +
+  ggplot2::ggtitle("Train vs holdout data by resample and model. Fixed scales \nRoot Mean Squared Error by model, lower is better. \nThe black horizontal line is 0.") +
+  ggplot2::labs(y = "Root Mean Squared Error (RMSE), lower is better \nthe black line is 0.\n") +
+  ggplot2::scale_color_manual(
+    name = "Total Results",
+    breaks = c("holdout", "train"),
     values = c(
       "train" = "blue", "holdout" = "red")
   )
@@ -4904,20 +5795,32 @@ total_plot <- ggplot2::ggplot(data = total_data, mapping = ggplot2::aes(x = coun
 
 #########################################################################
 
-if (do_you_have_new_data == "Y") {
+if (predict_on_new_data == "Y") {
+  new_bag_rf <- predict(object = bag_rf_train_fit$best.model, newdata = new_data)
   new_bagging <- predict(object = bagging_train_fit, newdata = new_data)
   new_bayesglm <- predict(object = bayesglm_train_fit, newdata = new_data)
   new_bayesrnn <- predict(object = bayesrnn_train_fit, newdata = new_data)
+  new_boost_rf <- predict(object = boost_rf_train_fit$best.model, newdata = new_data)
   new_cubist <- predict(object = cubist_train_fit, newdata = new_data)
   new_earth <- as.numeric(predict(object = earth_train_fit, newdata = new_data))
   new_elastic <- rowMeans(predict(object = best_elastic_model, newdata = new_data, newx = as.matrix(new_data[, 1:ncol(new_data) - 1])))
   new_gam <- predict(object = gam_train_fit, newdata = new_data)
   new_gb <- predict(object = gb_train_fit, newdata = new_data)
+  new_knn <- predict(object = knn_train_fit$best.model, newdata = new_data[, 1:ncol(new_data) - 1], k = knn_train_fit$best_model$k)
   new_lasso <- rowMeans(predict(object = best_lasso_model, newdata = new_data, newx = as.matrix(new_data[, 1:ncol(new_data) - 1])))
-  new_linear <- predict(object = linear_train_fit, newdata = new_data)
-  new_neuralnet <- predict(object = nnet_train_fit, newdata = new_data)
+  new_linear <- predict(object = linear_train_fit$best.model, newdata = new_data)
+
+  maxs <- apply(new_data, 2, max)
+  mins <- apply(new_data, 2, min)
+  scaled <- as.data.frame(scale(new_data, center = mins, scale = maxs - mins))
+  n <- names(new_data)
+  f <- as.formula(paste("y ~", paste(n[!n %in% "y"], collapse = " + ")))
+  nn <- neuralnet(f, data = new_data, hidden = c(5, 3), linear.output = T)
+  new_neuralnet <- neuralnet::compute(nn, new_data[, 1:ncol(new_data) - 1])$net.result[, 1]
+
   new_pls <- predict(object = pls_train_fit, newdata = new_data)[, , 1]
   new_pcr <- predict(object = pcr_train_fit, newdata = new_data)[, , 1]
+  new_rf <- predict(object = rf_train_fit$best.model, newdata = new_data)
   new_ridge <- rowMeans(predict(object = best_ridge_model, newdata = new_data, newx = as.matrix(new_data[, 1:ncol(new_data) - 1])))
   new_rpart <- predict(object = rpart_train_fit, newdata = new_data)
   new_svm <- predict(object = svm_train_fit$best.model, k = svm_train_fit$best_model$k, newdata = new_data)
@@ -4945,16 +5848,23 @@ if (do_you_have_new_data == "Y") {
   new_XGBoost <- predict(object = new_xgb_model, newdata = new_test_x)
 
   new_ensemble <- data.frame(
+    "BagRF" = new_bag_rf / bag_rf_holdout_RMSE_mean,
+    "Bagging" = new_bagging / bagging_holdout_RMSE_mean,
+    "BayesGLM" = new_bayesglm / bayesglm_holdout_RMSE_mean,
+    "BayesRNN" = new_bayesrnn / bayesrnn_holdout_RMSE_mean,
+    "BoostRF" = new_boost_rf / boost_rf_holdout_RMSE_mean,
     "Cubist" = new_cubist / cubist_holdout_RMSE_mean,
     "Earth" = new_earth / earth_holdout_RMSE_mean,
     "Elastic" = new_elastic / elastic_holdout_RMSE_mean,
     "GAM" = new_gam / gam_holdout_RMSE_mean,
     "GBM" = new_gb / gb_holdout_RMSE_mean,
+    "KNN" = new_knn / knn_holdout_RMSE_mean,
     "Lasso" = new_lasso / lasso_holdout_RMSE_mean,
     "Linear" = new_linear / linear_holdout_RMSE_mean,
-    "Neuralnet" = new_neuralnet / nnet_holdout_RMSE_mean,
+    "Neuralnet" = new_pcr / pcr_holdout_RMSE_mean,
     "PCR" = new_pcr / pcr_holdout_RMSE_mean,
     "PLS" = new_pls / pls_holdout_RMSE_mean,
+    "RandomForest" = new_rf / rf_holdout_RMSE_mean,
     "Ridge" = new_ridge / ridge_holdout_RMSE_mean,
     "Rpart" = new_rpart / rpart_holdout_RMSE_mean,
     "SVM" = new_svm / svm_holdout_RMSE_mean,
@@ -4971,17 +5881,20 @@ if (do_you_have_new_data == "Y") {
     new_ensemble <- dplyr::select(new_ensemble, thing1)
   }
 
+  new_ensemble_bag_rf <- predict(object = ensemble_bag_rf_train_fit$best.model, newdata = new_ensemble, mtry = ncol(new_ensemble) - 1)
   new_ensemble_bagging <- predict(object = ensemble_bagging_train_fit, newdata = new_ensemble)
   new_ensemble_bayesglm <- predict(object = ensemble_bayesglm_train_fit, newdata = new_ensemble)
   new_ensemble_bayesrnn <- predict(object = ensemble_bayesrnn_train_fit, newdata = new_ensemble)
+  new_ensemble_boost_rf <- predict(object = ensemble_boost_rf_train_fit$best.model, newdata = new_ensemble)
   new_ensemble_cart <- predict(object = ensemble_rpart_train_fit, newdata = new_ensemble)
   new_ensemble_cubist <- predict(object = ensemble_cubist_train_fit, newdata = new_ensemble)
   new_ensemble_earth <- predict(object = ensemble_earth_train_fit, newdata = new_ensemble)
   new_ensemble_elastic <- rowMeans(predict(object = ensemble_elastic_model, newx = data.matrix(new_ensemble %>% dplyr::select(-y_ensemble))))
   new_ensemble_gb <- predict(object = ensemble_gb_train_fit, newdata = new_ensemble)
+  new_ensemble_knn <- predict(object = ensemble_knn_model$best.model, newdata = new_ensemble)
   new_ensemble_lasso <- rowMeans(predict(object = ensemble_lasso_model, newx = data.matrix(new_ensemble %>% dplyr::select(-y_ensemble))))
-  new_ensemble_linear <- predict(object = ensemble_linear_train_fit, newdata = new_ensemble)
-  new_ensemble_neuralnet <- predict(object = ensemble_nnet_train_fit, newdata = new_ensemble)
+  new_ensemble_linear <- predict(object = ensemble_linear_train_fit$best.model, newdata = new_ensemble)
+  new_ensemble_rf <- predict(object = ensemble_rf_train_fit$best.model, newdata = new_ensemble)
   new_ensemble_rpart <- predict(object = ensemble_rpart_train_fit, newdata = new_ensemble)
   new_ensemble_ridge <- rowMeans(predict(object = ensemble_ridge_model, newx = data.matrix(new_ensemble %>% dplyr::select(-y_ensemble))))
   new_ensemble_svm <- predict(object = ensemble_svm_train_fit$best.model, newdata = new_ensemble)
@@ -5012,27 +5925,33 @@ if (do_you_have_new_data == "Y") {
   new_data_results <-
     data.frame(
       "True_Value" = new_ensemble$y_ensemble,
+      "BagRF" = round(new_bag_rf, 4),
       "Bagging" = round(new_bagging, 4),
       "BayesGLM" = round(new_bayesglm, 4),
       "BayesRNN" = round(new_bayesrnn, 4),
+      "BoostRF" = round(new_boost_rf, 4),
       "Cubist" = round(new_cubist, 4),
       "Earth" = round(new_earth, 4),
       "Elastic" = round(new_elastic, 4),
       "GAM" = round(new_gam, 4),
       "GBM" = round(new_gb, 4),
+      "KNN" = round(new_knn, 4),
       "Lasso" = round(new_lasso, 4),
       "Linear" = round(new_linear, 4),
       "Neuralnet" = round(new_neuralnet, 4),
       "PLS" = round(new_pls, 4),
       "PCR" = round(new_pcr, 4),
+      "RandomForest" = round(new_rf, 4),
       "Ridge" = round(new_ridge, 4),
       "Rpart" = round(new_rpart, 4),
       "SVM" = round(new_svm, 4),
       "Tree" = round(new_tree, 4),
       "XGBoost" = round(new_XGBoost, 4),
+      "Ensemble_BagRF" = round(new_ensemble_bag_rf, 4),
       "Ensemble_Bagging" = round(new_ensemble_bagging, 4),
       "Ensemble_BayesGLM" = round(new_ensemble_bayesglm, 4),
       "Ensemble_BayesRNN" = round(new_ensemble_bayesrnn, 4),
+      "Ensemble_BoostRF" = round(new_ensemble_boost_rf, 4),
       "Ensemble_Cart" = round(new_ensemble_cart, 4),
       "Ensemble_Cubist" = round(new_ensemble_cubist, 4),
       "Ensemble_Earth" = as.numeric(round(new_ensemble_earth, 4)),
@@ -5040,7 +5959,7 @@ if (do_you_have_new_data == "Y") {
       "Ensemble_Gardient_Boosted" = round(new_ensemble_gb, 4),
       "Ensemble_Lasso" = round(new_ensemble_lasso, 4),
       "Ensemble_Linear" = round(new_ensemble_linear, 4),
-      "Ensemble_Neuralnet" = round(new_ensemble_neuralnet, 4),
+      "Ensemble_RandomForest" = round(new_ensemble_rf, 4),
       "Ensemble_RPart" = round(new_ensemble_rpart, 4),
       "Ensemble_SVM" = round(new_ensemble_svm, 4),
       "Ensemble_Tree" = round(new_ensemble_tree, 4),
@@ -5058,34 +5977,42 @@ if (do_you_have_new_data == "Y") {
 
 
   if (save_all_trained_models == "Y") {
+    bag_rf_train_fit <<- bag_rf_train_fit # Bagged Random Forest
     bagging_train_fit <<- bagging_train_fit # Bagging
     bayesglm_train_fit <<- bayesglm_train_fit # Bayes Generalized Linear Models
     bayesrnn_train_fit <<- bayesrnn_train_fit # Bayes Recurrent Neural Networks
+    boost_rf_train_fit <<- boost_rf_train_fit # Boosted Random Forests
     cubist_train_fit <<- cubist_train_fit # Cubist
     earth_train_fit <<- earth_train_fit # Earth model
     best_elastic_model <<- best_elastic_model # Elastic
     gam_train_fit <<- gam_train_fit # Generalized Additive Models
     gb_train_fit <<- gb_train_fit # Gradient Boosted
+    knn_train_fit <<- knn_train_fit # K-Nearest Neighbors
     best_lasso_model <<- best_lasso_model # Lasso models
     linear_train_fit <<- linear_train_fit # Linear models
+    nn <<- nn # neuralnet models
     pls_train_fit <<- pls_train_fit # pls models
     pcr_train_fit <<- pcr_train_fit # Principal Components Regression models
+    rf_train_fit <<- rf_train_fit # Random Forest models
     best_ridge_model <<- best_ridge_model # Ridge models
     rpart_train_fit <<- rpart_train_fit # Rpart models
     svm_train_fit <<- svm_train_fit # Support Vector Machines models
     tree_train_fit <<- tree_train_fit # Tree models
     xgb_model <<- xgb_model # Extreme Gradient Boosted models
 
+    ensemble_bag_rf_train_fit <<- ensemble_bag_rf_train_fit # Bagged Random Forest ensembles models
     ensemble_bagging_train_fit <<- ensemble_bagging_train_fit # Bagging Ensembles models
     ensemble_bayesglm_train_fit <<- ensemble_bayesglm_train_fit # Bayes Generalized Linear ensemble models
     ensemble_bayesrnn_train_fit <<- ensemble_bayesrnn_train_fit # Bayes Recurrent Neural Network models
+    ensemble_boost_rf_train_fit <<- ensemble_boost_rf_train_fit # Boosted Random Forest models
     ensemble_cubist_train_fit <<- ensemble_cubist_train_fit # Cubist ensemble models
     ensemble_earth_train_fit <<- ensemble_earth_train_fit # Earth ensemble models
     ensemble_best_elastic_model <<- ensemble_best_elastic_model # Ensemble elastic models
     ensemble_gb_train_fit <<- ensemble_gb_train_fit # Gradient Boosted models using ensemble data
+    ensemble_knn_model <<- ensemble_knn_model # K-Nearest Neighbors analysis using ensemble data
     ensemble_best_lasso_model <<- ensemble_best_lasso_model # lasso analysis using ensemble data
     ensemble_linear_train_fit <<- ensemble_linear_train_fit # Linear analysis using ensemble data
-    ensemble_nnet_train_fit <<- ensemble_nnet_train_fit # Linear analysis using ensemble data
+    ensemble_rf_train_fit <<- ensemble_rf_train_fit # Random Forest analysis using ensemble data
     ensemble_bagging_train_fit <<- ensemble_bagging_train_fit # Bagging analysis using ensemble data
     ensemble_best_ridge_model <<- ensemble_best_ridge_model # Ridge analysis using the ensemble data
     ensemble_rpart_train_fit <<- ensemble_rpart_train_fit # RPart analysis using ensemble data
@@ -5094,49 +6021,57 @@ if (do_you_have_new_data == "Y") {
     ensemble_xgb_model <<- ensemble_xgb_model # Extreme Gradient Boosrting using ensemble data
   }
 
-  return(list(
-    "head_of_data" = head_df, "accuracy_plot" = accuracy_plot, "overfitting_plot" = overfitting_plot,
+  list(
+    "head_of_data" = head_df, "accuracy_plot" = accuracy_plot, "accuracy_plot_free_scales" = accuracy_plot2, "overfitting_plot" = overfitting_plot, "overfitting_plot_2" = overfitting_plot2,
     "histograms" = histograms, "boxplots" = boxplots, "predictor_vs_target" = predictor_vs_target,
     "final_results_table" = final_results, "data_correlation" = M1, "data_summary" = data_summary, "head_of_ensemble" = head_ensemble, "ensemble_correlation" = ensemble_correlation,
     "accuracy_barchart" = accuracy_barchart, "train_vs_holdout" = total_plot, "duration_barchart" = duration_barchart, "overfitting_barchart" = overfitting_barchart,
     "bias_barchart" = bias_barchart, "MSE_barchart" = MSE_barchart, "MAE_barchart" = MAE_barchart, "SSE_barchart" = SSE_barchart,
     "bias_plot" = bias_plot, "MSE_plot" = MSE_plot, "MAE_plot" = MAE_plot, "SSE_plot" = SSE_plot, "Kolmogorov-Smirnov test p-score" = k_s_test_barchart,
-    "colnum" = colnum, "numresamples" = numresamples, "do_you_have_new_data" = predictions_of_new_data, "save_all_trained_models" = save_all_trained_models,
-    "remove_ensemble_correlations_greater_than" = remove_ensemble_correlations_greater_than, "train_amount" = train_amount,
-    "test_amount" = test_amount, "validation_amount" = validation_amount
-  )
+    "colnum" = colnum, "numresamples" = numresamples, "predict_on_new_data" = predictions_of_new_data, "save_all_trained_models" = save_all_trained_models,
+    "how_to_handle_strings" = how_to_handle_strings, "ensemble_reduction_method" = ensemble_reduction_method,
+    "remove_ensemble_correlations_greater_than" = remove_ensemble_correlations_greater_than, "scale_data" = scale_data,
+    "train_amount" = train_amount, "test_amount" = test_amount, "validation_amount" = validation_amount
   )
 }
 
 if (save_all_trained_models == "Y") {
+  bag_rf_train_fit <<- bag_rf_train_fit # Bagged Random Forest
   bagging_train_fit <<- bagging_train_fit # Bagging
   bayesglm_train_fit <<- bayesglm_train_fit # Bayes Generalized Linear Models
   bayesrnn_train_fit <<- bayesrnn_train_fit # Bayes Recurrent Neural Networks
+  boost_rf_train_fit <<- boost_rf_train_fit # Boosted Random Forests
   cubist_train_fit <<- cubist_train_fit # Cubist
   earth_train_fit <<- earth_train_fit # Earth model
   best_elastic_model <<- best_elastic_model # Elastic
   gam_train_fit <<- gam_train_fit # Generalized Additive Models
   gb_train_fit <<- gb_train_fit # Gradient Boosted
+  knn_train_fit <<- knn_train_fit # K-Nearest Neighbors
   best_lasso_model <<- best_lasso_model # Lasso models
   linear_train_fit <<- linear_train_fit # Linear models
+  nn <<- nn # neuralnet models
   pls_train_fit <<- pls_train_fit # pls models
   pcr_train_fit <<- pcr_train_fit # Principal Components Regression models
+  rf_train_fit <<- rf_train_fit # Random Forest models
   best_ridge_model <<- best_ridge_model # Ridge models
   rpart_train_fit <<- rpart_train_fit # Rpart models
   svm_train_fit <<- svm_train_fit # Support Vector Machines models
   tree_train_fit <<- tree_train_fit # Tree models
   xgb_model <<- xgb_model # Extreme Gradient Boosted models
 
+  ensemble_bag_rf_train_fit <<- ensemble_bag_rf_train_fit # Bagged Random Forest ensembles models
   ensemble_bagging_train_fit <<- ensemble_bagging_train_fit # Bagging Ensembles models
   ensemble_bayesglm_train_fit <<- ensemble_bayesglm_train_fit # Bayes Generalized Linear ensemble models
   ensemble_bayesrnn_train_fit <<- ensemble_bayesrnn_train_fit # Bayes Recurrent Neural Network models
+  ensemble_boost_rf_train_fit <<- ensemble_boost_rf_train_fit # Boosted Random Forest models
   ensemble_cubist_train_fit <<- ensemble_cubist_train_fit # Cubist ensemble models
   ensemble_earth_train_fit <<- ensemble_earth_train_fit # Earth ensemble models
   ensemble_best_elastic_model <<- ensemble_best_elastic_model # Ensemble elastic models
   ensemble_gb_train_fit <<- ensemble_gb_train_fit # Gradient Boosted models using ensemble data
+  ensemble_knn_model <<- ensemble_knn_model # K-Nearest Neighbors analysis using ensemble data
   ensemble_best_lasso_model <<- ensemble_best_lasso_model # lasso analysis using ensemble data
   ensemble_linear_train_fit <<- ensemble_linear_train_fit # Linear analysis using ensemble data
-  ensemble_nnet_train_fit <<- ensemble_nnet_train_fit # Linear analysis using ensemble data
+  ensemble_rf_train_fit <<- ensemble_rf_train_fit # Random Forest analysis using ensemble data
   ensemble_bagging_train_fit <<- ensemble_bagging_train_fit # Bagging analysis using ensemble data
   ensemble_best_ridge_model <<- ensemble_best_ridge_model # Ridge analysis using the ensemble data
   ensemble_rpart_train_fit <<- ensemble_rpart_train_fit # RPart analysis using ensemble data
@@ -5166,15 +6101,17 @@ for (i in 1:ncol(df2)) {
 }
 
 return(list(
-  "head_of_data" = head_df, "accuracy_plot" = accuracy_plot, "overfitting_plot" = overfitting_plot,
+  "head_of_data" = head_df, "accuracy_plot" = accuracy_plot, "accuracy_free_scales" = accuracy_plot2, "overfitting_plot" = overfitting_plot, "overfitting_plot2" = overfitting_plot2,
   "histograms" = histograms, "boxplots" = boxplots, "predictor_vs_target" = predictor_vs_target, "final_results_table" = final_results,
   "data_correlation" = M1, "data_summary" = data_summary, "head_of_ensemble" = head_ensemble, "ensemble_correlation" = ensemble_correlation,
-  "accuracy_barchart" = accuracy_barchart, "train_vs_holdout" = total_plot, "duration_barchart" = duration_barchart, "overfitting_barchart" = overfitting_barchart,
+  "accuracy_barchart" = accuracy_barchart, "train_vs_holdout" = total_plot, "train_vs_holdout_free_scales" = total_plot2, "duration_barchart" = duration_barchart, "overfitting_barchart" = overfitting_barchart,
   "bias_barchart" = bias_barchart, "MSE_barchart" = MSE_barchart, "MAE_barchart" = MAE_barchart, "SSE_barchart" = SSE_barchart, "Kolmogorov-Smirnov test p-score" = k_s_test_barchart,
   "bias_plot" = bias_plot, "MSE_plot" = MSE_plot, "MAE_plot" = MAE_plot, "SSE_plot" = SSE_plot,
-  "colnum" = colnum, "numresamples" = numresamples, "save_all_trained_modesl" = save_all_trained_models,
+  "colnum" = colnum, "numresamples" = numresamples, "save_all_trained_modesl" = save_all_trained_models, "how_to_handle_strings" = how_to_handle_strings,
   "remove_ensemble_correlations_greater_than" = remove_ensemble_correlations_greater_than,
+  "ensemble_reduction_method" = ensemble_reduction_method, "scale_data" = scale_data,
   "train_amount" = train_amount, "test_amount" = test_amount, "validation_amount" = validation_amount
 )
 )
+
 }

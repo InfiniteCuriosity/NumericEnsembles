@@ -8,11 +8,15 @@ Numeric(
   data,
   colnum,
   numresamples,
-  best_subsets = c(0("none"), 1("Forward"), 2("Backward"), 3("Exhaustive"), 4("SeqRep")),
-  how_to_handle_strings = c(0("none"), 1("factor levels")),
-  do_you_have_new_data = c("Y", "N"),
+  how_to_handle_strings = c(0("none"), 1("factor levels"), 2("One-hot encoding"),
+    3("One-hot encoding with jitter")),
+  predict_on_new_data = c("Y", "N"),
   save_all_trained_models = c("Y", "N"),
   remove_ensemble_correlations_greater_than,
+  ensemble_reduction_method = c(0("none"), 1("BIC exhaustive"), 2("BIC forward"),
+    3("BIC backward"), 4("BIC seqrep"), 5("Mallows_cp exhaustive"),
+    6("Mallows_cp forward"), 7("Mallows_cp backward"), 8("Mallows_cp, seqrep")),
+  scale_data = c("Y", "N"),
   use_parallel = c("Y", "N"),
   train_amount,
   test_amount,
@@ -26,15 +30,17 @@ Numeric(
 
 \item{numresamples}{the number of resamples}
 
-\item{best_subsets}{0 None, 1 Forward, 2 Backward, 3 Exhaustive 4 Seqrep}
-
 \item{how_to_handle_strings}{0: No strings, 1: Factor values, 2: One-hot encoding, 3: One-hot encoding AND jitter}
 
-\item{do_you_have_new_data}{"Y" or "N". If "Y", then you will be asked for the new data}
+\item{predict_on_new_data}{"Y" or "N". If "Y", then you will be asked for the new data}
 
 \item{save_all_trained_models}{"Y" or "N". If "Y", then places all the trained models in the Environment}
 
 \item{remove_ensemble_correlations_greater_than}{Enter a number to remove correlations in the ensembles}
+
+\item{ensemble_reduction_method}{BIC (1, 2, 3, 4) or Mallow's_cp (5, 6, 7, 8) for Forward, Backward, Exhaustive and SeqRep}
+
+\item{scale_data}{"Y" or "N" to scale numeric data}
 
 \item{use_parallel}{"Y" or "N" for parallel processing}
 
