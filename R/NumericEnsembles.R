@@ -6,6 +6,7 @@
 #' @param how_to_handle_strings 0: No strings, 1: Factor values, 2: One-hot encoding, 3: One-hot encoding AND jitter
 #' @param predict_on_new_data "Y" or "N". If "Y", then you will be asked for the new data
 #' @param save_all_trained_models "Y" or "N". If "Y", then places all the trained models in the Environment
+#' @param save_all_plots Saves all plots to the working directory
 #' @param scale_data "Y" or "N" to scale numeric data
 #' @param ensemble_reduction_method BIC (1, 2, 3, 4) or Mallow's_cp (5, 6, 7, 8) for Forward, Backward, Exhaustive and SeqRep
 #' @param remove_ensemble_correlations_greater_than Enter a number to remove correlations in the ensembles
@@ -45,7 +46,7 @@
 #' @importFrom reactablefmtr add_title
 #' @importFrom readr read_lines
 #' @importFrom rpart rpart
-#' @importFrom stats as.formula cor sd predict residuals reorder quantile gaussian stats BIC
+#' @importFrom stats as.formula BIC cor sd predict residuals reorder quantile gaussian
 #' @importFrom tidyr gather pivot_longer
 #' @importFrom tree tree cv.tree misclass.tree
 #' @importFrom utils tail str head read.csv
@@ -53,7 +54,7 @@
 
 
 Numeric <- function(data, colnum, numresamples, how_to_handle_strings = c(0("none"), 1("factor levels"), 2("One-hot encoding"), 3("One-hot encoding with jitter")), predict_on_new_data = c("Y", "N"),
-                    save_all_trained_models = c("Y", "N"), remove_ensemble_correlations_greater_than,
+                    save_all_trained_models = c("Y", "N"), remove_ensemble_correlations_greater_than, save_all_plots = c("Y", "N"),
                     ensemble_reduction_method = c(0("none"), 1("BIC exhaustive"), 2("BIC forward"), 3("BIC backward"), 4("BIC seqrep"),
                     5("Mallows_cp exhaustive"), 6("Mallows_cp forward"), 7("Mallows_cp backward"), 8("Mallows_cp, seqrep")),
                     scale_data = c("Y", "N"), use_parallel = c("Y", "N"),
@@ -5316,6 +5317,12 @@ if (data_visualizations[1] == "Bagged Random Forest") {
   gridExtra::grid.arrange(bag_rf_resid_vs_actual)
   gridExtra::grid.arrange(bag_rf_hist_residuals)
   gridExtra::grid.arrange(bag_rf_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bagged Random Forest"){
+    print(ensemble_bayesglm_pred_vs_actual); ggplot2::ggsave("ensemble_bayesglm_pred_vs_actual.pdf")
+    print(ensemble_bayesglm_resid_vs_actual); ggplot2::ggsave("ensemble_bayesglm_resid_vs_actual.pdf")
+    print(ensemble_bayesglm_hist_residuals); ggplot2::ggsave("ensemble_bayesglm_hist_residuals.pdf")
+    print(ensemble_bayesglm_qq); ggplot2::ggsave("ensemble_bayesglm_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Bagging") {
@@ -5324,6 +5331,12 @@ if (data_visualizations[1] == "Bagging") {
   gridExtra::grid.arrange(bagging_resid_vs_actual)
   gridExtra::grid.arrange(bagging_hist_residuals)
   gridExtra::grid.arrange(bagging_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bagging"){
+    print(bagging_pred_vs_actual); ggplot2::ggsave("bagging_pred_vs_actual.pdf")
+    print(bagging_resid_vs_actual); ggplot2::ggsave("bagging_resid_vs_actual.pdf")
+    print(bagging_hist_residuals); ggplot2::ggsave("bagging_hist_residuals.pdf")
+    print(bagging_qq); ggplot2::ggsave("bagging_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "BayesGLM") {
@@ -5332,6 +5345,12 @@ if (data_visualizations[1] == "BayesGLM") {
   gridExtra::grid.arrange(bayesglm_resid_vs_actual)
   gridExtra::grid.arrange(bayesglm_hist_residuals)
   gridExtra::grid.arrange(bayesglm_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "BayesGLM"){
+    print(bayesglm_pred_vs_actual); ggplot2::ggsave("bayesglm_pred_vs_actual.pdf")
+    print(bayesglm_resid_vs_actual); ggplot2::ggsave("bayesglm_resid_vs_actual.pdf")
+    print(bayesglm_hist_residuals); ggplot2::ggsave("bayesglm_hist_residuals.pdf")
+    print(bayesglm_qq); ggplot2::ggsave("bayesglm_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "BayesRNN") {
@@ -5340,6 +5359,12 @@ if (data_visualizations[1] == "BayesRNN") {
   gridExtra::grid.arrange(bayesrnn_resid_vs_actual)
   gridExtra::grid.arrange(bayesrnn_hist_residuals)
   gridExtra::grid.arrange(bayesrnn_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "BayesRNN"){
+    print(bayesrnn_pred_vs_actual); ggplot2::ggsave("bayesrnn_pred_vs_actual.pdf")
+    print(bayesrnn_resid_vs_actual); ggplot2::ggsave("bayesrnn_resid_vs_actual.pdf")
+    print(bayesrnn_hist_residuals); ggplot2::ggsave("bayesrnn_hist_residuals.pdf")
+    print(bayesrnn_qq); ggplot2::ggsave("bayesrnn_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Boost_rf") {
@@ -5348,6 +5373,12 @@ if (data_visualizations[1] == "Boost_rf") {
   gridExtra::grid.arrange(boost_rf_resid_vs_actual)
   gridExtra::grid.arrange(boost_rf_hist_residuals)
   gridExtra::grid.arrange(boost_rf_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Boost_rf"){
+    print(boost_rf_pred_vs_actual); ggplot2::ggsave("boost_rf_pred_vs_actual.pdf")
+    print(boost_rf_resid_vs_actual); ggplot2::ggsave("boost_rf_resid_vs_actual.pdf")
+    print(boost_rf_hist_residuals); ggplot2::ggsave("boost_rf_hist_residuals.pdf")
+    print(boost_rf_qq); ggplot2::ggsave("boost_rf_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Cubist") {
@@ -5356,6 +5387,12 @@ if (data_visualizations[1] == "Cubist") {
   gridExtra::grid.arrange(cubist_resid_vs_actual)
   gridExtra::grid.arrange(cubist_hist_residuals)
   gridExtra::grid.arrange(cubist_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Cubist"){
+    print(boost_rf_pred_vs_actual); ggplot2::ggsave("boost_rf_pred_vs_actual.pdf")
+    print(boost_rf_resid_vs_actual); ggplot2::ggsave("boost_rf_resid_vs_actual.pdf")
+    print(boost_rf_hist_residuals); ggplot2::ggsave("boost_rf_hist_residuals.pdf")
+    print(boost_rf_qq); ggplot2::ggsave("boost_rf_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "earth") {
@@ -5364,6 +5401,12 @@ if (data_visualizations[1] == "earth") {
   gridExtra::grid.arrange(earth_resid_vs_actual)
   gridExtra::grid.arrange(earth_hist_residuals)
   gridExtra::grid.arrange(earth_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "earth"){
+    print(earth_pred_vs_actual); ggplot2::ggsave("earth_pred_vs_actual.pdf")
+    print(earth_resid_vs_actual); ggplot2::ggsave("earth_resid_vs_actual.pdf")
+    print(earth_hist_residuals); ggplot2::ggsave("earth_hist_residuals.pdf")
+    print(earth_qq); ggplot2::ggsave("earth_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Elastic") {
@@ -5372,8 +5415,13 @@ if (data_visualizations[1] == "Elastic") {
   gridExtra::grid.arrange(elastic_resid_vs_actual)
   gridExtra::grid.arrange(elastic_hist_residuals)
   gridExtra::grid.arrange(elastic_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Elastic"){
+    print(elastic_pred_vs_actual); ggplot2::ggsave("elastic_pred_vs_actual.pdf")
+    print(elastic_resid_vs_actual); ggplot2::ggsave("elastic_resid_vs_actual.pdf")
+    print(elastic_hist_residuals); ggplot2::ggsave("elastic_hist_residuals.pdf")
+    print(elastic_qq); ggplot2::ggsave("elastic_qq.pdf")
+  }
 }
-
 
 if (data_visualizations[1] == "GAM") {
   grid.arrange(gam_pred_vs_actual, gam_resid_vs_actual, gam_hist_residuals, gam_qq, ncol = 2)
@@ -5381,6 +5429,12 @@ if (data_visualizations[1] == "GAM") {
   gridExtra::grid.arrange(gam_resid_vs_actual)
   gridExtra::grid.arrange(gam_hist_residuals)
   gridExtra::grid.arrange(gam_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "GAM"){
+    print(gam_pred_vs_actual); ggplot2::ggsave("gam_pred_vs_actual.pdf")
+    print(gam_resid_vs_actual); ggplot2::ggsave("gam_resid_vs_actual.pdf")
+    print(gam_hist_residuals); ggplot2::ggsave("gam_hist_residuals.pdf")
+    print(gam_qq); ggplot2::ggsave("gam_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Gradient Boosted") {
@@ -5389,6 +5443,12 @@ if (data_visualizations[1] == "Gradient Boosted") {
   gridExtra::grid.arrange(gb_resid_vs_actual)
   gridExtra::grid.arrange(gb_hist_residuals)
   gridExtra::grid.arrange(gb_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Gradient Boosted"){
+    print(gb_pred_vs_actual); ggplot2::ggsave("gb_pred_vs_actual.pdf")
+    print(gb_resid_vs_actual); ggplot2::ggsave("gb_resid_vs_actual.pdf")
+    print(gb_hist_residuals); ggplot2::ggsave("gb_hist_residuals.pdf")
+    print(gb_qq); ggplot2::ggsave("gb_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "KNN") {
@@ -5397,6 +5457,12 @@ if (data_visualizations[1] == "KNN") {
   gridExtra::grid.arrange(knn_resid_vs_actual)
   gridExtra::grid.arrange(knn_hist_residuals)
   gridExtra::grid.arrange(knn_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "KNN") {
+    print(knn_pred_vs_actual); ggplot2::ggsave("knn_pred_vs_actual.pdf")
+    print(knn_resid_vs_actual); ggplot2::ggsave("knn_resid_vs_actual.pdf")
+    print(knn_hist_residuals); ggplot2::ggsave("knn_hist_residuals.pdf")
+    print(knn_qq); ggplot2::ggsave("knn_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Lasso") {
@@ -5405,8 +5471,13 @@ if (data_visualizations[1] == "Lasso") {
   gridExtra::grid.arrange(lasso_resid_vs_actual)
   gridExtra::grid.arrange(lasso_hist_residuals)
   gridExtra::grid.arrange(lasso_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Lasso"){
+    print(lasso_pred_vs_actual); ggplot2::ggsave("lasso_pred_vs_actual.pdf")
+    print(lasso_resid_vs_actual); ggplot2::ggsave("lasso_resid_vs_actual.pdf")
+    print(lasso_hist_residuals); ggplot2::ggsave("lasso_hist_residuals.pdf")
+    print(lasso_qq); ggplot2::ggsave("lasso_qq.pdf")
+  }
 }
-
 
 if (data_visualizations[1] == "Linear") {
   gridExtra::grid.arrange(linear_pred_vs_actual, linear_resid_vs_actual, linear_hist_residuals, linear_qq, ncol = 2)
@@ -5414,6 +5485,12 @@ if (data_visualizations[1] == "Linear") {
   gridExtra::grid.arrange(linear_resid_vs_actual)
   gridExtra::grid.arrange(linear_hist_residuals)
   gridExtra::grid.arrange(linear_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Linear"){
+    print(linear_pred_vs_actual); ggplot2::ggsave("linear_pred_vs_actual.pdf")
+    print(linear_resid_vs_actual); ggplot2::ggsave("linear_resid_vs_actual.pdf")
+    print(linear_hist_residuals); ggplot2::ggsave("linear_hist_residuals.pdf")
+    print(linear_qq); ggplot2::ggsave("linear_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Neuralnet") {
@@ -5422,6 +5499,12 @@ if (data_visualizations[1] == "Neuralnet") {
   gridExtra::grid.arrange(neuralnet_resid_vs_actual)
   gridExtra::grid.arrange(neuralnet_hist_residuals)
   gridExtra::grid.arrange(neuralnet_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Neuralnet"){
+    print(neuralnet_pred_vs_actual); ggplot2::ggsave("neuralnet_pred_vs_actual.pdf")
+    print(neuralnet_resid_vs_actual); ggplot2::ggsave("neuralnet_resid_vs_actual.pdf")
+    print(neuralnet_hist_residuals); ggplot2::ggsave("neuralnet_hist_residuals.pdf")
+    print(neuralnet_qq); ggplot2::ggsave("neuralnet_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "PLS") {
@@ -5430,6 +5513,12 @@ if (data_visualizations[1] == "PLS") {
   gridExtra::grid.arrange(pls_resid_vs_actual)
   gridExtra::grid.arrange(pls_hist_residuals)
   gridExtra::grid.arrange(pls_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "PLS"){
+    print(pls_pred_vs_actual); ggplot2::ggsave("pls_pred_vs_actual.pdf")
+    print(pls_resid_vs_actual); ggplot2::ggsave("pls_resid_vs_actual.pdf")
+    print(pls_hist_residuals); ggplot2::ggsave("pls_hist_residuals.pdf")
+    print(pls_qq); ggplot2::ggsave("pls_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "PCR") {
@@ -5438,6 +5527,12 @@ if (data_visualizations[1] == "PCR") {
   gridExtra::grid.arrange(pcr_resid_vs_actual)
   gridExtra::grid.arrange(pcr_hist_residuals)
   gridExtra::grid.arrange(pcr_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "PCR"){
+    print(pcr_pred_vs_actual); ggplot2::ggsave("pcr_pred_vs_actual.pdf")
+    print(pcr_resid_vs_actual); ggplot2::ggsave("pcr_resid_vs_actual.pdf")
+    print(pcr_hist_residuals); ggplot2::ggsave("pcr_hist_residuals.pdf")
+    print(pcr_qq); ggplot2::ggsave("pcr_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "RF") {
@@ -5446,6 +5541,12 @@ if (data_visualizations[1] == "RF") {
   gridExtra::grid.arrange(rf_resid_vs_actual)
   gridExtra::grid.arrange(rf_hist_residuals)
   gridExtra::grid.arrange(rf_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "RF"){
+    print(rf_pred_vs_actual); ggplot2::ggsave("rf_pred_vs_actual.pdf")
+    print(rf_resid_vs_actual); ggplot2::ggsave("rf_resid_vs_actual.pdf")
+    print(rf_hist_residuals); ggplot2::ggsave("rf_hist_residuals.pdf")
+    print(rf_qq); ggplot2::ggsave("rf_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Ridge") {
@@ -5454,6 +5555,12 @@ if (data_visualizations[1] == "Ridge") {
   gridExtra::grid.arrange(ridge_resid_vs_actual)
   gridExtra::grid.arrange(ridge_hist_residuals)
   gridExtra::grid.arrange(ridge_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ridge"){
+    print(ridge_pred_vs_actual); ggplot2::ggsave("ridge_pred_vs_actual.pdf")
+    print(ridge_resid_vs_actual); ggplot2::ggsave("ridge_resid_vs_actual.pdf")
+    print(ridge_hist_residuals); ggplot2::ggsave("ridge_hist_residuals.pdf")
+    print(ridge_qq); ggplot2::ggsave("ridge_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Rpart") {
@@ -5462,6 +5569,12 @@ if (data_visualizations[1] == "Rpart") {
   gridExtra::grid.arrange(rpart_resid_vs_actual)
   gridExtra::grid.arrange(rpart_hist_residuals)
   gridExtra::grid.arrange(rpart_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Rpart"){
+    print(rpart_pred_vs_actual); ggplot2::ggsave("rpart_pred_vs_actual.pdf")
+    print(rpart_resid_vs_actual); ggplot2::ggsave("rpart_resid_vs_actual.pdf")
+    print(rpart_hist_residuals); ggplot2::ggsave("rpart_hist_residuals.pdf")
+    print(rpart_qq); ggplot2::ggsave("rpart_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "SVM") {
@@ -5470,6 +5583,12 @@ if (data_visualizations[1] == "SVM") {
   gridExtra::grid.arrange(svm_resid_vs_actual)
   gridExtra::grid.arrange(svm_hist_residuals)
   gridExtra::grid.arrange(svm_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "SVM"){
+    print(svm_pred_vs_actual); ggplot2::ggsave("svm_pred_vs_actual.pdf")
+    print(svm_resid_vs_actual); ggplot2::ggsave("svm_resid_vs_actual.pdf")
+    print(svm_hist_residuals); ggplot2::ggsave("svm_hist_residuals.pdf")
+    print(svm_qq); ggplot2::ggsave("svm_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Tree") {
@@ -5478,6 +5597,12 @@ if (data_visualizations[1] == "Tree") {
   gridExtra::grid.arrange(tree_resid_vs_actual)
   gridExtra::grid.arrange(tree_hist_residuals)
   gridExtra::grid.arrange(tree_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Tree"){
+    print(tree_pred_vs_actual); ggplot2::ggsave("tree_pred_vs_actual.pdf")
+    print(tree_resid_vs_actual); ggplot2::ggsave("tree_resid_vs_actual.pdf")
+    print(tree_hist_residuals); ggplot2::ggsave("tree_hist_residuals.pdf")
+    print(tree_qq); ggplot2::ggsave("tree_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "XGBoost") {
@@ -5486,6 +5611,12 @@ if (data_visualizations[1] == "XGBoost") {
   gridExtra::grid.arrange(xgb_resid_vs_actual)
   gridExtra::grid.arrange(xgb_hist_residuals)
   gridExtra::grid.arrange(xgb_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "XGBoost"){
+    print(xgb_pred_vs_actual); ggplot2::ggsave("xgb_pred_vs_actual.pdf")
+    print(xgb_resid_vs_actual); ggplot2::ggsave("xgb_resid_vs_actual.pdf")
+    print(xgb_hist_residuals); ggplot2::ggsave("xgb_hist_residuals.pdf")
+    print(xgb_qq); ggplot2::ggsave("xgb_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Ensemble Bagged Random Forest") {
@@ -5494,6 +5625,12 @@ if (data_visualizations[1] == "Ensemble Bagged Random Forest") {
   gridExtra::grid.arrange(ensemble_bag_rf_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_bag_rf_hist_residuals)
   gridExtra::grid.arrange(ensemble_bag_rf_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Bagged Random Forest"){
+    print(ensemble_bag_rf_pred_vs_actual); ggplot2::ggsave("ensemble_bag_rf_pred_vs_actual.pdf")
+    print(ensemble_bag_rf_resid_vs_actual); ggplot2::ggsave("ensemble_bag_rf_resid_vs_actual.pdf")
+    print(ensemble_bag_rf_hist_residuals); ggplot2::ggsave("ensemble_bag_rf_hist_residuals.pdf")
+    print(ensemble_bag_rf_qq); ggplot2::ggsave("ensemble_bag_rf_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Ensemble Bagging") {
@@ -5502,6 +5639,12 @@ if (data_visualizations[1] == "Ensemble Bagging") {
   gridExtra::grid.arrange(ensemble_bagging_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_bagging_hist_residuals)
   gridExtra::grid.arrange(ensemble_bagging_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Bagging"){
+    print(ensemble_bagging_pred_vs_actual); ggplot2::ggsave("ensemble_bagging_pred_vs_actual.pdf")
+    print(ensemble_bagging_resid_vs_actual); ggplot2::ggsave("ensemble_bagging_resid_vs_actual.pdf")
+    print(ensemble_bagging_hist_residuals); ggplot2::ggsave("ensemble_bagging_hist_residuals.pdf")
+    print(ensemble_bagging_qq); ggplot2::ggsave("ensemble_bagging_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Ensemble BayesGLM") {
@@ -5510,6 +5653,12 @@ if (data_visualizations[1] == "Ensemble BayesGLM") {
   gridExtra::grid.arrange(ensemble_bayesglm_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_bayesglm_hist_residuals)
   gridExtra::grid.arrange(ensemble_bayesglm_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble BayesGLM"){
+    print(ensemble_bayesglm_pred_vs_actual); ggplot2::ggsave("ensemble_bayesglm_pred_vs_actual.pdf")
+    print(ensemble_bayesglm_resid_vs_actual); ggplot2::ggsave("ensemble_bayesglm_resid_vs_actual.pdf")
+    print(ensemble_bayesglm_hist_residuals); ggplot2::ggsave("ensemble_bayesglm_hist_residuals.pdf")
+    print(ensemble_bayesglm_qq); ggplot2::ggsave("ensemble_bayesglm_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Ensemble BayesRNN") {
@@ -5518,6 +5667,12 @@ if (data_visualizations[1] == "Ensemble BayesRNN") {
   gridExtra::grid.arrange(ensemble_bayesrnn_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_bayesrnn_hist_residuals)
   gridExtra::grid.arrange(ensemble_bayesrnn_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble BayesRNN"){
+    print(ensemble_bayesrnn_pred_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_pred_vs_actual.pdf")
+    print(ensemble_bayesrnn_resid_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_resid_vs_actual.pdf")
+    print(ensemble_bayesrnn_hist_residuals); ggplot2::ggsave("ensemble_bayesrnn_hist_residuals.pdf")
+    print(ensemble_bayesrnn_qq); ggplot2::ggsave("ensemble_bayesrnn_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Ensemble Boosted RF") {
@@ -5526,6 +5681,12 @@ if (data_visualizations[1] == "Ensemble Boosted RF") {
   gridExtra::grid.arrange(ensemble_boost_rf_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_boost_rf_hist_residuals)
   gridExtra::grid.arrange(ensemble_boost_rf_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Boosted RF"){
+    print(ensemble_boost_rf_pred_vs_actual); ggplot2::ggsave("ensemble_boost_rf_pred_vs_actual.pdf")
+    print(ensemble_boost_rf_resid_vs_actual); ggplot2::ggsave("ensemble_boost_rf_resid_vs_actual.pdf")
+    print(ensemble_boost_rf_hist_residuals); ggplot2::ggsave("ensemble_boost_rf_hist_residuals.pdf")
+    print(ensemble_boost_rf_qq); ggplot2::ggsave("ensemble_boost_rf_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Ensemble Cubist") {
@@ -5534,6 +5695,12 @@ if (data_visualizations[1] == "Ensemble Cubist") {
   gridExtra::grid.arrange(ensemble_cubist_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_cubist_hist_residuals)
   gridExtra::grid.arrange(ensemble_cubist_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Cubist"){
+    print(ensemble_cubist_pred_vs_actual); ggplot2::ggsave("ensemble_cubist_pred_vs_actual.pdf")
+    print(ensemble_cubist_resid_vs_actual); ggplot2::ggsave("ensemble_cubist_resid_vs_actual.pdf")
+    print(ensemble_cubist_hist_residuals); ggplot2::ggsave("ensemble_cubist_hist_residuals.pdf")
+    print(ensemble_cubist_qq); ggplot2::ggsave("ensemble_cubist_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Ensemble Earth") {
@@ -5542,6 +5709,12 @@ if (data_visualizations[1] == "Ensemble Earth") {
   gridExtra::grid.arrange(ensemble_earth_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_earth_hist_residuals)
   gridExtra::grid.arrange(ensemble_earth_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Earth"){
+    print(ensemble_earth_pred_vs_actual); ggplot2::ggsave("ensemble_earth_pred_vs_actual.pdf")
+    print(ensemble_earth_resid_vs_actual); ggplot2::ggsave("ensemble_earth_resid_vs_actual.pdf")
+    print(ensemble_earth_hist_residuals); ggplot2::ggsave("ensemble_earth_hist_residuals.pdf")
+    print(ensemble_earth_qq); ggplot2::ggsave("ensemble_earth_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Ensemble_Elastic") {
@@ -5550,8 +5723,13 @@ if (data_visualizations[1] == "Ensemble_Elastic") {
   gridExtra::grid.arrange(ensemble_elastic_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_elastic_hist_residuals)
   gridExtra::grid.arrange(ensemble_elastic_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Elastic"){
+    print(ensemble_elastic_pred_vs_actual); ggplot2::ggsave("ensemble_elastic_pred_vs_actual.pdf")
+    print(ensemble_elastic_resid_vs_actual); ggplot2::ggsave("ensemble_elastic_resid_vs_actual.pdf")
+    print(ensemble_elastic_hist_residuals); ggplot2::ggsave("ensemble_elastic_hist_residuals.pdf")
+    print(ensemble_elastic_qq); ggplot2::ggsave("ensemble_elastic_qq.pdf")
+  }
 }
-
 
 if (data_visualizations[1] == "Ensemble Gradient Boosted") {
   gridExtra::grid.arrange(ensemble_gb_pred_vs_actual, ensemble_gb_resid_vs_actual, ensemble_gb_hist_residuals, ensemble_gb_qq, ncol = 2)
@@ -5559,6 +5737,12 @@ if (data_visualizations[1] == "Ensemble Gradient Boosted") {
   gridExtra::grid.arrange(ensemble_gb_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_gb_hist_residuals)
   gridExtra::grid.arrange(ensemble_gb_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Gradient Boosted"){
+    print(ensemble_gb_pred_vs_actual); ggplot2::ggsave("ensemble_gb_pred_vs_actual.pdf")
+    print(ensemble_gb_resid_vs_actual); ggplot2::ggsave("ensemble_gb_resid_vs_actual.pdf")
+    print(ensemble_gb_hist_residuals); ggplot2::ggsave("ensemble_gb_hist_residuals.pdf")
+    print(ensemble_gb_qq); ggplot2::ggsave("ensemble_gb_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Ensemble K-Nearest Neighbors") {
@@ -5567,6 +5751,12 @@ if (data_visualizations[1] == "Ensemble K-Nearest Neighbors") {
   gridExtra::grid.arrange(ensemble_knn_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_knn_hist_residuals)
   gridExtra::grid.arrange(ensemble_knn_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble K-Nearest Neighbors"){
+    print(ensemble_knn_pred_vs_actual); ggplot2::ggsave("ensemble_knn_pred_vs_actual.pdf")
+    print(ensemble_knn_resid_vs_actual); ggplot2::ggsave("ensemble_knn_resid_vs_actual.pdf")
+    print(ensemble_knn_hist_residuals); ggplot2::ggsave("ensemble_knn_hist_residuals.pdf")
+    print(ensemble_knn_qq); ggplot2::ggsave("ensemble_knn_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Ensemble_Lasso") {
@@ -5575,6 +5765,12 @@ if (data_visualizations[1] == "Ensemble_Lasso") {
   gridExtra::grid.arrange(ensemble_lasso_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_lasso_hist_residuals)
   gridExtra::grid.arrange(ensemble_lasso_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Lasso"){
+    print(ensemble_lasso_pred_vs_actual); ggplot2::ggsave("ensemble_lasso_pred_vs_actual.pdf")
+    print(ensemble_lasso_resid_vs_actual); ggplot2::ggsave("ensemble_lasso_resid_vs_actual.pdf")
+    print(ensemble_lasso_hist_residuals); ggplot2::ggsave("ensemble_lasso_hist_residuals.pdf")
+    print(ensemble_lasso_qq); ggplot2::ggsave("ensemble_lasso_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Ensemble Linear") {
@@ -5583,6 +5779,12 @@ if (data_visualizations[1] == "Ensemble Linear") {
   gridExtra::grid.arrange(ensemble_linear_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_linear_hist_residuals)
   gridExtra::grid.arrange(ensemble_linear_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Linear"){
+    print(ensemble_linear_pred_vs_actual); ggplot2::ggsave("ensemble_linear_pred_vs_actual.pdf")
+    print(ensemble_linear_resid_vs_actual); ggplot2::ggsave("ensemble_linear_resid_vs_actual.pdf")
+    print(ensemble_linear_hist_residuals); ggplot2::ggsave("ensemble_linear_hist_residuals.pdf")
+    print(ensemble_linear_qq); ggplot2::ggsave("ensemble_linear_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Ensemble RF") {
@@ -5591,6 +5793,12 @@ if (data_visualizations[1] == "Ensemble RF") {
   gridExtra::grid.arrange(ensemble_rf_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_rf_hist_residuals)
   gridExtra::grid.arrange(ensemble_rf_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble RF"){
+    print(ensemble_rf_pred_vs_actual); ggplot2::ggsave("ensemble_rf_pred_vs_actual.pdf")
+    print(ensemble_rf_resid_vs_actual); ggplot2::ggsave("ensemble_rf_resid_vs_actual.pdf")
+    print(ensemble_rf_hist_residuals); ggplot2::ggsave("ensemble_rf_hist_residuals.pdf")
+    print(ensemble_rf_qq); ggplot2::ggsave("ensemble_rf_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Ensemble_Ridge") {
@@ -5599,6 +5807,12 @@ if (data_visualizations[1] == "Ensemble_Ridge") {
   gridExtra::grid.arrange(ensemble_ridge_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_ridge_hist_residuals)
   gridExtra::grid.arrange(ensemble_ridge_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Ridge"){
+    print(ensemble_ridge_pred_vs_actual); ggplot2::ggsave("ensemble_ridge_pred_vs_actual.pdf")
+    print(ensemble_ridge_resid_vs_actual); ggplot2::ggsave("ensemble_ridge_resid_vs_actual.pdf")
+    print(ensemble_ridge_hist_residuals); ggplot2::ggsave("ensemble_ridge_hist_residuals.pdf")
+    print(ensemble_ridge_qq); ggplot2::ggsave("ensemble_ridge_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Ensemble Rpart") {
@@ -5607,6 +5821,12 @@ if (data_visualizations[1] == "Ensemble Rpart") {
   gridExtra::grid.arrange(ensemble_rpart_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_rpart_hist_residuals)
   gridExtra::grid.arrange(ensemble_rpart_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Rpart"){
+    print(ensemble_rpart_pred_vs_actual); ggplot2::ggsave("ensemble_rpart_pred_vs_actual.pdf")
+    print(ensemble_rpart_resid_vs_actual); ggplot2::ggsave("ensemble_rpart_resid_vs_actual.pdf")
+    print(ensemble_rpart_hist_residuals); ggplot2::ggsave("ensemble_rpart_hist_residuals.pdf")
+    print(ensemble_rpart_qq); ggplot2::ggsave("ensemble_rpart_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Ensemble Support Vector Machines") {
@@ -5615,6 +5835,12 @@ if (data_visualizations[1] == "Ensemble Support Vector Machines") {
   gridExtra::grid.arrange(ensemble_svm_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_svm_hist_residuals)
   gridExtra::grid.arrange(ensemble_svm_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Support Vector Machines"){
+    print(ensemble_svm_pred_vs_actual); ggplot2::ggsave("ensemble_svm_pred_vs_actual.pdf")
+    print(ensemble_svm_resid_vs_actual); ggplot2::ggsave("ensemble_svm_resid_vs_actual.pdf")
+    print(ensemble_svm_hist_residuals); ggplot2::ggsave("ensemble_svm_hist_residuals.pdf")
+    print(ensemble_svm_qq); ggplot2::ggsave("ensemble_svm_qq.pdf")
+  }
 }
 
 if (data_visualizations[1] == "Ensemble Trees") {
@@ -5623,6 +5849,26 @@ if (data_visualizations[1] == "Ensemble Trees") {
   gridExtra::grid.arrange(ensemble_tree_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_tree_hist_residuals)
   gridExtra::grid.arrange(ensemble_tree_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Trees"){
+    print(ensemble_tree_pred_vs_actual); ggplot2::ggsave("ensemble_tree_pred_vs_actual.pdf")
+    print(ensemble_tree_resid_vs_actual); ggplot2::ggsave("ensemble_tree_resid_vs_actual.pdf")
+    print(ensemble_tree_hist_residuals); ggplot2::ggsave("ensemble_tree_hist_residuals.pdf")
+    print(ensemble_tree_qq); ggplot2::ggsave("ensemble_tree_qq.pdf")
+  }
+}
+
+if (data_visualizations[1] == "Ensemble XGBoost") {
+  gridExtra::grid.arrange(ensemble_xgb_pred_vs_actual, ensemble_xgb_resid_vs_actual, ensemble_xgb_hist_residuals, ensemble_xgb_qq, ncol = 2)
+  gridExtra::grid.arrange(ensemble_xgb_pred_vs_actual)
+  gridExtra::grid.arrange(ensemble_xgb_resid_vs_actual)
+  gridExtra::grid.arrange(ensemble_xgb_hist_residuals)
+  gridExtra::grid.arrange(ensemble_xgb_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble XGBoost"){
+    print(ensemble_xgb_pred_vs_actual); ggplot2::ggsave("ensemble_xgb_pred_vs_actual.pdf")
+    print(ensemble_xgb_resid_vs_actual); ggplot2::ggsave("ensemble_xgb_resid_vs_actual.pdf")
+    print(ensemble_xgb_hist_residuals); ggplot2::ggsave("ensemble_xgb_hist_residuals.pdf")
+    print(ensemble_xgb_qq); ggplot2::ggsave("ensemble_xgb_qq.pdf")
+  }
 }
 
 accuracy_data <-
@@ -6100,7 +6346,7 @@ for (i in 1:ncol(df2)) {
   print(noquote(""))
 }
 
-return(list(
+list(
   "head_of_data" = head_df, "accuracy_plot" = accuracy_plot, "accuracy_free_scales" = accuracy_plot2, "overfitting_plot" = overfitting_plot, "overfitting_plot2" = overfitting_plot2,
   "histograms" = histograms, "boxplots" = boxplots, "predictor_vs_target" = predictor_vs_target, "final_results_table" = final_results,
   "data_correlation" = M1, "data_summary" = data_summary, "head_of_ensemble" = head_ensemble, "ensemble_correlation" = ensemble_correlation,
@@ -6112,6 +6358,35 @@ return(list(
   "ensemble_reduction_method" = ensemble_reduction_method, "scale_data" = scale_data,
   "train_amount" = train_amount, "test_amount" = test_amount, "validation_amount" = validation_amount
 )
-)
+
+if(save_all_plots == "Y"){
+  print(accuracy_plot); ggplot2::ggsave("accuracy_plot.pdf")
+  print(accuracy_plot2); ggplot2::ggsave("accuracy_plot2.pdf")
+  print(overfitting_plot); ggplot2::ggsave("overfitting_plot.pdf")
+  print(overfitting_plot2); ggplot2::ggsave("overfitting_plot2.pdf")
+  print(boxplots); ggplot2::ggsave("boxplots.pdf")
+  print(histograms); ggplot2::ggsave("histograms.pdf")
+  print(predictor_vs_target); ggplot2::ggsave("predictor_vs_target.pdf")
+  print(bias_plot); ggplot2::ggsave("bias_plot.pdf")
+  print(MAE_plot); ggplot2::ggsave("MAE_plot.pdf")
+  print(SSE_plot); ggplot2::ggsave("SSE_plot.pdf")
+  print(MSE_plot); ggplot2::ggsave("MSE_plot.pdf")
+  print(accuracy_barchart); ggplot2::ggsave("accuracy_barchart.pdf")
+  print(total_plot); ggplot2::ggsave("total_plot.pdf")
+  print(total_plot2); ggplot2::ggsave("total_plot2.pdf")
+  print(duration_barchart); ggplot2::ggsave("duration_barchart.pdf")
+  print(overfitting_barchart); ggplot2::ggsave("overfitting_barchart.pdf")
+  print(bias_barchart); ggplot2::ggsave("bias_barchart.pdf")
+  print(MSE_barchart); ggplot2::ggsave("MSE_barchart.pdf")
+  print(MAE_barchart); ggplot2::ggsave("MAE_barchart.pdf")
+  print(SSE_barchart); ggplot2::ggsave("SSE_barchart.pdf")
+  print(k_s_test_barchart); ggplot2::ggsave("k_s_test_barchart.pdf")
+  reactablefmtr::save_reactable_test(final_results, "final_results.html")
+  reactablefmtr::save_reactable_test(ensemble_correlation, "ensemble_correlation.html")
+  reactablefmtr::save_reactable_test(head_ensemble, "head_ensemble.html")
+  reactablefmtr::save_reactable_test(data_summary, "data_summary.html")
+  reactablefmtr::save_reactable_test(M1, "data_correlation.html")
+  reactablefmtr::save_reactable_test(head_df, "head_of_the_data_frame.html")
+}
 
 }
