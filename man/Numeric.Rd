@@ -14,7 +14,7 @@ Numeric(
   save_all_trained_models = c("Y", "N"),
   remove_ensemble_correlations_greater_than,
   save_all_plots = c("Y", "N"),
-  ensemble_reduction_method = c(0("none"), 1("BIC exhaustive"), 2("BIC forward"),
+  data_reduction_method = c(0("none"), 1("BIC exhaustive"), 2("BIC forward"),
     3("BIC backward"), 4("BIC seqrep"), 5("Mallows_cp exhaustive"),
     6("Mallows_cp forward"), 7("Mallows_cp backward"), 8("Mallows_cp, seqrep")),
   scale_data = c("Y", "N"),
@@ -41,7 +41,7 @@ Numeric(
 
 \item{save_all_plots}{Saves all plots to the working directory}
 
-\item{ensemble_reduction_method}{BIC (1, 2, 3, 4) or Mallow's_cp (5, 6, 7, 8) for Forward, Backward, Exhaustive and SeqRep}
+\item{data_reduction_method}{0(none), BIC (1, 2, 3, 4) or Mallow's_cp (5, 6, 7, 8) for Forward, Backward, Exhaustive and SeqRep}
 
 \item{scale_data}{"Y" or "N" to scale numeric data}
 

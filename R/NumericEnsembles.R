@@ -8,7 +8,7 @@
 #' @param save_all_trained_models "Y" or "N". If "Y", then places all the trained models in the Environment
 #' @param save_all_plots Saves all plots to the working directory
 #' @param scale_data "Y" or "N" to scale numeric data
-#' @param ensemble_reduction_method BIC (1, 2, 3, 4) or Mallow's_cp (5, 6, 7, 8) for Forward, Backward, Exhaustive and SeqRep
+#' @param data_reduction_method 0(none), BIC (1, 2, 3, 4) or Mallow's_cp (5, 6, 7, 8) for Forward, Backward, Exhaustive and SeqRep
 #' @param remove_ensemble_correlations_greater_than Enter a number to remove correlations in the ensembles
 #' @param use_parallel "Y" or "N" for parallel processing
 #' @param train_amount set the amount for the training data
@@ -46,7 +46,7 @@
 #' @importFrom reactablefmtr add_title
 #' @importFrom readr read_lines
 #' @importFrom rpart rpart
-#' @importFrom stats as.formula BIC cor sd predict residuals reorder quantile gaussian
+#' @importFrom stats as.formula BIC cor sd predict residuals reorder quantile gaussian var
 #' @importFrom tidyr gather pivot_longer
 #' @importFrom tree tree cv.tree misclass.tree
 #' @importFrom utils tail str head read.csv
@@ -55,7 +55,7 @@
 
 Numeric <- function(data, colnum, numresamples, how_to_handle_strings = c(0("none"), 1("factor levels"), 2("One-hot encoding"), 3("One-hot encoding with jitter")), predict_on_new_data = c("Y", "N"),
                     save_all_trained_models = c("Y", "N"), remove_ensemble_correlations_greater_than, save_all_plots = c("Y", "N"),
-                    ensemble_reduction_method = c(0("none"), 1("BIC exhaustive"), 2("BIC forward"), 3("BIC backward"), 4("BIC seqrep"),
+                    data_reduction_method = c(0("none"), 1("BIC exhaustive"), 2("BIC forward"), 3("BIC backward"), 4("BIC seqrep"),
                     5("Mallows_cp exhaustive"), 6("Mallows_cp forward"), 7("Mallows_cp backward"), 8("Mallows_cp, seqrep")),
                     scale_data = c("Y", "N"), use_parallel = c("Y", "N"),
                     train_amount, test_amount, validation_amount) {
@@ -73,6 +73,110 @@ colnames(data)[colnum] <- "y"
 
 df <- data %>% dplyr::relocate(y, .after = last_col()) # Moves the target column to the last column on the right
 df <- df[sample(nrow(df)), ]
+
+if(data_reduction_method == 1){
+  data_regsubsets <- leaps::regsubsets(y ~ ., data = df, method = "exhaustive")
+
+  cols_sel <- data_regsubsets |>
+    broom::tidy() |>
+    filter(BIC == min(BIC)) |>
+    dplyr::select(dplyr::where(~.x == TRUE)) |>
+    colnames()
+
+  data <- dplyr::select(data, dplyr::any_of(cols_sel))
+  df <- cbind(data, y = df$y)
+}
+
+if(data_reduction_method == 2){
+  data_regsubsets <- leaps::regsubsets(y ~ ., data = df, method = "forward")
+
+  cols_sel <- data_regsubsets |>
+    broom::tidy() |>
+    filter(BIC == min(BIC)) |>
+    dplyr::select(dplyr::where(~.x == TRUE)) |>
+    colnames()
+
+  data <- dplyr::select(data, dplyr::any_of(cols_sel))
+  df <- cbind(data, y = df$y)
+}
+
+if(data_reduction_method == 3){
+  data_regsubsets <- leaps::regsubsets(y ~ ., data = df, method = "backward")
+
+  cols_sel <- data_regsubsets |>
+    broom::tidy() |>
+    filter(BIC == min(BIC)) |>
+    dplyr::select(dplyr::where(~.x == TRUE)) |>
+    colnames()
+
+  data <- dplyr::select(data, dplyr::any_of(cols_sel))
+  df <- cbind(data, df$y)
+}
+
+if(data_reduction_method == 4){
+  data_regsubsets <- leaps::regsubsets(y ~ ., data = df, method = "seqrep")
+
+  cols_sel <- data_regsubsets |>
+    broom::tidy() |>
+    filter(BIC == min(BIC)) |>
+    dplyr::select(dplyr::where(~.x == TRUE)) |>
+    colnames()
+
+  data <- dplyr::select(data, dplyr::any_of(cols_sel))
+  df <- cbind(data, df$y)
+}
+
+if(data_reduction_method == 5){
+  data_regsubsets <- leaps::regsubsets(y ~ ., data = df, method = "exhaustive")
+
+  cols_sel <- data_regsubsets |>
+    broom::tidy() |>
+    filter(mallows_cp == min(mallows_cp)) |>
+    dplyr::select(dplyr::where(~.x == TRUE)) |>
+    colnames()
+
+  data <- dplyr::select(data, dplyr::any_of(cols_sel))
+  df <- cbind(data, df$y)
+}
+
+if(data_reduction_method == 6){
+  data_regsubsets <- leaps::regsubsets(y ~ ., data = df, method = "forward")
+
+  cols_sel <- data_regsubsets |>
+    broom::tidy() |>
+    filter(mallows_cp == min(mallows_cp)) |>
+    dplyr::select(dplyr::where(~.x == TRUE)) |>
+    colnames()
+
+  data <- dplyr::select(data, dplyr::any_of(cols_sel))
+  df <- cbind(data, df$y)
+}
+
+if(data_reduction_method == 7){
+  data_regsubsets <- leaps::regsubsets(y ~ ., data = df, method = "backward")
+
+  cols_sel <- data_regsubsets |>
+    broom::tidy() |>
+    filter(mallows_cp == min(mallows_cp)) |>
+    dplyr::select(dplyr::where(~.x == TRUE)) |>
+    colnames()
+
+  data <- dplyr::select(data, dplyr::any_of(cols_sel))
+  df <- cbind(data, y)
+}
+
+if(data_reduction_method == 8){
+  data_regsubsets <- leaps::regsubsets(y ~ ., data = df, method = "seqrep")
+
+  cols_sel <- data_regsubsets |>
+    broom::tidy() |>
+    filter(mallows_cp == min(mallows_cp)) |>
+    dplyr::select(dplyr::where(~.x == TRUE)) |>
+    colnames()
+
+  data <- dplyr::select(data, dplyr::any_of(cols_sel))
+  df <- cbind(data, y)
+}
 
 if(scale_data == "Y"){
   df <- as.data.frame(scale(df[, 1:ncol(df) -1]) %>% cbind(y = df$y))
@@ -2385,110 +2489,11 @@ for (i in 1:numresamples) {
   ensemble$y_ensemble <- c(test$y, validation$y)
   y_ensemble <- c(test$y, validation$y)
 
-  if(ensemble_reduction_method == 1){
-    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "exhaustive")
-
-    cols_sel <- ensemble_regsubsets |>
-      broom::tidy() |>
-      filter(BIC == min(BIC)) |>
-      dplyr::select(dplyr::where(~.x == TRUE)) |>
-      colnames()
-
-    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
-    ensemble <- cbind(ensemble, y_ensemble)
+  if(sum(is.na(ensemble > 0))){
+    ensemble <- ensemble[stats::complete.cases(ensemble), ] # Removes rows with NAs
   }
 
-  if(ensemble_reduction_method == 2){
-    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "forward")
-
-    cols_sel <- ensemble_regsubsets |>
-      broom::tidy() |>
-      filter(BIC == min(BIC)) |>
-      dplyr::select(dplyr::where(~.x == TRUE)) |>
-      colnames()
-
-    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
-    ensemble <- cbind(ensemble, y_ensemble)
-  }
-
-  if(ensemble_reduction_method == 3){
-    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "backward")
-
-    cols_sel <- ensemble_regsubsets |>
-      broom::tidy() |>
-      filter(BIC == min(BIC)) |>
-      dplyr::select(dplyr::where(~.x == TRUE)) |>
-      colnames()
-
-    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
-    ensemble <- cbind(ensemble, y_ensemble)
-  }
-
-  if(ensemble_reduction_method == 4){
-    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "seqrep")
-
-    cols_sel <- ensemble_regsubsets |>
-      broom::tidy() |>
-      filter(BIC == min(BIC)) |>
-      dplyr::select(dplyr::where(~.x == TRUE)) |>
-      colnames()
-
-    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
-    ensemble <- cbind(ensemble, y_ensemble)
-  }
-
-  if(ensemble_reduction_method == 5){
-    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "exhaustive")
-
-    cols_sel <- ensemble_regsubsets |>
-      broom::tidy() |>
-      filter(mallows_cp == min(mallows_cp)) |>
-      dplyr::select(dplyr::where(~.x == TRUE)) |>
-      colnames()
-
-    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
-    ensemble <- cbind(ensemble, y_ensemble)
-  }
-
-
-  if(ensemble_reduction_method == 6){
-    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "forward")
-
-    cols_sel <- ensemble_regsubsets |>
-      broom::tidy() |>
-      filter(mallows_cp == min(mallows_cp)) |>
-      dplyr::select(dplyr::where(~.x == TRUE)) |>
-      colnames()
-
-    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
-    ensemble <- cbind(ensemble, y_ensemble)
-  }
-
-  if(ensemble_reduction_method == 7){
-    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "backward")
-
-    cols_sel <- ensemble_regsubsets |>
-      broom::tidy() |>
-      filter(mallows_cp == min(mallows_cp)) |>
-      dplyr::select(dplyr::where(~.x == TRUE)) |>
-      colnames()
-
-    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
-    ensemble <- cbind(ensemble, y_ensemble)
-  }
-
-  if(ensemble_reduction_method == 8){
-    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "seqrep")
-
-    cols_sel <- ensemble_regsubsets |>
-      broom::tidy() |>
-      filter(mallows_cp == min(mallows_cp)) |>
-      dplyr::select(dplyr::where(~.x == TRUE)) |>
-      colnames()
-
-    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
-    ensemble <- cbind(ensemble, y_ensemble)
-  }
+  ensemble <- Filter(function(x) stats::var(x) != 0, ensemble) # Removes columns with no variation
 
   print(noquote(""))
   print("Working on the Ensembles section")
@@ -6267,7 +6272,7 @@ if (predict_on_new_data == "Y") {
     ensemble_xgb_model <<- ensemble_xgb_model # Extreme Gradient Boosrting using ensemble data
   }
 
-  list(
+  return(list(
     "head_of_data" = head_df, "accuracy_plot" = accuracy_plot, "accuracy_plot_free_scales" = accuracy_plot2, "overfitting_plot" = overfitting_plot, "overfitting_plot_2" = overfitting_plot2,
     "histograms" = histograms, "boxplots" = boxplots, "predictor_vs_target" = predictor_vs_target,
     "final_results_table" = final_results, "data_correlation" = M1, "data_summary" = data_summary, "head_of_ensemble" = head_ensemble, "ensemble_correlation" = ensemble_correlation,
@@ -6275,9 +6280,10 @@ if (predict_on_new_data == "Y") {
     "bias_barchart" = bias_barchart, "MSE_barchart" = MSE_barchart, "MAE_barchart" = MAE_barchart, "SSE_barchart" = SSE_barchart,
     "bias_plot" = bias_plot, "MSE_plot" = MSE_plot, "MAE_plot" = MAE_plot, "SSE_plot" = SSE_plot, "Kolmogorov-Smirnov test p-score" = k_s_test_barchart,
     "colnum" = colnum, "numresamples" = numresamples, "predict_on_new_data" = predictions_of_new_data, "save_all_trained_models" = save_all_trained_models,
-    "how_to_handle_strings" = how_to_handle_strings, "ensemble_reduction_method" = ensemble_reduction_method,
+    "how_to_handle_strings" = how_to_handle_strings, "data_reduction_method" = data_reduction_method,
     "remove_ensemble_correlations_greater_than" = remove_ensemble_correlations_greater_than, "scale_data" = scale_data,
     "train_amount" = train_amount, "test_amount" = test_amount, "validation_amount" = validation_amount
+  )
   )
 }
 
@@ -6346,7 +6352,7 @@ for (i in 1:ncol(df2)) {
   print(noquote(""))
 }
 
-list(
+return(list(
   "head_of_data" = head_df, "accuracy_plot" = accuracy_plot, "accuracy_free_scales" = accuracy_plot2, "overfitting_plot" = overfitting_plot, "overfitting_plot2" = overfitting_plot2,
   "histograms" = histograms, "boxplots" = boxplots, "predictor_vs_target" = predictor_vs_target, "final_results_table" = final_results,
   "data_correlation" = M1, "data_summary" = data_summary, "head_of_ensemble" = head_ensemble, "ensemble_correlation" = ensemble_correlation,
@@ -6355,10 +6361,10 @@ list(
   "bias_plot" = bias_plot, "MSE_plot" = MSE_plot, "MAE_plot" = MAE_plot, "SSE_plot" = SSE_plot,
   "colnum" = colnum, "numresamples" = numresamples, "save_all_trained_modesl" = save_all_trained_models, "how_to_handle_strings" = how_to_handle_strings,
   "remove_ensemble_correlations_greater_than" = remove_ensemble_correlations_greater_than,
-  "ensemble_reduction_method" = ensemble_reduction_method, "scale_data" = scale_data,
+  "data_reduction_method" = data_reduction_method, "scale_data" = scale_data,
   "train_amount" = train_amount, "test_amount" = test_amount, "validation_amount" = validation_amount
 )
-
+)
 if(save_all_plots == "Y"){
   print(accuracy_plot); ggplot2::ggsave("accuracy_plot.pdf")
   print(accuracy_plot2); ggplot2::ggsave("accuracy_plot2.pdf")
