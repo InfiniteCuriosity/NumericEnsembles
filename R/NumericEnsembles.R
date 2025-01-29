@@ -6365,34 +6365,81 @@ return(list(
   "train_amount" = train_amount, "test_amount" = test_amount, "validation_amount" = validation_amount
 )
 )
+
 if(save_all_plots == "Y"){
-  print(accuracy_plot); ggplot2::ggsave("accuracy_plot.pdf")
-  print(accuracy_plot2); ggplot2::ggsave("accuracy_plot2.pdf")
-  print(overfitting_plot); ggplot2::ggsave("overfitting_plot.pdf")
-  print(overfitting_plot2); ggplot2::ggsave("overfitting_plot2.pdf")
-  print(boxplots); ggplot2::ggsave("boxplots.pdf")
-  print(histograms); ggplot2::ggsave("histograms.pdf")
-  print(predictor_vs_target); ggplot2::ggsave("predictor_vs_target.pdf")
-  print(bias_plot); ggplot2::ggsave("bias_plot.pdf")
-  print(MAE_plot); ggplot2::ggsave("MAE_plot.pdf")
-  print(SSE_plot); ggplot2::ggsave("SSE_plot.pdf")
-  print(MSE_plot); ggplot2::ggsave("MSE_plot.pdf")
-  print(accuracy_barchart); ggplot2::ggsave("accuracy_barchart.pdf")
-  print(total_plot); ggplot2::ggsave("total_plot.pdf")
-  print(total_plot2); ggplot2::ggsave("total_plot2.pdf")
-  print(duration_barchart); ggplot2::ggsave("duration_barchart.pdf")
-  print(overfitting_barchart); ggplot2::ggsave("overfitting_barchart.pdf")
-  print(bias_barchart); ggplot2::ggsave("bias_barchart.pdf")
-  print(MSE_barchart); ggplot2::ggsave("MSE_barchart.pdf")
-  print(MAE_barchart); ggplot2::ggsave("MAE_barchart.pdf")
-  print(SSE_barchart); ggplot2::ggsave("SSE_barchart.pdf")
-  print(k_s_test_barchart); ggplot2::ggsave("k_s_test_barchart.pdf")
-  reactablefmtr::save_reactable_test(final_results, "final_results.html")
-  reactablefmtr::save_reactable_test(ensemble_correlation, "ensemble_correlation.html")
-  reactablefmtr::save_reactable_test(head_ensemble, "head_ensemble.html")
-  reactablefmtr::save_reactable_test(data_summary, "data_summary.html")
-  reactablefmtr::save_reactable_test(M1, "data_correlation.html")
-  reactablefmtr::save_reactable_test(head_df, "head_of_the_data_frame.html")
+  print(accuracy_plot)
+  plot1 <- ggplot2::ggsave("accuracy_plot.pdf")
+
+  print(accuracy_plot2)
+  plot2 <- ggplot2::ggsave("accuracy_plot2.pdf")
+
+  print(overfitting_plot)
+  plot3 <- ggplot2::ggsave("overfitting_plot.pdf")
+
+  print(overfitting_plot2)
+  plot4 <- ggplot2::ggsave("overfitting_plot2.pdf")
+
+  print(boxplots)
+  plot5 <- ggplot2::ggsave("boxplots.pdf")
+
+  print(histograms)
+  plot6 <- ggplot2::ggsave("histograms.pdf")
+
+  print(predictor_vs_target)
+  plot7 <- ggplot2::ggsave("predictor_vs_target.pdf")
+
+  print(bias_plot)
+  plot8 <- ggplot2::ggsave("bias_plot.pdf")
+
+  print(MAE_plot)
+  plot9 <- ggplot2::ggsave("MAE_plot.pdf")
+
+  print(SSE_plot)
+  plot10 <- ggplot2::ggsave("SSE_plot.pdf")
+
+  print(MSE_plot)
+  plot11 <- ggplot2::ggsave("MSE_plot.pdf")
+
+  print(accuracy_barchart)
+  plot12 <- ggplot2::ggsave("accuracy_barchart.pdf")
+
+  print(total_plot)
+  plot13 <- ggplot2::ggsave("total_plot.pdf")
+
+  print(total_plot2)
+  plot14 <- ggplot2::ggsave("total_plot2.pdf")
+
+  print(duration_barchart)
+  plot15 <- ggplot2::ggsave("duration_barchart.pdf")
+
+  print(overfitting_barchart)
+  plot16 <- ggplot2::ggsave("overfitting_barchart.pdf")
+
+  print(bias_barchart)
+  plot17 <- ggplot2::ggsave("bias_barchart.pdf")
+
+  print(MSE_barchart)
+  plot18 <- ggplot2::ggsave("MSE_barchart.pdf")
+
+  print(MAE_barchart)
+  plot19 <- ggplot2::ggsave("MAE_barchart.pdf")
+
+  print(SSE_barchart)
+  plot20 <- ggplot2::ggsave("SSE_barchart.pdf")
+
+  print(k_s_test_barchart)
+  plot21 <- ggplot2::ggsave("k_s_test_barchart.pdf")
+  plot22 <- reactablefmtr::save_reactable_test(final_results, "final_results.html")
+  plot23 <- reactablefmtr::save_reactable_test(ensemble_correlation, "ensemble_correlation.html")
+  plot24 <- reactablefmtr::save_reactable_test(head_ensemble, "head_ensemble.html")
+  plot25 <- reactablefmtr::save_reactable_test(data_summary, "data_summary.html")
+  plot26 <- reactablefmtr::save_reactable_test(M1, "data_correlation.html")
+  plot27 <- reactablefmtr::save_reactable_test(head_df, "head_of_the_data_frame.html")
+
+  return(list(plot1, plot2, plot3, plot4, plot5, plot6, plot7, plot8, plot9, plot10,
+         plot11, plot12, plot13, plot14, plot15, plot16, plot17, plot18, plot19, plot20, plot21,
+         plot22, plot23, plot24, plot25, plot26, plot27)
+  )
 }
 
 }
