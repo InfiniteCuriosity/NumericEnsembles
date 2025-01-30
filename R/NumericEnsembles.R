@@ -226,6 +226,10 @@ if (how_to_handle_strings == 3 && predict_on_new_data == "Y") {
   newdata <- data.frame(lapply(newdata, jitter))
 }
 
+if(save_all_plots == "Y"){
+  width = as.numeric(readline("Width of the graphics: "))
+  height = as.numeric(readline("height of the graphics: "))
+}
 
 head_df <- reactable::reactable(head(df, n = 10),
                                 searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
@@ -278,7 +282,7 @@ boxplots <- df %>%
   ggplot2::labs(title = "Boxplots of the numeric data")
 # Thanks to https://rstudio-pubs-static.s3.amazonaws.com/388596_e21196f1adf04e0ea7cd68edd9eba966.html
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("boxplots.pdf")
+  ggplot2::ggsave("boxplots.pdf", width = width, height = height)
 }
 
 histograms <- ggplot2::ggplot(tidyr::gather(df1, cols, value), aes(x = value)) +
@@ -286,7 +290,7 @@ histograms <- ggplot2::ggplot(tidyr::gather(df1, cols, value), aes(x = value)) +
   ggplot2::facet_wrap(. ~ cols, scales = "free") +
   ggplot2::labs(title = "Histograms of each numeric column. Each bar = 10 rows of data")
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("histograms.pdf")
+  ggplot2::ggsave("histograms.pdf", width = width, height = height)
 }
 
 predictor_vs_target <- df %>%
@@ -297,7 +301,7 @@ predictor_vs_target <- df %>%
   ggplot2::theme_bw()+
   ggplot2::labs(title = "y (predictor variable) vs target variables")
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("predictor_vs_target.pdf")
+  ggplot2::ggsave("predictor_vs_target.pdf", width = width, height = height)
 }
 
 
@@ -4047,7 +4051,7 @@ overfitting_plot <- ggplot2::ggplot(data = overfitting_data, mapping = ggplot2::
   ggplot2::labs(y = "Overfitting, closer to one is better \n The black horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("overfitting_plot.pdf")
+  ggplot2::ggsave("overfitting_plot.pdf", width = width, height = height)
 }
 
 overfitting_plot2 <- ggplot2::ggplot(data = overfitting_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
@@ -4060,7 +4064,7 @@ overfitting_plot2 <- ggplot2::ggplot(data = overfitting_data, mapping = ggplot2:
   ggplot2::labs(y = "Overfitting, closer to one is better \n The black horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("overfitting_plot2.pdf")
+  ggplot2::ggsave("overfitting_plot2.pdf", width = width, height = height)
 }
 
 bias_data <-
@@ -4109,7 +4113,7 @@ bias_plot <- ggplot2::ggplot(data = bias_data, mapping = ggplot2::aes(x = count,
   ggplot2::labs(y = "Bias value, closer to zero is better \n The horizontal line is the mean of the results, the red line is 0.") +
   ggplot2::theme(legend.position = "none")
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("bias_plot.pdf")
+  ggplot2::ggsave("bias_plot.pdf", width = width, height = height)
 }
 
 MAE_data <-
@@ -4158,7 +4162,7 @@ MAE_plot <- ggplot2::ggplot(data = MAE_data, mapping = ggplot2::aes(x = count, y
   ggplot2::labs(y = "MAE value, closer to zero is better \n The horizontal line is the mean of the results, the red line is 0.") +
   ggplot2::theme(legend.position = "none")
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("MAE_plot.pdf")
+  ggplot2::ggsave("MAE_plot.pdf", width = width, height = height)
 }
 
 MSE_data <-
@@ -4207,7 +4211,7 @@ MSE_plot <- ggplot2::ggplot(data = MSE_data, mapping = ggplot2::aes(x = count, y
   ggplot2::labs(y = "MSE value, closer to zero is better \n The horizontal line is the mean of the results, the red line is 0.") +
   ggplot2::theme(legend.position = "none")
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("MSE_plot.pdf")
+  ggplot2::ggsave("MSE_plot.pdf", width = width, height = height)
 }
 
 SSE_data <-
@@ -4256,7 +4260,7 @@ SSE_plot <- ggplot2::ggplot(data = SSE_data, mapping = ggplot2::aes(x = count, y
   ggplot2::labs(y = "SSE value, closer to zero is better \n The horizontal line is the mean of the results, the red line is 0.") +
   ggplot2::theme(legend.position = "none")
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("SSE_plot.pdf")
+  ggplot2::ggsave("SSE_plot.pdf", width = width, height = height)
 }
 
 
@@ -5307,7 +5311,7 @@ accuracy_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mea
   ggplot2::ylim(0, 1.5*max(summary_results$Mean_holdout_RMSE)) +
   ggplot2::geom_errorbar(aes(x=Model, ymin=Mean_holdout_RMSE-Std_Deviation_of_holdout_RMSE, ymax = Mean_holdout_RMSE+Std_Deviation_of_holdout_RMSE))
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("accuracy_barchart.pdf")
+  ggplot2::ggsave("accuracy_barchart.pdf", width = width, height = height)
 }
 
 k_s_test_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, KS_Test_P_Value_mean, decreasing = TRUE), y = KS_Test_P_Value_mean)) +
@@ -5319,7 +5323,7 @@ k_s_test_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, KS_
   ggplot2::geom_hline(yintercept = c(0.05, 0.10), linetype='dashed', color=c('blue', 'blue')) +
   ggplot2::geom_errorbar(aes(x = Model, ymin = KS_Test_P_Value_mean - KS_Test_P_Value_std_dev, ymax = KS_Test_P_Value_mean + KS_Test_P_Value_std_dev))
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("k_s_test_barchart.pdf")
+  ggplot2::ggsave("k_s_test_barchart.pdf", width = width, height = height)
 }
 
 overfitting_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Overfitting_mean), y = Overfitting_mean)) +
@@ -5330,7 +5334,7 @@ overfitting_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, 
   ggplot2::ylim(0, max(max(summary_results$Overfitting_mean[!is.infinite(summary_results$Overfitting_mean)])) +2) +
   ggplot2::geom_errorbar(aes(x=Model, ymin=Overfitting_mean-Overfitting_sd, ymax = Overfitting_mean+Overfitting_sd))
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("overfitting_barchart.pdf")
+  ggplot2::ggsave("overfitting_barchart.pdf", width = width, height = height)
 }
 
 duration_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Duration), y = Duration)) +
@@ -5341,7 +5345,7 @@ duration_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Dur
   ggplot2::ylim(0, 1.5*max(summary_results$Duration)) +
   ggplot2::geom_errorbar(aes(x = Model, ymin = Duration - Duration_sd, ymax = Duration + Duration_sd))
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("duration_barchart.pdf")
+  ggplot2::ggsave("duration_barchart.pdf", width = width, height = height)
 }
 
 bias_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Bias), y = Bias)) +
@@ -5351,7 +5355,7 @@ bias_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Bias), 
   ggplot2::geom_text(aes(label = Bias), vjust = -0.5, hjust = -0.5, angle = 90) +
   ggplot2::ylim(min(summary_results$Bias), 1.5*max(summary_results$Bias))
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("bias_barchart.pdf")
+  ggplot2::ggsave("bias_barchart.pdf", width = width, height = height)
 }
 
 MAE_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_MAE), y = Mean_MAE)) +
@@ -5362,7 +5366,7 @@ MAE_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_MAE
   ggplot2::ylim(min(summary_results$Mean_MAE), 1.5*max(summary_results$Mean_MAE)) +
   ggplot2::geom_errorbar(aes(x = Model, ymin = Mean_MAE - Mean_MAE_sd, ymax = Mean_MAE + Mean_MAE_sd))
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("MAE_barchart.pdf")
+  ggplot2::ggsave("MAE_barchart.pdf", width = width, height = height)
 }
 
 MSE_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_MSE), y = Mean_MSE)) +
@@ -5373,7 +5377,7 @@ MSE_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_MSE
   ggplot2::ylim(min(summary_results$Mean_MSE), 1.5*max(summary_results$Mean_MSE)) +
   ggplot2::geom_errorbar(aes(x = Model, ymin = Mean_MSE - Mean_MSE_sd, ymax = Mean_MSE + Mean_MSE_sd))
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("MSE_barchart.pdf")
+  ggplot2::ggsave("MSE_barchart.pdf", width = width, height = height)
 }
 
 SSE_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_SSE), y = Mean_SSE)) +
@@ -5384,7 +5388,7 @@ SSE_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_SSE
   ggplot2::ylim(min(summary_results$Mean_SSE), 1.5*max(summary_results$Mean_SSE)) +
   ggplot2::geom_errorbar(aes(x = Model, ymin = Mean_SSE - Mean_SSE_sd, ymax = Mean_SSE + Mean_SSE_sd))
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("SSE_barchart.pdf")
+  ggplot2::ggsave("SSE_barchart.pdf", width = width, height = height)
 }
 
 
@@ -5397,10 +5401,10 @@ if (data_visualizations[1] == "Bagged Random Forest") {
   gridExtra::grid.arrange(bag_rf_hist_residuals)
   gridExtra::grid.arrange(bag_rf_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Bagged Random Forest"){
-    print(ensemble_bayesglm_pred_vs_actual); ggplot2::ggsave("ensemble_bayesglm_pred_vs_actual.pdf")
-    print(ensemble_bayesglm_resid_vs_actual); ggplot2::ggsave("ensemble_bayesglm_resid_vs_actual.pdf")
-    print(ensemble_bayesglm_hist_residuals); ggplot2::ggsave("ensemble_bayesglm_hist_residuals.pdf")
-    print(ensemble_bayesglm_qq); ggplot2::ggsave("ensemble_bayesglm_qq.pdf")
+    print(ensemble_bayesglm_pred_vs_actual); ggplot2::ggsave("ensemble_bayesglm_pred_vs_actual.pdf", width = width, height = height)
+    print(ensemble_bayesglm_resid_vs_actual); ggplot2::ggsave("ensemble_bayesglm_resid_vs_actual.pdf", width = width, height = height)
+    print(ensemble_bayesglm_hist_residuals); ggplot2::ggsave("ensemble_bayesglm_hist_residuals.pdf", width = width, height = height)
+    print(ensemble_bayesglm_qq); ggplot2::ggsave("ensemble_bayesglm_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5411,10 +5415,10 @@ if (data_visualizations[1] == "Bagging") {
   gridExtra::grid.arrange(bagging_hist_residuals)
   gridExtra::grid.arrange(bagging_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Bagging"){
-    print(bagging_pred_vs_actual); ggplot2::ggsave("bagging_pred_vs_actual.pdf")
-    print(bagging_resid_vs_actual); ggplot2::ggsave("bagging_resid_vs_actual.pdf")
-    print(bagging_hist_residuals); ggplot2::ggsave("bagging_hist_residuals.pdf")
-    print(bagging_qq); ggplot2::ggsave("bagging_qq.pdf")
+    print(bagging_pred_vs_actual); ggplot2::ggsave("bagging_pred_vs_actual.pdf", width = width, height = height)
+    print(bagging_resid_vs_actual); ggplot2::ggsave("bagging_resid_vs_actual.pdf", width = width, height = height)
+    print(bagging_hist_residuals); ggplot2::ggsave("bagging_hist_residuals.pdf", width = width, height = height)
+    print(bagging_qq); ggplot2::ggsave("bagging_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5425,10 +5429,10 @@ if (data_visualizations[1] == "BayesGLM") {
   gridExtra::grid.arrange(bayesglm_hist_residuals)
   gridExtra::grid.arrange(bayesglm_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "BayesGLM"){
-    print(bayesglm_pred_vs_actual); ggplot2::ggsave("bayesglm_pred_vs_actual.pdf")
-    print(bayesglm_resid_vs_actual); ggplot2::ggsave("bayesglm_resid_vs_actual.pdf")
-    print(bayesglm_hist_residuals); ggplot2::ggsave("bayesglm_hist_residuals.pdf")
-    print(bayesglm_qq); ggplot2::ggsave("bayesglm_qq.pdf")
+    print(bayesglm_pred_vs_actual); ggplot2::ggsave("bayesglm_pred_vs_actual.pdf", width = width, height = height)
+    print(bayesglm_resid_vs_actual); ggplot2::ggsave("bayesglm_resid_vs_actual.pdf", width = width, height = height)
+    print(bayesglm_hist_residuals); ggplot2::ggsave("bayesglm_hist_residuals.pdf", width = width, height = height)
+    print(bayesglm_qq); ggplot2::ggsave("bayesglm_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5439,10 +5443,10 @@ if (data_visualizations[1] == "BayesRNN") {
   gridExtra::grid.arrange(bayesrnn_hist_residuals)
   gridExtra::grid.arrange(bayesrnn_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "BayesRNN"){
-    print(bayesrnn_pred_vs_actual); ggplot2::ggsave("bayesrnn_pred_vs_actual.pdf")
-    print(bayesrnn_resid_vs_actual); ggplot2::ggsave("bayesrnn_resid_vs_actual.pdf")
-    print(bayesrnn_hist_residuals); ggplot2::ggsave("bayesrnn_hist_residuals.pdf")
-    print(bayesrnn_qq); ggplot2::ggsave("bayesrnn_qq.pdf")
+    print(bayesrnn_pred_vs_actual); ggplot2::ggsave("bayesrnn_pred_vs_actual.pdf", width = width, height = height)
+    print(bayesrnn_resid_vs_actual); ggplot2::ggsave("bayesrnn_resid_vs_actual.pdf", width = width, height = height)
+    print(bayesrnn_hist_residuals); ggplot2::ggsave("bayesrnn_hist_residuals.pdf", width = width, height = height)
+    print(bayesrnn_qq); ggplot2::ggsave("bayesrnn_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5453,10 +5457,10 @@ if (data_visualizations[1] == "Boost_rf") {
   gridExtra::grid.arrange(boost_rf_hist_residuals)
   gridExtra::grid.arrange(boost_rf_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Boost_rf"){
-    print(boost_rf_pred_vs_actual); ggplot2::ggsave("boost_rf_pred_vs_actual.pdf")
-    print(boost_rf_resid_vs_actual); ggplot2::ggsave("boost_rf_resid_vs_actual.pdf")
-    print(boost_rf_hist_residuals); ggplot2::ggsave("boost_rf_hist_residuals.pdf")
-    print(boost_rf_qq); ggplot2::ggsave("boost_rf_qq.pdf")
+    print(boost_rf_pred_vs_actual); ggplot2::ggsave("boost_rf_pred_vs_actual.pdf", width = width, height = height)
+    print(boost_rf_resid_vs_actual); ggplot2::ggsave("boost_rf_resid_vs_actual.pdf", width = width, height = height)
+    print(boost_rf_hist_residuals); ggplot2::ggsave("boost_rf_hist_residuals.pdf", width = width, height = height)
+    print(boost_rf_qq); ggplot2::ggsave("boost_rf_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5467,10 +5471,10 @@ if (data_visualizations[1] == "Cubist") {
   gridExtra::grid.arrange(cubist_hist_residuals)
   gridExtra::grid.arrange(cubist_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Cubist"){
-    print(boost_rf_pred_vs_actual); ggplot2::ggsave("boost_rf_pred_vs_actual.pdf")
-    print(boost_rf_resid_vs_actual); ggplot2::ggsave("boost_rf_resid_vs_actual.pdf")
-    print(boost_rf_hist_residuals); ggplot2::ggsave("boost_rf_hist_residuals.pdf")
-    print(boost_rf_qq); ggplot2::ggsave("boost_rf_qq.pdf")
+    print(boost_rf_pred_vs_actual); ggplot2::ggsave("boost_rf_pred_vs_actual.pdf", width = width, height = height)
+    print(boost_rf_resid_vs_actual); ggplot2::ggsave("boost_rf_resid_vs_actual.pdf", width = width, height = height)
+    print(boost_rf_hist_residuals); ggplot2::ggsave("boost_rf_hist_residuals.pdf", width = width, height = height)
+    print(boost_rf_qq); ggplot2::ggsave("boost_rf_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5481,10 +5485,10 @@ if (data_visualizations[1] == "earth") {
   gridExtra::grid.arrange(earth_hist_residuals)
   gridExtra::grid.arrange(earth_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "earth"){
-    print(earth_pred_vs_actual); ggplot2::ggsave("earth_pred_vs_actual.pdf")
-    print(earth_resid_vs_actual); ggplot2::ggsave("earth_resid_vs_actual.pdf")
-    print(earth_hist_residuals); ggplot2::ggsave("earth_hist_residuals.pdf")
-    print(earth_qq); ggplot2::ggsave("earth_qq.pdf")
+    print(earth_pred_vs_actual); ggplot2::ggsave("earth_pred_vs_actual.pdf", width = width, height = height)
+    print(earth_resid_vs_actual); ggplot2::ggsave("earth_resid_vs_actual.pdf", width = width, height = height)
+    print(earth_hist_residuals); ggplot2::ggsave("earth_hist_residuals.pdf", width = width, height = height)
+    print(earth_qq); ggplot2::ggsave("earth_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5495,10 +5499,10 @@ if (data_visualizations[1] == "Elastic") {
   gridExtra::grid.arrange(elastic_hist_residuals)
   gridExtra::grid.arrange(elastic_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Elastic"){
-    print(elastic_pred_vs_actual); ggplot2::ggsave("elastic_pred_vs_actual.pdf")
-    print(elastic_resid_vs_actual); ggplot2::ggsave("elastic_resid_vs_actual.pdf")
-    print(elastic_hist_residuals); ggplot2::ggsave("elastic_hist_residuals.pdf")
-    print(elastic_qq); ggplot2::ggsave("elastic_qq.pdf")
+    print(elastic_pred_vs_actual); ggplot2::ggsave("elastic_pred_vs_actual.pdf", width = width, height = height)
+    print(elastic_resid_vs_actual); ggplot2::ggsave("elastic_resid_vs_actual.pdf", width = width, height = height)
+    print(elastic_hist_residuals); ggplot2::ggsave("elastic_hist_residuals.pdf", width = width, height = height)
+    print(elastic_qq); ggplot2::ggsave("elastic_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5509,10 +5513,10 @@ if (data_visualizations[1] == "GAM") {
   gridExtra::grid.arrange(gam_hist_residuals)
   gridExtra::grid.arrange(gam_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "GAM"){
-    print(gam_pred_vs_actual); ggplot2::ggsave("gam_pred_vs_actual.pdf")
-    print(gam_resid_vs_actual); ggplot2::ggsave("gam_resid_vs_actual.pdf")
-    print(gam_hist_residuals); ggplot2::ggsave("gam_hist_residuals.pdf")
-    print(gam_qq); ggplot2::ggsave("gam_qq.pdf")
+    print(gam_pred_vs_actual); ggplot2::ggsave("gam_pred_vs_actual.pdf", width = width, height = height)
+    print(gam_resid_vs_actual); ggplot2::ggsave("gam_resid_vs_actual.pdf", width = width, height = height)
+    print(gam_hist_residuals); ggplot2::ggsave("gam_hist_residuals.pdf", width = width, height = height)
+    print(gam_qq); ggplot2::ggsave("gam_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5523,10 +5527,10 @@ if (data_visualizations[1] == "Gradient Boosted") {
   gridExtra::grid.arrange(gb_hist_residuals)
   gridExtra::grid.arrange(gb_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Gradient Boosted"){
-    print(gb_pred_vs_actual); ggplot2::ggsave("gb_pred_vs_actual.pdf")
-    print(gb_resid_vs_actual); ggplot2::ggsave("gb_resid_vs_actual.pdf")
-    print(gb_hist_residuals); ggplot2::ggsave("gb_hist_residuals.pdf")
-    print(gb_qq); ggplot2::ggsave("gb_qq.pdf")
+    print(gb_pred_vs_actual); ggplot2::ggsave("gb_pred_vs_actual.pdf", width = width, height = height)
+    print(gb_resid_vs_actual); ggplot2::ggsave("gb_resid_vs_actual.pdf", width = width, height = height)
+    print(gb_hist_residuals); ggplot2::ggsave("gb_hist_residuals.pdf", width = width, height = height)
+    print(gb_qq); ggplot2::ggsave("gb_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5537,10 +5541,10 @@ if (data_visualizations[1] == "KNN") {
   gridExtra::grid.arrange(knn_hist_residuals)
   gridExtra::grid.arrange(knn_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "KNN") {
-    print(knn_pred_vs_actual); ggplot2::ggsave("knn_pred_vs_actual.pdf")
-    print(knn_resid_vs_actual); ggplot2::ggsave("knn_resid_vs_actual.pdf")
-    print(knn_hist_residuals); ggplot2::ggsave("knn_hist_residuals.pdf")
-    print(knn_qq); ggplot2::ggsave("knn_qq.pdf")
+    print(knn_pred_vs_actual); ggplot2::ggsave("knn_pred_vs_actual.pdf", width = width, height = height)
+    print(knn_resid_vs_actual); ggplot2::ggsave("knn_resid_vs_actual.pdf", width = width, height = height)
+    print(knn_hist_residuals); ggplot2::ggsave("knn_hist_residuals.pdf", width = width, height = height)
+    print(knn_qq); ggplot2::ggsave("knn_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5551,10 +5555,10 @@ if (data_visualizations[1] == "Lasso") {
   gridExtra::grid.arrange(lasso_hist_residuals)
   gridExtra::grid.arrange(lasso_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Lasso"){
-    print(lasso_pred_vs_actual); ggplot2::ggsave("lasso_pred_vs_actual.pdf")
-    print(lasso_resid_vs_actual); ggplot2::ggsave("lasso_resid_vs_actual.pdf")
-    print(lasso_hist_residuals); ggplot2::ggsave("lasso_hist_residuals.pdf")
-    print(lasso_qq); ggplot2::ggsave("lasso_qq.pdf")
+    print(lasso_pred_vs_actual); ggplot2::ggsave("lasso_pred_vs_actual.pdf", width = width, height = height)
+    print(lasso_resid_vs_actual); ggplot2::ggsave("lasso_resid_vs_actual.pdf", width = width, height = height)
+    print(lasso_hist_residuals); ggplot2::ggsave("lasso_hist_residuals.pdf", width = width, height = height)
+    print(lasso_qq); ggplot2::ggsave("lasso_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5565,10 +5569,10 @@ if (data_visualizations[1] == "Linear") {
   gridExtra::grid.arrange(linear_hist_residuals)
   gridExtra::grid.arrange(linear_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Linear"){
-    print(linear_pred_vs_actual); ggplot2::ggsave("linear_pred_vs_actual.pdf")
-    print(linear_resid_vs_actual); ggplot2::ggsave("linear_resid_vs_actual.pdf")
-    print(linear_hist_residuals); ggplot2::ggsave("linear_hist_residuals.pdf")
-    print(linear_qq); ggplot2::ggsave("linear_qq.pdf")
+    print(linear_pred_vs_actual); ggplot2::ggsave("linear_pred_vs_actual.pdf", width = width, height = height)
+    print(linear_resid_vs_actual); ggplot2::ggsave("linear_resid_vs_actual.pdf", width = width, height = height)
+    print(linear_hist_residuals); ggplot2::ggsave("linear_hist_residuals.pdf", width = width, height = height)
+    print(linear_qq); ggplot2::ggsave("linear_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5579,10 +5583,10 @@ if (data_visualizations[1] == "Neuralnet") {
   gridExtra::grid.arrange(neuralnet_hist_residuals)
   gridExtra::grid.arrange(neuralnet_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Neuralnet"){
-    print(neuralnet_pred_vs_actual); ggplot2::ggsave("neuralnet_pred_vs_actual.pdf")
-    print(neuralnet_resid_vs_actual); ggplot2::ggsave("neuralnet_resid_vs_actual.pdf")
-    print(neuralnet_hist_residuals); ggplot2::ggsave("neuralnet_hist_residuals.pdf")
-    print(neuralnet_qq); ggplot2::ggsave("neuralnet_qq.pdf")
+    print(neuralnet_pred_vs_actual); ggplot2::ggsave("neuralnet_pred_vs_actual.pdf", width = width, height = height)
+    print(neuralnet_resid_vs_actual); ggplot2::ggsave("neuralnet_resid_vs_actual.pdf", width = width, height = height)
+    print(neuralnet_hist_residuals); ggplot2::ggsave("neuralnet_hist_residuals.pdf", width = width, height = height)
+    print(neuralnet_qq); ggplot2::ggsave("neuralnet_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5593,10 +5597,10 @@ if (data_visualizations[1] == "PLS") {
   gridExtra::grid.arrange(pls_hist_residuals)
   gridExtra::grid.arrange(pls_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "PLS"){
-    print(pls_pred_vs_actual); ggplot2::ggsave("pls_pred_vs_actual.pdf")
-    print(pls_resid_vs_actual); ggplot2::ggsave("pls_resid_vs_actual.pdf")
-    print(pls_hist_residuals); ggplot2::ggsave("pls_hist_residuals.pdf")
-    print(pls_qq); ggplot2::ggsave("pls_qq.pdf")
+    print(pls_pred_vs_actual); ggplot2::ggsave("pls_pred_vs_actual.pdf", width = width, height = height)
+    print(pls_resid_vs_actual); ggplot2::ggsave("pls_resid_vs_actual.pdf", width = width, height = height)
+    print(pls_hist_residuals); ggplot2::ggsave("pls_hist_residuals.pdf", width = width, height = height)
+    print(pls_qq); ggplot2::ggsave("pls_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5607,10 +5611,10 @@ if (data_visualizations[1] == "PCR") {
   gridExtra::grid.arrange(pcr_hist_residuals)
   gridExtra::grid.arrange(pcr_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "PCR"){
-    print(pcr_pred_vs_actual); ggplot2::ggsave("pcr_pred_vs_actual.pdf")
-    print(pcr_resid_vs_actual); ggplot2::ggsave("pcr_resid_vs_actual.pdf")
-    print(pcr_hist_residuals); ggplot2::ggsave("pcr_hist_residuals.pdf")
-    print(pcr_qq); ggplot2::ggsave("pcr_qq.pdf")
+    print(pcr_pred_vs_actual); ggplot2::ggsave("pcr_pred_vs_actual.pdf", width = width, height = height)
+    print(pcr_resid_vs_actual); ggplot2::ggsave("pcr_resid_vs_actual.pdf", width = width, height = height)
+    print(pcr_hist_residuals); ggplot2::ggsave("pcr_hist_residuals.pdf", width = width, height = height)
+    print(pcr_qq); ggplot2::ggsave("pcr_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5621,10 +5625,10 @@ if (data_visualizations[1] == "RF") {
   gridExtra::grid.arrange(rf_hist_residuals)
   gridExtra::grid.arrange(rf_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "RF"){
-    print(rf_pred_vs_actual); ggplot2::ggsave("rf_pred_vs_actual.pdf")
-    print(rf_resid_vs_actual); ggplot2::ggsave("rf_resid_vs_actual.pdf")
-    print(rf_hist_residuals); ggplot2::ggsave("rf_hist_residuals.pdf")
-    print(rf_qq); ggplot2::ggsave("rf_qq.pdf")
+    print(rf_pred_vs_actual); ggplot2::ggsave("rf_pred_vs_actual.pdf", width = width, height = height)
+    print(rf_resid_vs_actual); ggplot2::ggsave("rf_resid_vs_actual.pdf", width = width, height = height)
+    print(rf_hist_residuals); ggplot2::ggsave("rf_hist_residuals.pdf", width = width, height = height)
+    print(rf_qq); ggplot2::ggsave("rf_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5635,10 +5639,10 @@ if (data_visualizations[1] == "Ridge") {
   gridExtra::grid.arrange(ridge_hist_residuals)
   gridExtra::grid.arrange(ridge_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Ridge"){
-    print(ridge_pred_vs_actual); ggplot2::ggsave("ridge_pred_vs_actual.pdf")
-    print(ridge_resid_vs_actual); ggplot2::ggsave("ridge_resid_vs_actual.pdf")
-    print(ridge_hist_residuals); ggplot2::ggsave("ridge_hist_residuals.pdf")
-    print(ridge_qq); ggplot2::ggsave("ridge_qq.pdf")
+    print(ridge_pred_vs_actual); ggplot2::ggsave("ridge_pred_vs_actual.pdf", width = width, height = height)
+    print(ridge_resid_vs_actual); ggplot2::ggsave("ridge_resid_vs_actual.pdf", width = width, height = height)
+    print(ridge_hist_residuals); ggplot2::ggsave("ridge_hist_residuals.pdf", width = width, height = height)
+    print(ridge_qq); ggplot2::ggsave("ridge_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5649,10 +5653,10 @@ if (data_visualizations[1] == "Rpart") {
   gridExtra::grid.arrange(rpart_hist_residuals)
   gridExtra::grid.arrange(rpart_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Rpart"){
-    print(rpart_pred_vs_actual); ggplot2::ggsave("rpart_pred_vs_actual.pdf")
-    print(rpart_resid_vs_actual); ggplot2::ggsave("rpart_resid_vs_actual.pdf")
-    print(rpart_hist_residuals); ggplot2::ggsave("rpart_hist_residuals.pdf")
-    print(rpart_qq); ggplot2::ggsave("rpart_qq.pdf")
+    print(rpart_pred_vs_actual); ggplot2::ggsave("rpart_pred_vs_actual.pdf", width = width, height = height)
+    print(rpart_resid_vs_actual); ggplot2::ggsave("rpart_resid_vs_actual.pdf", width = width, height = height)
+    print(rpart_hist_residuals); ggplot2::ggsave("rpart_hist_residuals.pdf", width = width, height = height)
+    print(rpart_qq); ggplot2::ggsave("rpart_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5663,10 +5667,10 @@ if (data_visualizations[1] == "SVM") {
   gridExtra::grid.arrange(svm_hist_residuals)
   gridExtra::grid.arrange(svm_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "SVM"){
-    print(svm_pred_vs_actual); ggplot2::ggsave("svm_pred_vs_actual.pdf")
-    print(svm_resid_vs_actual); ggplot2::ggsave("svm_resid_vs_actual.pdf")
-    print(svm_hist_residuals); ggplot2::ggsave("svm_hist_residuals.pdf")
-    print(svm_qq); ggplot2::ggsave("svm_qq.pdf")
+    print(svm_pred_vs_actual); ggplot2::ggsave("svm_pred_vs_actual.pdf", width = width, height = height)
+    print(svm_resid_vs_actual); ggplot2::ggsave("svm_resid_vs_actual.pdf", width = width, height = height)
+    print(svm_hist_residuals); ggplot2::ggsave("svm_hist_residuals.pdf", width = width, height = height)
+    print(svm_qq); ggplot2::ggsave("svm_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5677,10 +5681,10 @@ if (data_visualizations[1] == "Tree") {
   gridExtra::grid.arrange(tree_hist_residuals)
   gridExtra::grid.arrange(tree_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Tree"){
-    print(tree_pred_vs_actual); ggplot2::ggsave("tree_pred_vs_actual.pdf")
-    print(tree_resid_vs_actual); ggplot2::ggsave("tree_resid_vs_actual.pdf")
-    print(tree_hist_residuals); ggplot2::ggsave("tree_hist_residuals.pdf")
-    print(tree_qq); ggplot2::ggsave("tree_qq.pdf")
+    print(tree_pred_vs_actual); ggplot2::ggsave("tree_pred_vs_actual.pdf", width = width, height = height)
+    print(tree_resid_vs_actual); ggplot2::ggsave("tree_resid_vs_actual.pdf", width = width, height = height)
+    print(tree_hist_residuals); ggplot2::ggsave("tree_hist_residuals.pdf", width = width, height = height)
+    print(tree_qq); ggplot2::ggsave("tree_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5691,10 +5695,10 @@ if (data_visualizations[1] == "XGBoost") {
   gridExtra::grid.arrange(xgb_hist_residuals)
   gridExtra::grid.arrange(xgb_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "XGBoost"){
-    print(xgb_pred_vs_actual); ggplot2::ggsave("xgb_pred_vs_actual.pdf")
-    print(xgb_resid_vs_actual); ggplot2::ggsave("xgb_resid_vs_actual.pdf")
-    print(xgb_hist_residuals); ggplot2::ggsave("xgb_hist_residuals.pdf")
-    print(xgb_qq); ggplot2::ggsave("xgb_qq.pdf")
+    print(xgb_pred_vs_actual); ggplot2::ggsave("xgb_pred_vs_actual.pdf", width = width, height = height)
+    print(xgb_resid_vs_actual); ggplot2::ggsave("xgb_resid_vs_actual.pdf", width = width, height = height)
+    print(xgb_hist_residuals); ggplot2::ggsave("xgb_hist_residuals.pdf", width = width, height = height)
+    print(xgb_qq); ggplot2::ggsave("xgb_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5705,10 +5709,10 @@ if (data_visualizations[1] == "Ensemble Bagged Random Forest") {
   gridExtra::grid.arrange(ensemble_bag_rf_hist_residuals)
   gridExtra::grid.arrange(ensemble_bag_rf_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Bagged Random Forest"){
-    print(ensemble_bag_rf_pred_vs_actual); ggplot2::ggsave("ensemble_bag_rf_pred_vs_actual.pdf")
-    print(ensemble_bag_rf_resid_vs_actual); ggplot2::ggsave("ensemble_bag_rf_resid_vs_actual.pdf")
-    print(ensemble_bag_rf_hist_residuals); ggplot2::ggsave("ensemble_bag_rf_hist_residuals.pdf")
-    print(ensemble_bag_rf_qq); ggplot2::ggsave("ensemble_bag_rf_qq.pdf")
+    print(ensemble_bag_rf_pred_vs_actual); ggplot2::ggsave("ensemble_bag_rf_pred_vs_actual.pdf", width = width, height = height)
+    print(ensemble_bag_rf_resid_vs_actual); ggplot2::ggsave("ensemble_bag_rf_resid_vs_actual.pdf", width = width, height = height)
+    print(ensemble_bag_rf_hist_residuals); ggplot2::ggsave("ensemble_bag_rf_hist_residuals.pdf", width = width, height = height)
+    print(ensemble_bag_rf_qq); ggplot2::ggsave("ensemble_bag_rf_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5719,10 +5723,10 @@ if (data_visualizations[1] == "Ensemble Bagging") {
   gridExtra::grid.arrange(ensemble_bagging_hist_residuals)
   gridExtra::grid.arrange(ensemble_bagging_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Bagging"){
-    print(ensemble_bagging_pred_vs_actual); ggplot2::ggsave("ensemble_bagging_pred_vs_actual.pdf")
-    print(ensemble_bagging_resid_vs_actual); ggplot2::ggsave("ensemble_bagging_resid_vs_actual.pdf")
-    print(ensemble_bagging_hist_residuals); ggplot2::ggsave("ensemble_bagging_hist_residuals.pdf")
-    print(ensemble_bagging_qq); ggplot2::ggsave("ensemble_bagging_qq.pdf")
+    print(ensemble_bagging_pred_vs_actual); ggplot2::ggsave("ensemble_bagging_pred_vs_actual.pdf", width = width, height = height)
+    print(ensemble_bagging_resid_vs_actual); ggplot2::ggsave("ensemble_bagging_resid_vs_actual.pdf", width = width, height = height)
+    print(ensemble_bagging_hist_residuals); ggplot2::ggsave("ensemble_bagging_hist_residuals.pdf", width = width, height = height)
+    print(ensemble_bagging_qq); ggplot2::ggsave("ensemble_bagging_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5733,10 +5737,10 @@ if (data_visualizations[1] == "Ensemble BayesGLM") {
   gridExtra::grid.arrange(ensemble_bayesglm_hist_residuals)
   gridExtra::grid.arrange(ensemble_bayesglm_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble BayesGLM"){
-    print(ensemble_bayesglm_pred_vs_actual); ggplot2::ggsave("ensemble_bayesglm_pred_vs_actual.pdf")
-    print(ensemble_bayesglm_resid_vs_actual); ggplot2::ggsave("ensemble_bayesglm_resid_vs_actual.pdf")
-    print(ensemble_bayesglm_hist_residuals); ggplot2::ggsave("ensemble_bayesglm_hist_residuals.pdf")
-    print(ensemble_bayesglm_qq); ggplot2::ggsave("ensemble_bayesglm_qq.pdf")
+    print(ensemble_bayesglm_pred_vs_actual); ggplot2::ggsave("ensemble_bayesglm_pred_vs_actual.pdf", width = width, height = height)
+    print(ensemble_bayesglm_resid_vs_actual); ggplot2::ggsave("ensemble_bayesglm_resid_vs_actual.pdf", width = width, height = height)
+    print(ensemble_bayesglm_hist_residuals); ggplot2::ggsave("ensemble_bayesglm_hist_residuals.pdf", width = width, height = height)
+    print(ensemble_bayesglm_qq); ggplot2::ggsave("ensemble_bayesglm_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5747,10 +5751,10 @@ if (data_visualizations[1] == "Ensemble BayesRNN") {
   gridExtra::grid.arrange(ensemble_bayesrnn_hist_residuals)
   gridExtra::grid.arrange(ensemble_bayesrnn_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble BayesRNN"){
-    print(ensemble_bayesrnn_pred_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_pred_vs_actual.pdf")
-    print(ensemble_bayesrnn_resid_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_resid_vs_actual.pdf")
-    print(ensemble_bayesrnn_hist_residuals); ggplot2::ggsave("ensemble_bayesrnn_hist_residuals.pdf")
-    print(ensemble_bayesrnn_qq); ggplot2::ggsave("ensemble_bayesrnn_qq.pdf")
+    print(ensemble_bayesrnn_pred_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_pred_vs_actual.pdf", width = width, height = height)
+    print(ensemble_bayesrnn_resid_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_resid_vs_actual.pdf", width = width, height = height)
+    print(ensemble_bayesrnn_hist_residuals); ggplot2::ggsave("ensemble_bayesrnn_hist_residuals.pdf", width = width, height = height)
+    print(ensemble_bayesrnn_qq); ggplot2::ggsave("ensemble_bayesrnn_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5761,10 +5765,10 @@ if (data_visualizations[1] == "Ensemble Boosted RF") {
   gridExtra::grid.arrange(ensemble_boost_rf_hist_residuals)
   gridExtra::grid.arrange(ensemble_boost_rf_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Boosted RF"){
-    print(ensemble_boost_rf_pred_vs_actual); ggplot2::ggsave("ensemble_boost_rf_pred_vs_actual.pdf")
-    print(ensemble_boost_rf_resid_vs_actual); ggplot2::ggsave("ensemble_boost_rf_resid_vs_actual.pdf")
-    print(ensemble_boost_rf_hist_residuals); ggplot2::ggsave("ensemble_boost_rf_hist_residuals.pdf")
-    print(ensemble_boost_rf_qq); ggplot2::ggsave("ensemble_boost_rf_qq.pdf")
+    print(ensemble_boost_rf_pred_vs_actual); ggplot2::ggsave("ensemble_boost_rf_pred_vs_actual.pdf", width = width, height = height)
+    print(ensemble_boost_rf_resid_vs_actual); ggplot2::ggsave("ensemble_boost_rf_resid_vs_actual.pdf", width = width, height = height)
+    print(ensemble_boost_rf_hist_residuals); ggplot2::ggsave("ensemble_boost_rf_hist_residuals.pdf", width = width, height = height)
+    print(ensemble_boost_rf_qq); ggplot2::ggsave("ensemble_boost_rf_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5775,10 +5779,10 @@ if (data_visualizations[1] == "Ensemble Cubist") {
   gridExtra::grid.arrange(ensemble_cubist_hist_residuals)
   gridExtra::grid.arrange(ensemble_cubist_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Cubist"){
-    print(ensemble_cubist_pred_vs_actual); ggplot2::ggsave("ensemble_cubist_pred_vs_actual.pdf")
-    print(ensemble_cubist_resid_vs_actual); ggplot2::ggsave("ensemble_cubist_resid_vs_actual.pdf")
-    print(ensemble_cubist_hist_residuals); ggplot2::ggsave("ensemble_cubist_hist_residuals.pdf")
-    print(ensemble_cubist_qq); ggplot2::ggsave("ensemble_cubist_qq.pdf")
+    print(ensemble_cubist_pred_vs_actual); ggplot2::ggsave("ensemble_cubist_pred_vs_actual.pdf", width = width, height = height)
+    print(ensemble_cubist_resid_vs_actual); ggplot2::ggsave("ensemble_cubist_resid_vs_actual.pdf", width = width, height = height)
+    print(ensemble_cubist_hist_residuals); ggplot2::ggsave("ensemble_cubist_hist_residuals.pdf", width = width, height = height)
+    print(ensemble_cubist_qq); ggplot2::ggsave("ensemble_cubist_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5789,10 +5793,10 @@ if (data_visualizations[1] == "Ensemble Earth") {
   gridExtra::grid.arrange(ensemble_earth_hist_residuals)
   gridExtra::grid.arrange(ensemble_earth_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Earth"){
-    print(ensemble_earth_pred_vs_actual); ggplot2::ggsave("ensemble_earth_pred_vs_actual.pdf")
-    print(ensemble_earth_resid_vs_actual); ggplot2::ggsave("ensemble_earth_resid_vs_actual.pdf")
-    print(ensemble_earth_hist_residuals); ggplot2::ggsave("ensemble_earth_hist_residuals.pdf")
-    print(ensemble_earth_qq); ggplot2::ggsave("ensemble_earth_qq.pdf")
+    print(ensemble_earth_pred_vs_actual); ggplot2::ggsave("ensemble_earth_pred_vs_actual.pdf", width = width, height = height)
+    print(ensemble_earth_resid_vs_actual); ggplot2::ggsave("ensemble_earth_resid_vs_actual.pdf", width = width, height = height)
+    print(ensemble_earth_hist_residuals); ggplot2::ggsave("ensemble_earth_hist_residuals.pdf", width = width, height = height)
+    print(ensemble_earth_qq); ggplot2::ggsave("ensemble_earth_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5803,10 +5807,10 @@ if (data_visualizations[1] == "Ensemble_Elastic") {
   gridExtra::grid.arrange(ensemble_elastic_hist_residuals)
   gridExtra::grid.arrange(ensemble_elastic_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Elastic"){
-    print(ensemble_elastic_pred_vs_actual); ggplot2::ggsave("ensemble_elastic_pred_vs_actual.pdf")
-    print(ensemble_elastic_resid_vs_actual); ggplot2::ggsave("ensemble_elastic_resid_vs_actual.pdf")
-    print(ensemble_elastic_hist_residuals); ggplot2::ggsave("ensemble_elastic_hist_residuals.pdf")
-    print(ensemble_elastic_qq); ggplot2::ggsave("ensemble_elastic_qq.pdf")
+    print(ensemble_elastic_pred_vs_actual); ggplot2::ggsave("ensemble_elastic_pred_vs_actual.pdf", width = width, height = height)
+    print(ensemble_elastic_resid_vs_actual); ggplot2::ggsave("ensemble_elastic_resid_vs_actual.pdf", width = width, height = height)
+    print(ensemble_elastic_hist_residuals); ggplot2::ggsave("ensemble_elastic_hist_residuals.pdf", width = width, height = height)
+    print(ensemble_elastic_qq); ggplot2::ggsave("ensemble_elastic_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5817,10 +5821,10 @@ if (data_visualizations[1] == "Ensemble Gradient Boosted") {
   gridExtra::grid.arrange(ensemble_gb_hist_residuals)
   gridExtra::grid.arrange(ensemble_gb_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Gradient Boosted"){
-    print(ensemble_gb_pred_vs_actual); ggplot2::ggsave("ensemble_gb_pred_vs_actual.pdf")
-    print(ensemble_gb_resid_vs_actual); ggplot2::ggsave("ensemble_gb_resid_vs_actual.pdf")
-    print(ensemble_gb_hist_residuals); ggplot2::ggsave("ensemble_gb_hist_residuals.pdf")
-    print(ensemble_gb_qq); ggplot2::ggsave("ensemble_gb_qq.pdf")
+    print(ensemble_gb_pred_vs_actual); ggplot2::ggsave("ensemble_gb_pred_vs_actual.pdf", width = width, height = height)
+    print(ensemble_gb_resid_vs_actual); ggplot2::ggsave("ensemble_gb_resid_vs_actual.pdf", width = width, height = height)
+    print(ensemble_gb_hist_residuals); ggplot2::ggsave("ensemble_gb_hist_residuals.pdf", width = width, height = height)
+    print(ensemble_gb_qq); ggplot2::ggsave("ensemble_gb_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5831,10 +5835,10 @@ if (data_visualizations[1] == "Ensemble K-Nearest Neighbors") {
   gridExtra::grid.arrange(ensemble_knn_hist_residuals)
   gridExtra::grid.arrange(ensemble_knn_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble K-Nearest Neighbors"){
-    print(ensemble_knn_pred_vs_actual); ggplot2::ggsave("ensemble_knn_pred_vs_actual.pdf")
-    print(ensemble_knn_resid_vs_actual); ggplot2::ggsave("ensemble_knn_resid_vs_actual.pdf")
-    print(ensemble_knn_hist_residuals); ggplot2::ggsave("ensemble_knn_hist_residuals.pdf")
-    print(ensemble_knn_qq); ggplot2::ggsave("ensemble_knn_qq.pdf")
+    print(ensemble_knn_pred_vs_actual); ggplot2::ggsave("ensemble_knn_pred_vs_actual.pdf", width = width, height = height)
+    print(ensemble_knn_resid_vs_actual); ggplot2::ggsave("ensemble_knn_resid_vs_actual.pdf", width = width, height = height)
+    print(ensemble_knn_hist_residuals); ggplot2::ggsave("ensemble_knn_hist_residuals.pdf", width = width, height = height)
+    print(ensemble_knn_qq); ggplot2::ggsave("ensemble_knn_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5845,10 +5849,10 @@ if (data_visualizations[1] == "Ensemble_Lasso") {
   gridExtra::grid.arrange(ensemble_lasso_hist_residuals)
   gridExtra::grid.arrange(ensemble_lasso_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Lasso"){
-    print(ensemble_lasso_pred_vs_actual); ggplot2::ggsave("ensemble_lasso_pred_vs_actual.pdf")
-    print(ensemble_lasso_resid_vs_actual); ggplot2::ggsave("ensemble_lasso_resid_vs_actual.pdf")
-    print(ensemble_lasso_hist_residuals); ggplot2::ggsave("ensemble_lasso_hist_residuals.pdf")
-    print(ensemble_lasso_qq); ggplot2::ggsave("ensemble_lasso_qq.pdf")
+    print(ensemble_lasso_pred_vs_actual); ggplot2::ggsave("ensemble_lasso_pred_vs_actual.pdf", width = width, height = height)
+    print(ensemble_lasso_resid_vs_actual); ggplot2::ggsave("ensemble_lasso_resid_vs_actual.pdf", width = width, height = height)
+    print(ensemble_lasso_hist_residuals); ggplot2::ggsave("ensemble_lasso_hist_residuals.pdf", width = width, height = height)
+    print(ensemble_lasso_qq); ggplot2::ggsave("ensemble_lasso_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5859,10 +5863,10 @@ if (data_visualizations[1] == "Ensemble Linear") {
   gridExtra::grid.arrange(ensemble_linear_hist_residuals)
   gridExtra::grid.arrange(ensemble_linear_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Linear"){
-    print(ensemble_linear_pred_vs_actual); ggplot2::ggsave("ensemble_linear_pred_vs_actual.pdf")
-    print(ensemble_linear_resid_vs_actual); ggplot2::ggsave("ensemble_linear_resid_vs_actual.pdf")
-    print(ensemble_linear_hist_residuals); ggplot2::ggsave("ensemble_linear_hist_residuals.pdf")
-    print(ensemble_linear_qq); ggplot2::ggsave("ensemble_linear_qq.pdf")
+    print(ensemble_linear_pred_vs_actual); ggplot2::ggsave("ensemble_linear_pred_vs_actual.pdf", width = width, height = height)
+    print(ensemble_linear_resid_vs_actual); ggplot2::ggsave("ensemble_linear_resid_vs_actual.pdf", width = width, height = height)
+    print(ensemble_linear_hist_residuals); ggplot2::ggsave("ensemble_linear_hist_residuals.pdf", width = width, height = height)
+    print(ensemble_linear_qq); ggplot2::ggsave("ensemble_linear_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5873,10 +5877,10 @@ if (data_visualizations[1] == "Ensemble RF") {
   gridExtra::grid.arrange(ensemble_rf_hist_residuals)
   gridExtra::grid.arrange(ensemble_rf_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble RF"){
-    print(ensemble_rf_pred_vs_actual); ggplot2::ggsave("ensemble_rf_pred_vs_actual.pdf")
-    print(ensemble_rf_resid_vs_actual); ggplot2::ggsave("ensemble_rf_resid_vs_actual.pdf")
-    print(ensemble_rf_hist_residuals); ggplot2::ggsave("ensemble_rf_hist_residuals.pdf")
-    print(ensemble_rf_qq); ggplot2::ggsave("ensemble_rf_qq.pdf")
+    print(ensemble_rf_pred_vs_actual); ggplot2::ggsave("ensemble_rf_pred_vs_actual.pdf", width = width, height = height)
+    print(ensemble_rf_resid_vs_actual); ggplot2::ggsave("ensemble_rf_resid_vs_actual.pdf", width = width, height = height)
+    print(ensemble_rf_hist_residuals); ggplot2::ggsave("ensemble_rf_hist_residuals.pdf", width = width, height = height)
+    print(ensemble_rf_qq); ggplot2::ggsave("ensemble_rf_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5887,10 +5891,10 @@ if (data_visualizations[1] == "Ensemble_Ridge") {
   gridExtra::grid.arrange(ensemble_ridge_hist_residuals)
   gridExtra::grid.arrange(ensemble_ridge_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Ridge"){
-    print(ensemble_ridge_pred_vs_actual); ggplot2::ggsave("ensemble_ridge_pred_vs_actual.pdf")
-    print(ensemble_ridge_resid_vs_actual); ggplot2::ggsave("ensemble_ridge_resid_vs_actual.pdf")
-    print(ensemble_ridge_hist_residuals); ggplot2::ggsave("ensemble_ridge_hist_residuals.pdf")
-    print(ensemble_ridge_qq); ggplot2::ggsave("ensemble_ridge_qq.pdf")
+    print(ensemble_ridge_pred_vs_actual); ggplot2::ggsave("ensemble_ridge_pred_vs_actual.pdf", width = width, height = height)
+    print(ensemble_ridge_resid_vs_actual); ggplot2::ggsave("ensemble_ridge_resid_vs_actual.pdf", width = width, height = height)
+    print(ensemble_ridge_hist_residuals); ggplot2::ggsave("ensemble_ridge_hist_residuals.pdf", width = width, height = height)
+    print(ensemble_ridge_qq); ggplot2::ggsave("ensemble_ridge_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5901,10 +5905,10 @@ if (data_visualizations[1] == "Ensemble Rpart") {
   gridExtra::grid.arrange(ensemble_rpart_hist_residuals)
   gridExtra::grid.arrange(ensemble_rpart_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Rpart"){
-    print(ensemble_rpart_pred_vs_actual); ggplot2::ggsave("ensemble_rpart_pred_vs_actual.pdf")
-    print(ensemble_rpart_resid_vs_actual); ggplot2::ggsave("ensemble_rpart_resid_vs_actual.pdf")
-    print(ensemble_rpart_hist_residuals); ggplot2::ggsave("ensemble_rpart_hist_residuals.pdf")
-    print(ensemble_rpart_qq); ggplot2::ggsave("ensemble_rpart_qq.pdf")
+    print(ensemble_rpart_pred_vs_actual); ggplot2::ggsave("ensemble_rpart_pred_vs_actual.pdf", width = width, height = height)
+    print(ensemble_rpart_resid_vs_actual); ggplot2::ggsave("ensemble_rpart_resid_vs_actual.pdf", width = width, height = height)
+    print(ensemble_rpart_hist_residuals); ggplot2::ggsave("ensemble_rpart_hist_residuals.pdf", width = width, height = height)
+    print(ensemble_rpart_qq); ggplot2::ggsave("ensemble_rpart_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5915,10 +5919,10 @@ if (data_visualizations[1] == "Ensemble Support Vector Machines") {
   gridExtra::grid.arrange(ensemble_svm_hist_residuals)
   gridExtra::grid.arrange(ensemble_svm_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Support Vector Machines"){
-    print(ensemble_svm_pred_vs_actual); ggplot2::ggsave("ensemble_svm_pred_vs_actual.pdf")
-    print(ensemble_svm_resid_vs_actual); ggplot2::ggsave("ensemble_svm_resid_vs_actual.pdf")
-    print(ensemble_svm_hist_residuals); ggplot2::ggsave("ensemble_svm_hist_residuals.pdf")
-    print(ensemble_svm_qq); ggplot2::ggsave("ensemble_svm_qq.pdf")
+    print(ensemble_svm_pred_vs_actual); ggplot2::ggsave("ensemble_svm_pred_vs_actual.pdf", width = width, height = height)
+    print(ensemble_svm_resid_vs_actual); ggplot2::ggsave("ensemble_svm_resid_vs_actual.pdf", width = width, height = height)
+    print(ensemble_svm_hist_residuals); ggplot2::ggsave("ensemble_svm_hist_residuals.pdf", width = width, height = height)
+    print(ensemble_svm_qq); ggplot2::ggsave("ensemble_svm_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5929,10 +5933,10 @@ if (data_visualizations[1] == "Ensemble Trees") {
   gridExtra::grid.arrange(ensemble_tree_hist_residuals)
   gridExtra::grid.arrange(ensemble_tree_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Trees"){
-    print(ensemble_tree_pred_vs_actual); ggplot2::ggsave("ensemble_tree_pred_vs_actual.pdf")
-    print(ensemble_tree_resid_vs_actual); ggplot2::ggsave("ensemble_tree_resid_vs_actual.pdf")
-    print(ensemble_tree_hist_residuals); ggplot2::ggsave("ensemble_tree_hist_residuals.pdf")
-    print(ensemble_tree_qq); ggplot2::ggsave("ensemble_tree_qq.pdf")
+    print(ensemble_tree_pred_vs_actual); ggplot2::ggsave("ensemble_tree_pred_vs_actual.pdf", width = width, height = height)
+    print(ensemble_tree_resid_vs_actual); ggplot2::ggsave("ensemble_tree_resid_vs_actual.pdf", width = width, height = height)
+    print(ensemble_tree_hist_residuals); ggplot2::ggsave("ensemble_tree_hist_residuals.pdf", width = width, height = height)
+    print(ensemble_tree_qq); ggplot2::ggsave("ensemble_tree_qq.pdf", width = width, height = height)
   }
 }
 
@@ -5943,10 +5947,10 @@ if (data_visualizations[1] == "Ensemble XGBoost") {
   gridExtra::grid.arrange(ensemble_xgb_hist_residuals)
   gridExtra::grid.arrange(ensemble_xgb_qq)
   if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble XGBoost"){
-    print(ensemble_xgb_pred_vs_actual); ggplot2::ggsave("ensemble_xgb_pred_vs_actual.pdf")
-    print(ensemble_xgb_resid_vs_actual); ggplot2::ggsave("ensemble_xgb_resid_vs_actual.pdf")
-    print(ensemble_xgb_hist_residuals); ggplot2::ggsave("ensemble_xgb_hist_residuals.pdf")
-    print(ensemble_xgb_qq); ggplot2::ggsave("ensemble_xgb_qq.pdf")
+    print(ensemble_xgb_pred_vs_actual); ggplot2::ggsave("ensemble_xgb_pred_vs_actual.pdf", width = width, height = height)
+    print(ensemble_xgb_resid_vs_actual); ggplot2::ggsave("ensemble_xgb_resid_vs_actual.pdf", width = width, height = height)
+    print(ensemble_xgb_hist_residuals); ggplot2::ggsave("ensemble_xgb_hist_residuals.pdf", width = width, height = height)
+    print(ensemble_xgb_qq); ggplot2::ggsave("ensemble_xgb_qq.pdf", width = width, height = height)
   }
 }
 
@@ -6013,7 +6017,7 @@ accuracy_plot <- ggplot2::ggplot(data = accuracy_data, mapping = ggplot2::aes(x 
   ggplot2::labs(y = "Root Mean Squared Error (RMSE), lower is better \n The horizontal line is the mean of the results, the red line is 0.") +
   ggplot2::theme(legend.position = "none")
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("accuracy_plot.pdf")
+  ggplot2::ggsave("accuracy_plot.pdf", width = width, height = height)
 }
 
 accuracy_plot2 <- ggplot2::ggplot(data = accuracy_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
@@ -6026,7 +6030,7 @@ accuracy_plot2 <- ggplot2::ggplot(data = accuracy_data, mapping = ggplot2::aes(x
   ggplot2::labs(y = "Root Mean Squared Error (RMSE), lower is better \n The horizontal line is the mean of the results, the red line is 0.") +
   ggplot2::theme(legend.position = "none")
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("accuracy_plot2.pdf")
+  ggplot2::ggsave("accuracy_plot2.pdf", width = width, height = height)
 }
 
 total_data <-
@@ -6102,7 +6106,7 @@ total_plot <- ggplot2::ggplot(data = total_data, mapping = ggplot2::aes(x = coun
       "train" = "blue", "holdout" = "red")
   )
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("total_plot.pdf")
+  ggplot2::ggsave("total_plot.pdf", width = width, height = height)
 }
 
 total_plot2 <- ggplot2::ggplot(data = total_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
@@ -6121,7 +6125,7 @@ total_plot2 <- ggplot2::ggplot(data = total_data, mapping = ggplot2::aes(x = cou
       "train" = "blue", "holdout" = "red")
   )
 if(save_all_plots == "Y"){
-  ggplot2::ggsave("total_plot2.pdf")
+  ggplot2::ggsave("total_plot2.pdf", width = width, height = height)
 }
 
 
