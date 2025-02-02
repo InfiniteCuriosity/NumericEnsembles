@@ -38,7 +38,7 @@
 #' @importFrom ipred bagging
 #' @importFrom leaps regsubsets
 #' @importFrom Metrics rmse
-#' @importFrom neuralnet neuralnet
+#' @importFrom nnet nnet
 #' @importFrom parallel makeCluster
 #' @importFrom pls pcr
 #' @importFrom purrr keep map_dbl
@@ -229,6 +229,10 @@ if (how_to_handle_strings == 3 && predict_on_new_data == "Y") {
 if(save_all_plots == "Y"){
   width = as.numeric(readline("Width of the graphics: "))
   height = as.numeric(readline("height of the graphics: "))
+  units = readline("Which units? You may use in, cm, mm or px. ")
+  scale = as.numeric(readline("What multiplicative scaling factor? "))
+  device = readline("Which device to use? You may enter eps, jpeg, pdf, png, svg or tiff: ")
+  dpi <- as.numeric(readline("Plot resolution. Applies only to raster output types (jpeg, png, tiff): "))
 }
 
 head_df <- reactable::reactable(head(df, n = 10),
@@ -274,23 +278,55 @@ corrplot::corrplot(stats::cor(df1), method = "number", title = title, mar = c(0,
 corrplot::corrplot(stats::cor(df1), method = "circle", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
 
 ## Boxplots of the numeric data ##
+
+## Boxplots of the numeric data ##
 boxplots <- df %>%
   tidyr::gather(key = "var", value = "value") %>%
   ggplot2::ggplot(aes(x = "", y = value)) +
   ggplot2::geom_boxplot(outlier.colour = "red", outlier.shape = 1) +
   ggplot2::facet_wrap(~var, scales = "free") +
   ggplot2::labs(title = "Boxplots of the numeric data")
-# Thanks to https://rstudio-pubs-static.s3.amazonaws.com/388596_e21196f1adf04e0ea7cd68edd9eba966.html
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("boxplots.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("boxplots.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("boxplots.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("boxplots.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("boxplots.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("boxplots.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("boxplots.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+# Thanks to https://rstudio-pubs-static.s3.amazonaws.com/388596_e21196f1adf04e0ea7cd68edd9eba966.html
 
 histograms <- ggplot2::ggplot(tidyr::gather(df1, cols, value), aes(x = value)) +
   ggplot2::geom_histogram(bins = round(nrow(df1) / 10)) +
   ggplot2::facet_wrap(. ~ cols, scales = "free") +
   ggplot2::labs(title = "Histograms of each numeric column. Each bar = 10 rows of data")
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("histograms.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("histograms.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("histograms.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("histograms.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("histograms.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("histograms.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("histograms.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 predictor_vs_target <- df %>%
@@ -300,8 +336,23 @@ predictor_vs_target <- df %>%
   ggplot2::facet_wrap(~ var, scales = "free") +
   ggplot2::theme_bw()+
   ggplot2::labs(title = "y (predictor variable) vs target variables")
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("predictor_vs_target.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("predictor_vs_target.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("predictor_vs_target.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("predictor_vs_target.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("predictor_vs_target.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("predictor_vs_target.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("predictor_vs_target.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 
@@ -555,41 +606,21 @@ linear_SSE <- 0
 linear_ks_stat <- 0
 linear_ks_p_value <- 0
 
-neuralnet_test_RMSE <- 0
-neuralnet_test_RMSE_mean <- 0
-neuralnet_validation_RMSE <- 0
-neuralnet_validation_RMSE_mean <- 0
-neuralnet_test_predict_value <- 0
-neuralnet_RMSE_sd <- 0
-neuralnet_test_sd <- 0
-neuralnet_test_sd_df <- data.frame(neuralnet_test_sd)
-neuralnet_test_predict_value_mean <- 0
-y_hat_neuralnet <- 0
-neuralnet_RMSE_difference <- 0
 neuralnet_train_RMSE <- 0
-neuralnet_train_RMSE_mean <- 0
-neuralnet_overfitting <- 0
-neuralnet_overfitting_mean <- 0
-predict_new_data_nn <- 0
-predict_train_nn_ <- 0
-predict_test_nn_ <- 0
-predict_validation_nn_ <- 0
-neuralnet_validation_predict_value <- 0
-neuralnet_validation_predict_value_mean <- 0
-neuralet_validation_sd <- 0
-neuralnet_RMSE <- 0
-neuralnet_holdout_RMSE <- 0
-neuralnet_holdout_RMSE_sd_mean <- 0
+neuralnet_test_RMSE <- 0
+neuralnet_validation_RMSE <- 0
 neuralnet_sd <- 0
-neuralnet_sd_mean <- 0
+neuralnet_overfitting <- 0
 neuralnet_duration <- 0
-neuralnet_duration_mean <- 0
+neuralnet_holdout_RMSE <- 0
+neuralnet_holdout_RMSE_mean <- 0
 neuralnet_bias <- 0
 neuralnet_MAE <- 0
 neuralnet_MSE <- 0
 neuralnet_SSE <- 0
 neuralnet_ks_stat <- 0
 neuralnet_ks_p_value <- 0
+neuralnet_test_predict_value_mean <- 0
 
 pls_train_RMSE <- 0
 pls_test_RMSE <- 0
@@ -1975,52 +2006,37 @@ for (i in 1:numresamples) {
 
   ####  Model 14 Neuralnet ####
   neuralnet_start <- Sys.time()
-  maxs <- apply(df, 2, max)
-  mins <- apply(df, 2, min)
-  scaled <- as.data.frame(scale(df, center = mins, scale = maxs - mins))
-  train_ <- scaled[idx == 1, ]
-  test_ <- scaled[idx == 2, ]
-  validation_ <- scaled[idx == 3, ]
-  n <- names(train_)
-  f <- as.formula(paste("y ~", paste(n[!n %in% "y"], collapse = " + ")))
-  nn <- neuralnet(f, data = train_, hidden = c(5, 3), linear.output = TRUE)
-  predict_test_nn <- neuralnet::compute(nn, test_[, 1:ncol(df) - 1])
-  predict_test_nn_ <- predict_test_nn$net.result * (max(df$y) - min(df$y)) + min(df$y)
-  predict_train_nn <- neuralnet::compute(nn, train_[, 1:ncol(df) - 1])
-  predict_train_nn_ <- predict_train_nn$net.result * (max(df$y) - min(df$y)) + min(df$y)
-  neuralnet_train_RMSE[i] <- Metrics::rmse(actual = train$y, predicted = predict_train_nn_)
+  neuralnet_train_fit <- nnet::nnet(train$y ~ ., data = train, size = 0, linout = TRUE, skip = TRUE)
+  neuralnet_train_RMSE[i] <- Metrics::rmse(actual = train$y, predicted = predict(object = neuralnet_train_fit, newdata = train))
   neuralnet_train_RMSE_mean <- mean(neuralnet_train_RMSE)
-  neuralnet_test_RMSE[i] <- Metrics::rmse(actual = test$y, predicted = predict_test_nn_)
+  neuralnet_test_RMSE[i] <- Metrics::rmse(actual = test$y, predicted = predict(object = neuralnet_train_fit, newdata = test))
   neuralnet_test_RMSE_mean <- mean(neuralnet_test_RMSE)
-  predict_validation_nn <- neuralnet::compute(nn, validation_[, 1:ncol(df) - 1])
-  predict_validation_nn_ <- predict_validation_nn$net.result * (max(df$y) - min(df$y)) + min(df$y)
-  neuralnet_validation_RMSE[i] <- Metrics::rmse(actual = validation$y, predicted = predict_validation_nn_)
+  neuralnet_validation_RMSE[i] <- Metrics::rmse(actual = validation$y, predicted = predict(object = neuralnet_train_fit, newdata = validation))
   neuralnet_validation_RMSE_mean <- mean(neuralnet_validation_RMSE)
-  neuralnet_holdout_RMSE[i] <- mean(c(neuralnet_test_RMSE, neuralnet_validation_RMSE))
+  neuralnet_holdout_RMSE[i] <- mean(c(neuralnet_test_RMSE_mean, neuralnet_validation_RMSE_mean))
   neuralnet_holdout_RMSE_mean <- mean(neuralnet_holdout_RMSE)
-  neuralnet_holdout_RMSE_sd_mean <- mean(sd(c(neuralnet_test_RMSE, neuralnet_validation_RMSE)))
-  neuralnet_test_predict_value[i] <- mean(predict_test_nn_)
-  neuralnet_test_predict_value_mean <- mean(neuralnet_test_predict_value)
-  neuralnet_validation_predict_value[i] <- mean(predict_validation_nn_)
-  neuralnet_validation_predict_value_mean <- mean(neuralnet_validation_predict_value)
-  neuralnet_test_sd <- sd(predict_test_nn_)
-  neuralnet_validation_sd <- sd(predict_validation_nn_)
-  neuralnet_sd_mean <- mean(neuralnet_test_sd, neuralet_validation_sd)
+  neuralnet_holdout_RMSE_sd_mean <- sd(c(neuralnet_test_RMSE_mean, neuralnet_validation_RMSE_mean))
+  neuralnet_train_predict_value <- predict(object = neuralnet_train_fit, newdata = train)
+  neuralnet_test_predict_value <- predict(object = neuralnet_train_fit, newdata = test)
+  neuralnet_validation_predict_value <- predict(object = neuralnet_train_fit, newdata = validation)
+  neuralnet_predict_value_mean <- mean(c(neuralnet_test_predict_value, neuralnet_validation_predict_value))
+  neuralnet_sd[i] <- sd(c(neuralnet_test_predict_value, neuralnet_validation_predict_value))
+  neuralnet_sd_mean <- mean(neuralnet_sd)
   neuralnet_overfitting[i] <- neuralnet_holdout_RMSE_mean / neuralnet_train_RMSE_mean
   neuralnet_overfitting_mean <- mean(neuralnet_overfitting)
   neuralnet_overfitting_range <- range(neuralnet_overfitting)
   neuralnet_overfitting_sd <- sd(neuralnet_overfitting)
-  y_hat_neuralnet <- c(predict_test_nn_, predict_validation_nn_)
-  neuralnet_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = y_hat_neuralnet)
+  y_hat_neuralnet <- c(neuralnet_test_predict_value, neuralnet_validation_predict_value)
+  neuralnet_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(neuralnet_test_predict_value, neuralnet_validation_predict_value))
   neuralnet_bias_mean <- mean(neuralnet_bias)
   neuralnet_bias_sd <- sd(neuralnet_bias)
-  neuralnet_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = y_hat_neuralnet)
+  neuralnet_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(neuralnet_test_predict_value, neuralnet_validation_predict_value))
   neuralnet_MAE_mean <- mean(neuralnet_MAE)
   neuralnet_MAE_sd <- sd(neuralnet_MAE)
-  neuralnet_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = y_hat_neuralnet)
+  neuralnet_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(neuralnet_test_predict_value, neuralnet_validation_predict_value))
   neuralnet_MSE_mean <- mean(neuralnet_MSE)
   neuralnet_MSE_sd <- sd(neuralnet_MSE)
-  neuralnet_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = y_hat_neuralnet)
+  neuralnet_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(neuralnet_test_predict_value, neuralnet_validation_predict_value))
   neuralnet_SSE_mean <- mean(neuralnet_SSE)
   neuralnet_SSE_sd <- sd(neuralnet_SSE)
   neuralnet_ks_p_value[i] <- stats::ks.test(x = y_hat_neuralnet, y = c(train$y, validation$y), exact = TRUE)$p.value
@@ -4050,8 +4066,23 @@ overfitting_plot <- ggplot2::ggplot(data = overfitting_data, mapping = ggplot2::
   ggplot2::ggtitle("Overfitting data\nOverfitting by model, fixed scales, closer to one is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 1.") +
   ggplot2::labs(y = "Overfitting, closer to one is better \n The black horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("overfitting_plot.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("overfitting_plot.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("overfitting_plot.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("overfitting_plot.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("overfitting_plot.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("overfitting_plot.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("overfitting_plot.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 overfitting_plot2 <- ggplot2::ggplot(data = overfitting_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
@@ -4063,8 +4094,23 @@ overfitting_plot2 <- ggplot2::ggplot(data = overfitting_data, mapping = ggplot2:
   ggplot2::ggtitle("Overfitting data\nOverfitting by model, free scales, closer to one is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 1.") +
   ggplot2::labs(y = "Overfitting, closer to one is better \n The black horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("overfitting_plot2.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("overfitting_plot2.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("overfitting_plot2.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("overfitting_plot2.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("overfitting_plot2.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("overfitting_plot2.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("overfitting_plot2.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 bias_data <-
@@ -4112,8 +4158,23 @@ bias_plot <- ggplot2::ggplot(data = bias_data, mapping = ggplot2::aes(x = count,
   ggplot2::ggtitle("Bias plot\nBias value by model, closer to zero is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 0.") +
   ggplot2::labs(y = "Bias value, closer to zero is better \n The horizontal line is the mean of the results, the red line is 0.") +
   ggplot2::theme(legend.position = "none")
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("bias_plot.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("bias_plot.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("bias_plot.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("bias_plot.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("bias_plot.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("bias_plot.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("bias_plot.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 MAE_data <-
@@ -4161,8 +4222,23 @@ MAE_plot <- ggplot2::ggplot(data = MAE_data, mapping = ggplot2::aes(x = count, y
   ggplot2::ggtitle("MAE plot\nMAE value by model, closer to zero is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 0.") +
   ggplot2::labs(y = "MAE value, closer to zero is better \n The horizontal line is the mean of the results, the red line is 0.") +
   ggplot2::theme(legend.position = "none")
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("MAE_plot.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("MAE_plot.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("MAE_plot.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("MAE_plot.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("MAE_plot.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("MAE_plot.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("MAE_plot.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 MSE_data <-
@@ -4210,8 +4286,23 @@ MSE_plot <- ggplot2::ggplot(data = MSE_data, mapping = ggplot2::aes(x = count, y
   ggplot2::ggtitle("MSE plot\nMSE value by model, closer to zero is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 0.") +
   ggplot2::labs(y = "MSE value, closer to zero is better \n The horizontal line is the mean of the results, the red line is 0.") +
   ggplot2::theme(legend.position = "none")
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("MSE_plot.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("MSE_plot.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("MSE_plot.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("MSE_plot.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("MSE_plot.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("MSE_plot.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("MSE_plot.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 SSE_data <-
@@ -4259,10 +4350,24 @@ SSE_plot <- ggplot2::ggplot(data = SSE_data, mapping = ggplot2::aes(x = count, y
   ggplot2::ggtitle("SSE plot\nSSE value by model, closer to zero is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 0.") +
   ggplot2::labs(y = "SSE value, closer to zero is better \n The horizontal line is the mean of the results, the red line is 0.") +
   ggplot2::theme(legend.position = "none")
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("SSE_plot.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("SSE_plot.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
-
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("SSE_plot.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("SSE_plot.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("SSE_plot.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("SSE_plot.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("SSE_plot.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 
 summary_results <- summary_results %>% dplyr::arrange(Mean_holdout_RMSE)
 
@@ -5310,8 +5415,23 @@ accuracy_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mea
   ggplot2::geom_text(aes(label = Mean_holdout_RMSE), vjust = -0.5, hjust = -0.5, angle = 90) +
   ggplot2::ylim(0, 1.5*max(summary_results$Mean_holdout_RMSE)) +
   ggplot2::geom_errorbar(aes(x=Model, ymin=Mean_holdout_RMSE-Std_Deviation_of_holdout_RMSE, ymax = Mean_holdout_RMSE+Std_Deviation_of_holdout_RMSE))
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("accuracy_barchart.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("accuracy_barchart.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("accuracy_barchart.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("accuracy_barchart.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("accuracy_barchart.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("accuracy_barchart.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("accuracy_barchart.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 k_s_test_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, KS_Test_P_Value_mean, decreasing = TRUE), y = KS_Test_P_Value_mean)) +
@@ -5322,10 +5442,24 @@ k_s_test_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, KS_
   ggplot2::scale_y_continuous(breaks = c(0.05, 0.10)) +
   ggplot2::geom_hline(yintercept = c(0.05, 0.10), linetype='dashed', color=c('blue', 'blue')) +
   ggplot2::geom_errorbar(aes(x = Model, ymin = KS_Test_P_Value_mean - KS_Test_P_Value_std_dev, ymax = KS_Test_P_Value_mean + KS_Test_P_Value_std_dev))
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("k_s_test_barchart.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("k_s_test_barchart.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
-
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("k_s_test_barchart.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("k_s_test_barchart.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("k_s_test_barchart.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("k_s_test_barchart.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("k_s_test_barchart.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 overfitting_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Overfitting_mean), y = Overfitting_mean)) +
   ggplot2::geom_col(width = 0.5)+
   ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1, hjust=1)) +
@@ -5333,10 +5467,24 @@ overfitting_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, 
   ggplot2::geom_text(aes(label = Overfitting_mean), vjust = 0,hjust = -0.5, angle = 90) +
   ggplot2::ylim(0, max(max(summary_results$Overfitting_mean[!is.infinite(summary_results$Overfitting_mean)])) +2) +
   ggplot2::geom_errorbar(aes(x=Model, ymin=Overfitting_mean-Overfitting_sd, ymax = Overfitting_mean+Overfitting_sd))
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("overfitting_barchart.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("overfitting_barchart.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
-
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("overfitting_barchart.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("overfitting_barchart.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("overfitting_barchart.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("overfitting_barchart.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("overfitting_barchart.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 duration_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Duration), y = Duration)) +
   ggplot2::geom_col(width = 0.5)+
   ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1, hjust=1)) +
@@ -5344,20 +5492,48 @@ duration_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Dur
   ggplot2::geom_text(aes(label = Duration), vjust = 0,hjust = -0.5, angle = 90) +
   ggplot2::ylim(0, 1.5*max(summary_results$Duration)) +
   ggplot2::geom_errorbar(aes(x = Model, ymin = Duration - Duration_sd, ymax = Duration + Duration_sd))
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("duration_barchart.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("duration_barchart.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
-
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("duration_barchart.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("duration_barchart.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("duration_barchart.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("duration_barchart.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("duration_barchart.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 bias_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Bias), y = Bias)) +
   ggplot2::geom_col(width = 0.5)+
   ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1, hjust=1)) +
   ggplot2::labs(x = "Model", y = "Holdout bias", title = "Mean bias, closer to zero is better") +
   ggplot2::geom_text(aes(label = Bias), vjust = -0.5, hjust = -0.5, angle = 90) +
   ggplot2::ylim(min(summary_results$Bias), 1.5*max(summary_results$Bias))
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("bias_barchart.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("bias_barchart.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
-
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("bias_barchart.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("bias_barchart.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("bias_barchart.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("bias_barchart.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("bias_barchart.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 MAE_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_MAE), y = Mean_MAE)) +
   ggplot2::geom_col(width = 0.5)+
   ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1, hjust=1)) +
@@ -5365,10 +5541,24 @@ MAE_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_MAE
   ggplot2::geom_text(aes(label = Mean_MAE), vjust = -0.5, hjust = -0.5, angle = 90) +
   ggplot2::ylim(min(summary_results$Mean_MAE), 1.5*max(summary_results$Mean_MAE)) +
   ggplot2::geom_errorbar(aes(x = Model, ymin = Mean_MAE - Mean_MAE_sd, ymax = Mean_MAE + Mean_MAE_sd))
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("MAE_barchart.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("MAE_barchart.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
-
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("MAE_barchart.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("MAE_barchart.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("MAE_barchart.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("MAE_barchart.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("MAE_barchart.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 MSE_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_MSE), y = Mean_MSE)) +
   ggplot2::geom_col(width = 0.5)+
   ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1, hjust=1)) +
@@ -5376,10 +5566,24 @@ MSE_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_MSE
   ggplot2::geom_text(aes(label = Mean_MSE), vjust = -0.5, hjust = -0.5, angle = 90)  +
   ggplot2::ylim(min(summary_results$Mean_MSE), 1.5*max(summary_results$Mean_MSE)) +
   ggplot2::geom_errorbar(aes(x = Model, ymin = Mean_MSE - Mean_MSE_sd, ymax = Mean_MSE + Mean_MSE_sd))
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("MSE_barchart.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("MSE_barchart.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
-
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("MSE_barchart.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("MSE_barchart.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("MSE_barchart.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("MSE_barchart.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("MSE_barchart.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 SSE_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_SSE), y = Mean_SSE)) +
   ggplot2::geom_col(width = 0.5)+
   ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1, hjust=1)) +
@@ -5387,10 +5591,24 @@ SSE_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_SSE
   ggplot2::geom_text(aes(label = Mean_SSE), vjust = -0.5, hjust = -0.5, angle = 90) +
   ggplot2::ylim(min(summary_results$Mean_SSE), 1.5*max(summary_results$Mean_SSE)) +
   ggplot2::geom_errorbar(aes(x = Model, ymin = Mean_SSE - Mean_SSE_sd, ymax = Mean_SSE + Mean_SSE_sd))
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("SSE_barchart.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("SSE_barchart.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
-
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("SSE_barchart.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("SSE_barchart.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("SSE_barchart.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("SSE_barchart.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("SSE_barchart.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 
 data_visualizations <- summary_results[2, 1]
 
@@ -5400,11 +5618,41 @@ if (data_visualizations[1] == "Bagged Random Forest") {
   gridExtra::grid.arrange(bag_rf_resid_vs_actual)
   gridExtra::grid.arrange(bag_rf_hist_residuals)
   gridExtra::grid.arrange(bag_rf_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Bagged Random Forest"){
-    print(ensemble_bayesglm_pred_vs_actual); ggplot2::ggsave("ensemble_bayesglm_pred_vs_actual.pdf", width = width, height = height)
-    print(ensemble_bayesglm_resid_vs_actual); ggplot2::ggsave("ensemble_bayesglm_resid_vs_actual.pdf", width = width, height = height)
-    print(ensemble_bayesglm_hist_residuals); ggplot2::ggsave("ensemble_bayesglm_hist_residuals.pdf", width = width, height = height)
-    print(ensemble_bayesglm_qq); ggplot2::ggsave("ensemble_bayesglm_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bagged Random Forest" && device == "eps"){
+    print(bag_rf_pred_vs_actual); ggplot2::ggsave("bag_rf_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bag_rf_resid_vs_actual); ggplot2::ggsave("bag_rf_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bag_rf_hist_residuals); ggplot2::ggsave("bag_rf_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bag_rf_qq); ggplot2::ggsave("bag_rf_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bagged Random Forest" && device == "pdf"){
+    print(bag_rf_pred_vs_actual); ggplot2::ggsave("bag_rf_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bag_rf_resid_vs_actual); ggplot2::ggsave("bag_rf_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bag_rf_hist_residuals); ggplot2::ggsave("bag_rf_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bag_rf_qq); ggplot2::ggsave("bag_rf_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bagged Random Forest" && device == "jpeg"){
+    print(bag_rf_pred_vs_actual); ggplot2::ggsave("bag_rf_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bag_rf_resid_vs_actual); ggplot2::ggsave("bag_rf_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bag_rf_hist_residuals); ggplot2::ggsave("bag_rf_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bag_rf_qq); ggplot2::ggsave("bag_rf_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bagged Random Forest" && device == "tiff"){
+    print(bag_rf_pred_vs_actual); ggplot2::ggsave("bag_rf_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bag_rf_resid_vs_actual); ggplot2::ggsave("bag_rf_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bag_rf_hist_residuals); ggplot2::ggsave("bag_rf_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bag_rf_qq); ggplot2::ggsave("bag_rf_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bagged Random Forest" && device == "png"){
+    print(bag_rf_pred_vs_actual); ggplot2::ggsave("bag_rf_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bag_rf_resid_vs_actual); ggplot2::ggsave("bag_rf_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bag_rf_hist_residuals); ggplot2::ggsave("bag_rf_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bag_rf_qq); ggplot2::ggsave("bag_rf_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bagged Random Forest" && device == "svg"){
+    print(bag_rf_pred_vs_actual); ggplot2::ggsave("bag_rf_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bag_rf_resid_vs_actual); ggplot2::ggsave("bag_rf_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bag_rf_hist_residuals); ggplot2::ggsave("bag_rf_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bag_rf_qq); ggplot2::ggsave("bag_rf_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 }
 
@@ -5414,11 +5662,41 @@ if (data_visualizations[1] == "Bagging") {
   gridExtra::grid.arrange(bagging_resid_vs_actual)
   gridExtra::grid.arrange(bagging_hist_residuals)
   gridExtra::grid.arrange(bagging_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Bagging"){
-    print(bagging_pred_vs_actual); ggplot2::ggsave("bagging_pred_vs_actual.pdf", width = width, height = height)
-    print(bagging_resid_vs_actual); ggplot2::ggsave("bagging_resid_vs_actual.pdf", width = width, height = height)
-    print(bagging_hist_residuals); ggplot2::ggsave("bagging_hist_residuals.pdf", width = width, height = height)
-    print(bagging_qq); ggplot2::ggsave("bagging_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bagging" && device == "eps"){
+    print(bagging_pred_vs_actual); ggplot2::ggsave("bagging_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bagging_resid_vs_actual); ggplot2::ggsave("bagging_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bagging_hist_residuals); ggplot2::ggsave("bagging_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bagging_qq); ggplot2::ggsave("bagging_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bagging" && device == "pdf"){
+    print(bagging_pred_vs_actual); ggplot2::ggsave("bagging_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bagging_resid_vs_actual); ggplot2::ggsave("bagging_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bagging_hist_residuals); ggplot2::ggsave("bagging_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bagging_qq); ggplot2::ggsave("bagging_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bagging" && device == "jpeg"){
+    print(bagging_pred_vs_actual); ggplot2::ggsave("bagging_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bagging_resid_vs_actual); ggplot2::ggsave("bagging_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bagging_hist_residuals); ggplot2::ggsave("bagging_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bagging_qq); ggplot2::ggsave("bagging_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bagging" && device == "tiff"){
+    print(bagging_pred_vs_actual); ggplot2::ggsave("bagging_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bagging_resid_vs_actual); ggplot2::ggsave("bagging_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bagging_hist_residuals); ggplot2::ggsave("bagging_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bagging_qq); ggplot2::ggsave("bagging_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bagging" && device == "png"){
+    print(bagging_pred_vs_actual); ggplot2::ggsave("bagging_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bagging_resid_vs_actual); ggplot2::ggsave("bagging_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bagging_hist_residuals); ggplot2::ggsave("bagging_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bagging_qq); ggplot2::ggsave("bagging_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bagging" && device == "svg"){
+    print(bagging_pred_vs_actual); ggplot2::ggsave("bagging_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bagging_resid_vs_actual); ggplot2::ggsave("bagging_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bagging_hist_residuals); ggplot2::ggsave("bagging_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bagging_qq); ggplot2::ggsave("bagging_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 }
 
@@ -5428,13 +5706,42 @@ if (data_visualizations[1] == "BayesGLM") {
   gridExtra::grid.arrange(bayesglm_resid_vs_actual)
   gridExtra::grid.arrange(bayesglm_hist_residuals)
   gridExtra::grid.arrange(bayesglm_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "BayesGLM"){
-    print(bayesglm_pred_vs_actual); ggplot2::ggsave("bayesglm_pred_vs_actual.pdf", width = width, height = height)
-    print(bayesglm_resid_vs_actual); ggplot2::ggsave("bayesglm_resid_vs_actual.pdf", width = width, height = height)
-    print(bayesglm_hist_residuals); ggplot2::ggsave("bayesglm_hist_residuals.pdf", width = width, height = height)
-    print(bayesglm_qq); ggplot2::ggsave("bayesglm_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bayesglm" && device == "eps"){
+    print(bayesglm_pred_vs_actual); ggplot2::ggsave("Bayesglm_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesglm_resid_vs_actual); ggplot2::ggsave("Bayesglm_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesglm_hist_residuals); ggplot2::ggsave("Bayesglm_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesglm_qq); ggplot2::ggsave("Bayesglm_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
-}
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bayesglm" && device == "pdf"){
+    print(bayesglm_pred_vs_actual); ggplot2::ggsave("Bayesglm_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesglm_resid_vs_actual); ggplot2::ggsave("Bayesglm_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesglm_hist_residuals); ggplot2::ggsave("Bayesglm_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesglm_qq); ggplot2::ggsave("Bayesglm_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bayesglm" && device == "jpeg"){
+    print(bayesglm_pred_vs_actual); ggplot2::ggsave("Bayesglm_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesglm_resid_vs_actual); ggplot2::ggsave("Bayesglm_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesglm_hist_residuals); ggplot2::ggsave("Bayesglm_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesglm_qq); ggplot2::ggsave("Bayesglm_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bayesglm" && device == "tiff"){
+    print(bayesglm_pred_vs_actual); ggplot2::ggsave("Bayesglm_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesglm_resid_vs_actual); ggplot2::ggsave("Bayesglm_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesglm_hist_residuals); ggplot2::ggsave("Bayesglm_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesglm_qq); ggplot2::ggsave("Bayesglm_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bayesglm" && device == "png"){
+    print(bayesglm_pred_vs_actual); ggplot2::ggsave("Bayesglm_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesglm_resid_vs_actual); ggplot2::ggsave("Bayesglm_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesglm_hist_residuals); ggplot2::ggsave("Bayesglm_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesglm_qq); ggplot2::ggsave("Bayesglm_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bayesglm" && device == "svg"){
+    print(bayesglm_pred_vs_actual); ggplot2::ggsave("Bayesglm_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesglm_resid_vs_actual); ggplot2::ggsave("Bayesglm_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesglm_hist_residuals); ggplot2::ggsave("Bayesglm_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesglm_qq); ggplot2::ggsave("Bayesglm_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }}
 
 if (data_visualizations[1] == "BayesRNN") {
   grid.arrange(bayesrnn_pred_vs_actual, bayesrnn_resid_vs_actual, bayesrnn_hist_residuals, bayesrnn_qq, ncol = 2)
@@ -5442,13 +5749,43 @@ if (data_visualizations[1] == "BayesRNN") {
   gridExtra::grid.arrange(bayesrnn_resid_vs_actual)
   gridExtra::grid.arrange(bayesrnn_hist_residuals)
   gridExtra::grid.arrange(bayesrnn_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "BayesRNN"){
-    print(bayesrnn_pred_vs_actual); ggplot2::ggsave("bayesrnn_pred_vs_actual.pdf", width = width, height = height)
-    print(bayesrnn_resid_vs_actual); ggplot2::ggsave("bayesrnn_resid_vs_actual.pdf", width = width, height = height)
-    print(bayesrnn_hist_residuals); ggplot2::ggsave("bayesrnn_hist_residuals.pdf", width = width, height = height)
-    print(bayesrnn_qq); ggplot2::ggsave("bayesrnn_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bayesrnn" && device == "eps"){
+    print(bayesrnn_pred_vs_actual); ggplot2::ggsave("bayesrnn_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesrnn_resid_vs_actual); ggplot2::ggsave("bayesrnn_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesrnn_hist_residuals); ggplot2::ggsave("bayesrnn_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesrnn_qq); ggplot2::ggsave("bayesrnn_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
-}
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bayesrnn" && device == "pdf"){
+    print(bayesrnn_pred_vs_actual); ggplot2::ggsave("bayesrnn_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesrnn_resid_vs_actual); ggplot2::ggsave("bayesrnn_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesrnn_hist_residuals); ggplot2::ggsave("bayesrnn_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesrnn_qq); ggplot2::ggsave("bayesrnn_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bayesrnn" && device == "jpeg"){
+    print(bayesrnn_pred_vs_actual); ggplot2::ggsave("bayesrnn_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesrnn_resid_vs_actual); ggplot2::ggsave("bayesrnn_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesrnn_hist_residuals); ggplot2::ggsave("bayesrnn_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesrnn_qq); ggplot2::ggsave("bayesrnn_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bayesrnn" && device == "tiff"){
+    print(bayesrnn_pred_vs_actual); ggplot2::ggsave("bayesrnn_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesrnn_resid_vs_actual); ggplot2::ggsave("bayesrnn_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesrnn_hist_residuals); ggplot2::ggsave("bayesrnn_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesrnn_qq); ggplot2::ggsave("bayesrnn_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bayesrnn" && device == "png"){
+    print(bayesrnn_pred_vs_actual); ggplot2::ggsave("bayesrnn_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesrnn_resid_vs_actual); ggplot2::ggsave("bayesrnn_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesrnn_hist_residuals); ggplot2::ggsave("bayesrnn_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesrnn_qq); ggplot2::ggsave("bayesrnn_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Bayesrnn" && device == "svg"){
+    print(bayesrnn_pred_vs_actual); ggplot2::ggsave("bayesrnn_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesrnn_resid_vs_actual); ggplot2::ggsave("bayesrnn_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesrnn_hist_residuals); ggplot2::ggsave("bayesrnn_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(bayesrnn_qq); ggplot2::ggsave("bayesrnn_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  }
 
 if (data_visualizations[1] == "Boost_rf") {
   grid.arrange(boost_rf_pred_vs_actual, boost_rf_resid_vs_actual, boost_rf_hist_residuals, boost_rf_qq, ncol = 2)
@@ -5456,13 +5793,43 @@ if (data_visualizations[1] == "Boost_rf") {
   gridExtra::grid.arrange(boost_rf_resid_vs_actual)
   gridExtra::grid.arrange(boost_rf_hist_residuals)
   gridExtra::grid.arrange(boost_rf_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Boost_rf"){
-    print(boost_rf_pred_vs_actual); ggplot2::ggsave("boost_rf_pred_vs_actual.pdf", width = width, height = height)
-    print(boost_rf_resid_vs_actual); ggplot2::ggsave("boost_rf_resid_vs_actual.pdf", width = width, height = height)
-    print(boost_rf_hist_residuals); ggplot2::ggsave("boost_rf_hist_residuals.pdf", width = width, height = height)
-    print(boost_rf_qq); ggplot2::ggsave("boost_rf_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Boost_rf" && device == "eps"){
+    print(boost_rf_pred_vs_actual); ggplot2::ggsave("boost_rf_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(boost_rf_resid_vs_actual); ggplot2::ggsave("boost_rf_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(boost_rf_hist_residuals); ggplot2::ggsave("boost_rf_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(boost_rf_qq); ggplot2::ggsave("boost_rf_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
-}
+  if(save_all_plots == "Y" && data_visualizations[1] == "Boost_rf" && device == "pdf"){
+    print(boost_rf_pred_vs_actual); ggplot2::ggsave("boost_rf_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(boost_rf_resid_vs_actual); ggplot2::ggsave("boost_rf_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(boost_rf_hist_residuals); ggplot2::ggsave("boost_rf_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(boost_rf_qq); ggplot2::ggsave("boost_rf_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Boost_rf" && device == "jpeg"){
+    print(boost_rf_pred_vs_actual); ggplot2::ggsave("boost_rf_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(boost_rf_resid_vs_actual); ggplot2::ggsave("boost_rf_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(boost_rf_hist_residuals); ggplot2::ggsave("boost_rf_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(boost_rf_qq); ggplot2::ggsave("boost_rf_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Boost_rf" && device == "tiff"){
+    print(boost_rf_pred_vs_actual); ggplot2::ggsave("boost_rf_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(boost_rf_resid_vs_actual); ggplot2::ggsave("boost_rf_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(boost_rf_hist_residuals); ggplot2::ggsave("boost_rf_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(boost_rf_qq); ggplot2::ggsave("boost_rf_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Boost_rf" && device == "png"){
+    print(boost_rf_pred_vs_actual); ggplot2::ggsave("boost_rf_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(boost_rf_resid_vs_actual); ggplot2::ggsave("boost_rf_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(boost_rf_hist_residuals); ggplot2::ggsave("boost_rf_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(boost_rf_qq); ggplot2::ggsave("boost_rf_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Boost_rf" && device == "svg"){
+    print(boost_rf_pred_vs_actual); ggplot2::ggsave("boost_rf_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(boost_rf_resid_vs_actual); ggplot2::ggsave("boost_rf_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(boost_rf_hist_residuals); ggplot2::ggsave("boost_rf_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(boost_rf_qq); ggplot2::ggsave("boost_rf_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  }
 
 if (data_visualizations[1] == "Cubist") {
   grid.arrange(cubist_pred_vs_actual, cubist_resid_vs_actual, cubist_hist_residuals, cubist_qq, ncol = 2)
@@ -5470,13 +5837,43 @@ if (data_visualizations[1] == "Cubist") {
   gridExtra::grid.arrange(cubist_resid_vs_actual)
   gridExtra::grid.arrange(cubist_hist_residuals)
   gridExtra::grid.arrange(cubist_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Cubist"){
-    print(boost_rf_pred_vs_actual); ggplot2::ggsave("boost_rf_pred_vs_actual.pdf", width = width, height = height)
-    print(boost_rf_resid_vs_actual); ggplot2::ggsave("boost_rf_resid_vs_actual.pdf", width = width, height = height)
-    print(boost_rf_hist_residuals); ggplot2::ggsave("boost_rf_hist_residuals.pdf", width = width, height = height)
-    print(boost_rf_qq); ggplot2::ggsave("boost_rf_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Cubist" && device == "eps"){
+    print(cubist_pred_vs_actual); ggplot2::ggsave("cubist_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(cubist_resid_vs_actual); ggplot2::ggsave("cubist_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(cubist_hist_residuals); ggplot2::ggsave("cubist_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(cubist_qq); ggplot2::ggsave("cubist_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
-}
+  if(save_all_plots == "Y" && data_visualizations[1] == "Cubist" && device == "pdf"){
+    print(cubist_pred_vs_actual); ggplot2::ggsave("cubist_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(cubist_resid_vs_actual); ggplot2::ggsave("cubist_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(cubist_hist_residuals); ggplot2::ggsave("cubist_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(cubist_qq); ggplot2::ggsave("cubist_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Cubist" && device == "jpeg"){
+    print(cubist_pred_vs_actual); ggplot2::ggsave("cubist_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(cubist_resid_vs_actual); ggplot2::ggsave("cubist_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(cubist_hist_residuals); ggplot2::ggsave("cubist_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(cubist_qq); ggplot2::ggsave("cubist_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Cubist" && device == "tiff"){
+    print(cubist_pred_vs_actual); ggplot2::ggsave("cubist_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(cubist_resid_vs_actual); ggplot2::ggsave("cubist_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(cubist_hist_residuals); ggplot2::ggsave("cubist_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(cubist_qq); ggplot2::ggsave("cubist_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Cubist" && device == "png"){
+    print(cubist_pred_vs_actual); ggplot2::ggsave("cubist_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(cubist_resid_vs_actual); ggplot2::ggsave("cubist_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(cubist_hist_residuals); ggplot2::ggsave("cubist_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(cubist_qq); ggplot2::ggsave("cubist_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Cubist" && device == "svg"){
+    print(cubist_pred_vs_actual); ggplot2::ggsave("cubist_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(cubist_resid_vs_actual); ggplot2::ggsave("cubist_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(cubist_hist_residuals); ggplot2::ggsave("cubist_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(cubist_qq); ggplot2::ggsave("cubist_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  }
 
 if (data_visualizations[1] == "earth") {
   grid.arrange(earth_pred_vs_actual, earth_resid_vs_actual, earth_hist_residuals, earth_qq, ncol = 2)
@@ -5484,13 +5881,43 @@ if (data_visualizations[1] == "earth") {
   gridExtra::grid.arrange(earth_resid_vs_actual)
   gridExtra::grid.arrange(earth_hist_residuals)
   gridExtra::grid.arrange(earth_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "earth"){
-    print(earth_pred_vs_actual); ggplot2::ggsave("earth_pred_vs_actual.pdf", width = width, height = height)
-    print(earth_resid_vs_actual); ggplot2::ggsave("earth_resid_vs_actual.pdf", width = width, height = height)
-    print(earth_hist_residuals); ggplot2::ggsave("earth_hist_residuals.pdf", width = width, height = height)
-    print(earth_qq); ggplot2::ggsave("earth_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Earth" && device == "eps"){
+    print(earth_pred_vs_actual); ggplot2::ggsave("earth_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(earth_resid_vs_actual); ggplot2::ggsave("earth_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(earth_hist_residuals); ggplot2::ggsave("earth_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(earth_qq); ggplot2::ggsave("earth_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
-}
+  if(save_all_plots == "Y" && data_visualizations[1] == "Earth" && device == "pdf"){
+    print(earth_pred_vs_actual); ggplot2::ggsave("earth_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(earth_resid_vs_actual); ggplot2::ggsave("earth_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(earth_hist_residuals); ggplot2::ggsave("earth_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(earth_qq); ggplot2::ggsave("earth_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Earth" && device == "jpeg"){
+    print(earth_pred_vs_actual); ggplot2::ggsave("earth_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(earth_resid_vs_actual); ggplot2::ggsave("earth_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(earth_hist_residuals); ggplot2::ggsave("earth_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(earth_qq); ggplot2::ggsave("earth_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Earth" && device == "tiff"){
+    print(earth_pred_vs_actual); ggplot2::ggsave("earth_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(earth_resid_vs_actual); ggplot2::ggsave("earth_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(earth_hist_residuals); ggplot2::ggsave("earth_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(earth_qq); ggplot2::ggsave("earth_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Earth" && device == "png"){
+    print(earth_pred_vs_actual); ggplot2::ggsave("earth_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(earth_resid_vs_actual); ggplot2::ggsave("earth_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(earth_hist_residuals); ggplot2::ggsave("earth_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(earth_qq); ggplot2::ggsave("earth_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Earth" && device == "svg"){
+    print(earth_pred_vs_actual); ggplot2::ggsave("earth_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(earth_resid_vs_actual); ggplot2::ggsave("earth_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(earth_hist_residuals); ggplot2::ggsave("earth_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(earth_qq); ggplot2::ggsave("earth_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  }
 
 if (data_visualizations[1] == "Elastic") {
   grid.arrange(elastic_pred_vs_actual, elastic_resid_vs_actual, elastic_hist_residuals, elastic_qq, ncol = 2)
@@ -5498,13 +5925,43 @@ if (data_visualizations[1] == "Elastic") {
   gridExtra::grid.arrange(elastic_resid_vs_actual)
   gridExtra::grid.arrange(elastic_hist_residuals)
   gridExtra::grid.arrange(elastic_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Elastic"){
-    print(elastic_pred_vs_actual); ggplot2::ggsave("elastic_pred_vs_actual.pdf", width = width, height = height)
-    print(elastic_resid_vs_actual); ggplot2::ggsave("elastic_resid_vs_actual.pdf", width = width, height = height)
-    print(elastic_hist_residuals); ggplot2::ggsave("elastic_hist_residuals.pdf", width = width, height = height)
-    print(elastic_qq); ggplot2::ggsave("elastic_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Elastic" && device == "eps"){
+    print(elastic_pred_vs_actual); ggplot2::ggsave("elastic_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(elastic_resid_vs_actual); ggplot2::ggsave("elastic_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(elastic_hist_residuals); ggplot2::ggsave("elastic_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(elastic_qq); ggplot2::ggsave("elastic_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
-}
+  if(save_all_plots == "Y" && data_visualizations[1] == "Elastic" && device == "pdf"){
+    print(elastic_pred_vs_actual); ggplot2::ggsave("elastic_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(elastic_resid_vs_actual); ggplot2::ggsave("elastic_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(elastic_hist_residuals); ggplot2::ggsave("elastic_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(elastic_qq); ggplot2::ggsave("elastic_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Elastic" && device == "jpeg"){
+    print(elastic_pred_vs_actual); ggplot2::ggsave("elastic_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(elastic_resid_vs_actual); ggplot2::ggsave("elastic_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(elastic_hist_residuals); ggplot2::ggsave("elastic_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(elastic_qq); ggplot2::ggsave("elastic_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Elastic" && device == "tiff"){
+    print(elastic_pred_vs_actual); ggplot2::ggsave("elastic_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(elastic_resid_vs_actual); ggplot2::ggsave("elastic_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(elastic_hist_residuals); ggplot2::ggsave("elastic_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(elastic_qq); ggplot2::ggsave("elastic_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Elastic" && device == "png"){
+    print(elastic_pred_vs_actual); ggplot2::ggsave("elastic_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(elastic_resid_vs_actual); ggplot2::ggsave("elastic_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(elastic_hist_residuals); ggplot2::ggsave("elastic_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(elastic_qq); ggplot2::ggsave("elastic_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Elastic" && device == "svg"){
+    print(elastic_pred_vs_actual); ggplot2::ggsave("elastic_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(elastic_resid_vs_actual); ggplot2::ggsave("elastic_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(elastic_hist_residuals); ggplot2::ggsave("elastic_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(elastic_qq); ggplot2::ggsave("elastic_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  }
 
 if (data_visualizations[1] == "GAM") {
   grid.arrange(gam_pred_vs_actual, gam_resid_vs_actual, gam_hist_residuals, gam_qq, ncol = 2)
@@ -5512,13 +5969,43 @@ if (data_visualizations[1] == "GAM") {
   gridExtra::grid.arrange(gam_resid_vs_actual)
   gridExtra::grid.arrange(gam_hist_residuals)
   gridExtra::grid.arrange(gam_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "GAM"){
-    print(gam_pred_vs_actual); ggplot2::ggsave("gam_pred_vs_actual.pdf", width = width, height = height)
-    print(gam_resid_vs_actual); ggplot2::ggsave("gam_resid_vs_actual.pdf", width = width, height = height)
-    print(gam_hist_residuals); ggplot2::ggsave("gam_hist_residuals.pdf", width = width, height = height)
-    print(gam_qq); ggplot2::ggsave("gam_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "GAM" && device == "eps"){
+    print(gam_pred_vs_actual); ggplot2::ggsave("gam_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gam_resid_vs_actual); ggplot2::ggsave("gam_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gam_hist_residuals); ggplot2::ggsave("gam_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gam_qq); ggplot2::ggsave("gam_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
-}
+  if(save_all_plots == "Y" && data_visualizations[1] == "GAM" && device == "pdf"){
+    print(gam_pred_vs_actual); ggplot2::ggsave("gam_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gam_resid_vs_actual); ggplot2::ggsave("gam_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gam_hist_residuals); ggplot2::ggsave("gam_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gam_qq); ggplot2::ggsave("gam_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "GAM" && device == "jpeg"){
+    print(gam_pred_vs_actual); ggplot2::ggsave("gam_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gam_resid_vs_actual); ggplot2::ggsave("gam_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gam_hist_residuals); ggplot2::ggsave("gam_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gam_qq); ggplot2::ggsave("gam_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "GAM" && device == "tiff"){
+    print(gam_pred_vs_actual); ggplot2::ggsave("gam_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gam_resid_vs_actual); ggplot2::ggsave("gam_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gam_hist_residuals); ggplot2::ggsave("gam_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gam_qq); ggplot2::ggsave("gam_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "GAM" && device == "png"){
+    print(gam_pred_vs_actual); ggplot2::ggsave("gam_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gam_resid_vs_actual); ggplot2::ggsave("gam_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gam_hist_residuals); ggplot2::ggsave("gam_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gam_qq); ggplot2::ggsave("gam_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "GAM" && device == "svg"){
+    print(gam_pred_vs_actual); ggplot2::ggsave("gam_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gam_resid_vs_actual); ggplot2::ggsave("gam_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gam_hist_residuals); ggplot2::ggsave("gam_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gam_qq); ggplot2::ggsave("gam_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  }
 
 if (data_visualizations[1] == "Gradient Boosted") {
   grid.arrange(gb_pred_vs_actual, gb_resid_vs_actual, gb_hist_residuals, gb_qq, ncol = 2)
@@ -5526,11 +6013,41 @@ if (data_visualizations[1] == "Gradient Boosted") {
   gridExtra::grid.arrange(gb_resid_vs_actual)
   gridExtra::grid.arrange(gb_hist_residuals)
   gridExtra::grid.arrange(gb_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Gradient Boosted"){
-    print(gb_pred_vs_actual); ggplot2::ggsave("gb_pred_vs_actual.pdf", width = width, height = height)
-    print(gb_resid_vs_actual); ggplot2::ggsave("gb_resid_vs_actual.pdf", width = width, height = height)
-    print(gb_hist_residuals); ggplot2::ggsave("gb_hist_residuals.pdf", width = width, height = height)
-    print(gb_qq); ggplot2::ggsave("gb_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Gardient Boosted" && device == "eps"){
+    print(gb_pred_vs_actual); ggplot2::ggsave("gb_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gb_resid_vs_actual); ggplot2::ggsave("gb_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gb_hist_residuals); ggplot2::ggsave("gb_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gb_qq); ggplot2::ggsave("gb_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Gardient Boosted" && device == "pdf"){
+    print(gb_pred_vs_actual); ggplot2::ggsave("gb_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gb_resid_vs_actual); ggplot2::ggsave("gb_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gb_hist_residuals); ggplot2::ggsave("gb_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gb_qq); ggplot2::ggsave("gb_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Gardient Boosted" && device == "jpeg"){
+    print(gb_pred_vs_actual); ggplot2::ggsave("gb_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gb_resid_vs_actual); ggplot2::ggsave("gb_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gb_hist_residuals); ggplot2::ggsave("gb_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gb_qq); ggplot2::ggsave("gb_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Gardient Boosted" && device == "tiff"){
+    print(gb_pred_vs_actual); ggplot2::ggsave("gb_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gb_resid_vs_actual); ggplot2::ggsave("gb_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gb_hist_residuals); ggplot2::ggsave("gb_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gb_qq); ggplot2::ggsave("gb_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Gardient Boosted" && device == "png"){
+    print(gb_pred_vs_actual); ggplot2::ggsave("gb_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gb_resid_vs_actual); ggplot2::ggsave("gb_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gb_hist_residuals); ggplot2::ggsave("gb_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gb_qq); ggplot2::ggsave("gb_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Gardient Boosted" && device == "svg"){
+    print(gb_pred_vs_actual); ggplot2::ggsave("gb_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gb_resid_vs_actual); ggplot2::ggsave("gb_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gb_hist_residuals); ggplot2::ggsave("gb_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(gb_qq); ggplot2::ggsave("gb_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 }
 
@@ -5540,11 +6057,41 @@ if (data_visualizations[1] == "KNN") {
   gridExtra::grid.arrange(knn_resid_vs_actual)
   gridExtra::grid.arrange(knn_hist_residuals)
   gridExtra::grid.arrange(knn_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "KNN") {
-    print(knn_pred_vs_actual); ggplot2::ggsave("knn_pred_vs_actual.pdf", width = width, height = height)
-    print(knn_resid_vs_actual); ggplot2::ggsave("knn_resid_vs_actual.pdf", width = width, height = height)
-    print(knn_hist_residuals); ggplot2::ggsave("knn_hist_residuals.pdf", width = width, height = height)
-    print(knn_qq); ggplot2::ggsave("knn_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "KNN" && device == "eps"){
+    print(knn_pred_vs_actual); ggplot2::ggsave("knn_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(knn_resid_vs_actual); ggplot2::ggsave("knn_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(knn_hist_residuals); ggplot2::ggsave("knn_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(knn_qq); ggplot2::ggsave("knn_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "KNN" && device == "pdf"){
+    print(knn_pred_vs_actual); ggplot2::ggsave("knn_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(knn_resid_vs_actual); ggplot2::ggsave("knn_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(knn_hist_residuals); ggplot2::ggsave("knn_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(knn_qq); ggplot2::ggsave("knn_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "KNN" && device == "jpeg"){
+    print(knn_pred_vs_actual); ggplot2::ggsave("knn_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(knn_resid_vs_actual); ggplot2::ggsave("knn_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(knn_hist_residuals); ggplot2::ggsave("knn_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(knn_qq); ggplot2::ggsave("knn_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "KNN" && device == "tiff"){
+    print(knn_pred_vs_actual); ggplot2::ggsave("knn_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(knn_resid_vs_actual); ggplot2::ggsave("knn_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(knn_hist_residuals); ggplot2::ggsave("knn_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(knn_qq); ggplot2::ggsave("knn_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "KNN" && device == "png"){
+    print(knn_pred_vs_actual); ggplot2::ggsave("knn_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(knn_resid_vs_actual); ggplot2::ggsave("knn_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(knn_hist_residuals); ggplot2::ggsave("knn_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(knn_qq); ggplot2::ggsave("knn_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "KNN" && device == "svg"){
+    print(knn_pred_vs_actual); ggplot2::ggsave("knn_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(knn_resid_vs_actual); ggplot2::ggsave("knn_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(knn_hist_residuals); ggplot2::ggsave("knn_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(knn_qq); ggplot2::ggsave("knn_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 }
 
@@ -5554,11 +6101,41 @@ if (data_visualizations[1] == "Lasso") {
   gridExtra::grid.arrange(lasso_resid_vs_actual)
   gridExtra::grid.arrange(lasso_hist_residuals)
   gridExtra::grid.arrange(lasso_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Lasso"){
-    print(lasso_pred_vs_actual); ggplot2::ggsave("lasso_pred_vs_actual.pdf", width = width, height = height)
-    print(lasso_resid_vs_actual); ggplot2::ggsave("lasso_resid_vs_actual.pdf", width = width, height = height)
-    print(lasso_hist_residuals); ggplot2::ggsave("lasso_hist_residuals.pdf", width = width, height = height)
-    print(lasso_qq); ggplot2::ggsave("lasso_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Lasso" && device == "eps"){
+    print(lasso_pred_vs_actual); ggplot2::ggsave("lasso_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(lasso_resid_vs_actual); ggplot2::ggsave("lasso_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(lasso_hist_residuals); ggplot2::ggsave("lasso_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(lasso_qq); ggplot2::ggsave("lasso_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Lasso" && device == "pdf"){
+    print(lasso_pred_vs_actual); ggplot2::ggsave("lasso_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(lasso_resid_vs_actual); ggplot2::ggsave("lasso_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(lasso_hist_residuals); ggplot2::ggsave("lasso_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(lasso_qq); ggplot2::ggsave("lasso_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Lasso" && device == "jpeg"){
+    print(lasso_pred_vs_actual); ggplot2::ggsave("lasso_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(lasso_resid_vs_actual); ggplot2::ggsave("lasso_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(lasso_hist_residuals); ggplot2::ggsave("lasso_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(lasso_qq); ggplot2::ggsave("lasso_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Lasso" && device == "tiff"){
+    print(lasso_pred_vs_actual); ggplot2::ggsave("lasso_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(lasso_resid_vs_actual); ggplot2::ggsave("lasso_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(lasso_hist_residuals); ggplot2::ggsave("lasso_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(lasso_qq); ggplot2::ggsave("lasso_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Lasso" && device == "png"){
+    print(lasso_pred_vs_actual); ggplot2::ggsave("lasso_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(lasso_resid_vs_actual); ggplot2::ggsave("lasso_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(lasso_hist_residuals); ggplot2::ggsave("lasso_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(lasso_qq); ggplot2::ggsave("lasso_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Lasso" && device == "svg"){
+    print(lasso_pred_vs_actual); ggplot2::ggsave("lasso_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(lasso_resid_vs_actual); ggplot2::ggsave("lasso_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(lasso_hist_residuals); ggplot2::ggsave("lasso_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(lasso_qq); ggplot2::ggsave("lasso_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 }
 
@@ -5568,11 +6145,41 @@ if (data_visualizations[1] == "Linear") {
   gridExtra::grid.arrange(linear_resid_vs_actual)
   gridExtra::grid.arrange(linear_hist_residuals)
   gridExtra::grid.arrange(linear_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Linear"){
-    print(linear_pred_vs_actual); ggplot2::ggsave("linear_pred_vs_actual.pdf", width = width, height = height)
-    print(linear_resid_vs_actual); ggplot2::ggsave("linear_resid_vs_actual.pdf", width = width, height = height)
-    print(linear_hist_residuals); ggplot2::ggsave("linear_hist_residuals.pdf", width = width, height = height)
-    print(linear_qq); ggplot2::ggsave("linear_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Linear" && device == "eps"){
+    print(linear_pred_vs_actual); ggplot2::ggsave("linear_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(linear_resid_vs_actual); ggplot2::ggsave("linear_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(linear_hist_residuals); ggplot2::ggsave("linear_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(linear_qq); ggplot2::ggsave("linear_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Linear" && device == "pdf"){
+    print(linear_pred_vs_actual); ggplot2::ggsave("linear_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(linear_resid_vs_actual); ggplot2::ggsave("linear_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(linear_hist_residuals); ggplot2::ggsave("linear_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(linear_qq); ggplot2::ggsave("linear_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Linear" && device == "jpeg"){
+    print(linear_pred_vs_actual); ggplot2::ggsave("linear_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(linear_resid_vs_actual); ggplot2::ggsave("linear_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(linear_hist_residuals); ggplot2::ggsave("linear_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(linear_qq); ggplot2::ggsave("linear_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Linear" && device == "tiff"){
+    print(linear_pred_vs_actual); ggplot2::ggsave("linear_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(linear_resid_vs_actual); ggplot2::ggsave("linear_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(linear_hist_residuals); ggplot2::ggsave("linear_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(linear_qq); ggplot2::ggsave("linear_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Linear" && device == "png"){
+    print(linear_pred_vs_actual); ggplot2::ggsave("linear_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(linear_resid_vs_actual); ggplot2::ggsave("linear_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(linear_hist_residuals); ggplot2::ggsave("linear_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(linear_qq); ggplot2::ggsave("linear_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Linear" && device == "svg"){
+    print(linear_pred_vs_actual); ggplot2::ggsave("linear_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(linear_resid_vs_actual); ggplot2::ggsave("linear_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(linear_hist_residuals); ggplot2::ggsave("linear_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(linear_qq); ggplot2::ggsave("linear_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 }
 
@@ -5582,11 +6189,41 @@ if (data_visualizations[1] == "Neuralnet") {
   gridExtra::grid.arrange(neuralnet_resid_vs_actual)
   gridExtra::grid.arrange(neuralnet_hist_residuals)
   gridExtra::grid.arrange(neuralnet_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Neuralnet"){
-    print(neuralnet_pred_vs_actual); ggplot2::ggsave("neuralnet_pred_vs_actual.pdf", width = width, height = height)
-    print(neuralnet_resid_vs_actual); ggplot2::ggsave("neuralnet_resid_vs_actual.pdf", width = width, height = height)
-    print(neuralnet_hist_residuals); ggplot2::ggsave("neuralnet_hist_residuals.pdf", width = width, height = height)
-    print(neuralnet_qq); ggplot2::ggsave("neuralnet_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Neuralnet" && device == "eps"){
+    print(neuralnet_pred_vs_actual); ggplot2::ggsave("neuralnet_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(neuralnet_resid_vs_actual); ggplot2::ggsave("neuralnet_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(neuralnet_hist_residuals); ggplot2::ggsave("neuralnet_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(neuralnet_qq); ggplot2::ggsave("neuralnet_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Neuralnet" && device == "pdf"){
+    print(neuralnet_pred_vs_actual); ggplot2::ggsave("neuralnet_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(neuralnet_resid_vs_actual); ggplot2::ggsave("neuralnet_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(neuralnet_hist_residuals); ggplot2::ggsave("neuralnet_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(neuralnet_qq); ggplot2::ggsave("neuralnet_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Neuralnet" && device == "jpeg"){
+    print(neuralnet_pred_vs_actual); ggplot2::ggsave("neuralnet_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(neuralnet_resid_vs_actual); ggplot2::ggsave("neuralnet_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(neuralnet_hist_residuals); ggplot2::ggsave("neuralnet_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(neuralnet_qq); ggplot2::ggsave("neuralnet_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Neuralnet" && device == "tiff"){
+    print(neuralnet_pred_vs_actual); ggplot2::ggsave("neuralnet_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(neuralnet_resid_vs_actual); ggplot2::ggsave("neuralnet_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(neuralnet_hist_residuals); ggplot2::ggsave("neuralnet_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(neuralnet_qq); ggplot2::ggsave("neuralnet_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Neuralnet" && device == "png"){
+    print(neuralnet_pred_vs_actual); ggplot2::ggsave("neuralnet_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(neuralnet_resid_vs_actual); ggplot2::ggsave("neuralnet_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(neuralnet_hist_residuals); ggplot2::ggsave("neuralnet_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(neuralnet_qq); ggplot2::ggsave("neuralnet_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Neuralnet" && device == "svg"){
+    print(neuralnet_pred_vs_actual); ggplot2::ggsave("neuralnet_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(neuralnet_resid_vs_actual); ggplot2::ggsave("neuralnet_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(neuralnet_hist_residuals); ggplot2::ggsave("neuralnet_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(neuralnet_qq); ggplot2::ggsave("neuralnet_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 }
 
@@ -5596,11 +6233,41 @@ if (data_visualizations[1] == "PLS") {
   gridExtra::grid.arrange(pls_resid_vs_actual)
   gridExtra::grid.arrange(pls_hist_residuals)
   gridExtra::grid.arrange(pls_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "PLS"){
-    print(pls_pred_vs_actual); ggplot2::ggsave("pls_pred_vs_actual.pdf", width = width, height = height)
-    print(pls_resid_vs_actual); ggplot2::ggsave("pls_resid_vs_actual.pdf", width = width, height = height)
-    print(pls_hist_residuals); ggplot2::ggsave("pls_hist_residuals.pdf", width = width, height = height)
-    print(pls_qq); ggplot2::ggsave("pls_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "PLS" && device == "eps"){
+    print(pls_pred_vs_actual); ggplot2::ggsave("pls_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pls_resid_vs_actual); ggplot2::ggsave("pls_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pls_hist_residuals); ggplot2::ggsave("pls_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pls_qq); ggplot2::ggsave("pls_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "PLS" && device == "pdf"){
+    print(pls_pred_vs_actual); ggplot2::ggsave("pls_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pls_resid_vs_actual); ggplot2::ggsave("pls_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pls_hist_residuals); ggplot2::ggsave("pls_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pls_qq); ggplot2::ggsave("pls_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "PLS" && device == "jpeg"){
+    print(pls_pred_vs_actual); ggplot2::ggsave("pls_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pls_resid_vs_actual); ggplot2::ggsave("pls_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pls_hist_residuals); ggplot2::ggsave("pls_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pls_qq); ggplot2::ggsave("pls_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "PLS" && device == "tiff"){
+    print(pls_pred_vs_actual); ggplot2::ggsave("pls_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pls_resid_vs_actual); ggplot2::ggsave("pls_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pls_hist_residuals); ggplot2::ggsave("pls_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pls_qq); ggplot2::ggsave("pls_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "PLS" && device == "png"){
+    print(pls_pred_vs_actual); ggplot2::ggsave("pls_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pls_resid_vs_actual); ggplot2::ggsave("pls_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pls_hist_residuals); ggplot2::ggsave("pls_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pls_qq); ggplot2::ggsave("pls_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "PLS" && device == "svg"){
+    print(pls_pred_vs_actual); ggplot2::ggsave("pls_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pls_resid_vs_actual); ggplot2::ggsave("pls_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pls_hist_residuals); ggplot2::ggsave("pls_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pls_qq); ggplot2::ggsave("pls_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 }
 
@@ -5610,11 +6277,41 @@ if (data_visualizations[1] == "PCR") {
   gridExtra::grid.arrange(pcr_resid_vs_actual)
   gridExtra::grid.arrange(pcr_hist_residuals)
   gridExtra::grid.arrange(pcr_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "PCR"){
-    print(pcr_pred_vs_actual); ggplot2::ggsave("pcr_pred_vs_actual.pdf", width = width, height = height)
-    print(pcr_resid_vs_actual); ggplot2::ggsave("pcr_resid_vs_actual.pdf", width = width, height = height)
-    print(pcr_hist_residuals); ggplot2::ggsave("pcr_hist_residuals.pdf", width = width, height = height)
-    print(pcr_qq); ggplot2::ggsave("pcr_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "PCR" && device == "eps"){
+    print(pcr_pred_vs_actual); ggplot2::ggsave("pcr_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pcr_resid_vs_actual); ggplot2::ggsave("pcr_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pcr_hist_residuals); ggplot2::ggsave("pcr_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pcr_qq); ggplot2::ggsave("pcr_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "PCR" && device == "pdf"){
+    print(pcr_pred_vs_actual); ggplot2::ggsave("pcr_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pcr_resid_vs_actual); ggplot2::ggsave("pcr_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pcr_hist_residuals); ggplot2::ggsave("pcr_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pcr_qq); ggplot2::ggsave("pcr_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "PCR" && device == "jpeg"){
+    print(pcr_pred_vs_actual); ggplot2::ggsave("pcr_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pcr_resid_vs_actual); ggplot2::ggsave("pcr_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pcr_hist_residuals); ggplot2::ggsave("pcr_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pcr_qq); ggplot2::ggsave("pcr_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "PCR" && device == "tiff"){
+    print(pcr_pred_vs_actual); ggplot2::ggsave("pcr_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pcr_resid_vs_actual); ggplot2::ggsave("pcr_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pcr_hist_residuals); ggplot2::ggsave("pcr_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pcr_qq); ggplot2::ggsave("pcr_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "PCR" && device == "png"){
+    print(pcr_pred_vs_actual); ggplot2::ggsave("pcr_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pcr_resid_vs_actual); ggplot2::ggsave("pcr_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pcr_hist_residuals); ggplot2::ggsave("pcr_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pcr_qq); ggplot2::ggsave("pcr_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "PCR" && device == "svg"){
+    print(pcr_pred_vs_actual); ggplot2::ggsave("pcr_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pcr_resid_vs_actual); ggplot2::ggsave("pcr_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pcr_hist_residuals); ggplot2::ggsave("pcr_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(pcr_qq); ggplot2::ggsave("pcr_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 }
 
@@ -5624,11 +6321,41 @@ if (data_visualizations[1] == "RF") {
   gridExtra::grid.arrange(rf_resid_vs_actual)
   gridExtra::grid.arrange(rf_hist_residuals)
   gridExtra::grid.arrange(rf_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "RF"){
-    print(rf_pred_vs_actual); ggplot2::ggsave("rf_pred_vs_actual.pdf", width = width, height = height)
-    print(rf_resid_vs_actual); ggplot2::ggsave("rf_resid_vs_actual.pdf", width = width, height = height)
-    print(rf_hist_residuals); ggplot2::ggsave("rf_hist_residuals.pdf", width = width, height = height)
-    print(rf_qq); ggplot2::ggsave("rf_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "RF" && device == "eps"){
+    print(rf_pred_vs_actual); ggplot2::ggsave("rf_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rf_resid_vs_actual); ggplot2::ggsave("rf_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rf_hist_residuals); ggplot2::ggsave("rf_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rf_qq); ggplot2::ggsave("rf_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "RF" && device == "pdf"){
+    print(rf_pred_vs_actual); ggplot2::ggsave("rf_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rf_resid_vs_actual); ggplot2::ggsave("rf_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rf_hist_residuals); ggplot2::ggsave("rf_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rf_qq); ggplot2::ggsave("rf_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "RF" && device == "jpeg"){
+    print(rf_pred_vs_actual); ggplot2::ggsave("rf_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rf_resid_vs_actual); ggplot2::ggsave("rf_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rf_hist_residuals); ggplot2::ggsave("rf_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rf_qq); ggplot2::ggsave("rf_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "RF" && device == "tiff"){
+    print(rf_pred_vs_actual); ggplot2::ggsave("rf_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rf_resid_vs_actual); ggplot2::ggsave("rf_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rf_hist_residuals); ggplot2::ggsave("rf_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rf_qq); ggplot2::ggsave("rf_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "RF" && device == "png"){
+    print(rf_pred_vs_actual); ggplot2::ggsave("rf_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rf_resid_vs_actual); ggplot2::ggsave("rf_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rf_hist_residuals); ggplot2::ggsave("rf_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rf_qq); ggplot2::ggsave("rf_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "RF" && device == "svg"){
+    print(rf_pred_vs_actual); ggplot2::ggsave("rf_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rf_resid_vs_actual); ggplot2::ggsave("rf_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rf_hist_residuals); ggplot2::ggsave("rf_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rf_qq); ggplot2::ggsave("rf_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 }
 
@@ -5638,11 +6365,41 @@ if (data_visualizations[1] == "Ridge") {
   gridExtra::grid.arrange(ridge_resid_vs_actual)
   gridExtra::grid.arrange(ridge_hist_residuals)
   gridExtra::grid.arrange(ridge_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ridge"){
-    print(ridge_pred_vs_actual); ggplot2::ggsave("ridge_pred_vs_actual.pdf", width = width, height = height)
-    print(ridge_resid_vs_actual); ggplot2::ggsave("ridge_resid_vs_actual.pdf", width = width, height = height)
-    print(ridge_hist_residuals); ggplot2::ggsave("ridge_hist_residuals.pdf", width = width, height = height)
-    print(ridge_qq); ggplot2::ggsave("ridge_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ridge" && device == "eps"){
+    print(ridge_pred_vs_actual); ggplot2::ggsave("ridge_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ridge_resid_vs_actual); ggplot2::ggsave("ridge_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ridge_hist_residuals); ggplot2::ggsave("ridge_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ridge_qq); ggplot2::ggsave("ridge_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ridge" && device == "pdf"){
+    print(ridge_pred_vs_actual); ggplot2::ggsave("ridge_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ridge_resid_vs_actual); ggplot2::ggsave("ridge_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ridge_hist_residuals); ggplot2::ggsave("ridge_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ridge_qq); ggplot2::ggsave("ridge_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ridge" && device == "jpeg"){
+    print(ridge_pred_vs_actual); ggplot2::ggsave("ridge_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ridge_resid_vs_actual); ggplot2::ggsave("ridge_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ridge_hist_residuals); ggplot2::ggsave("ridge_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ridge_qq); ggplot2::ggsave("ridge_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ridge" && device == "tiff"){
+    print(ridge_pred_vs_actual); ggplot2::ggsave("ridge_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ridge_resid_vs_actual); ggplot2::ggsave("ridge_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ridge_hist_residuals); ggplot2::ggsave("ridge_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ridge_qq); ggplot2::ggsave("ridge_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ridge" && device == "png"){
+    print(ridge_pred_vs_actual); ggplot2::ggsave("ridge_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ridge_resid_vs_actual); ggplot2::ggsave("ridge_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ridge_hist_residuals); ggplot2::ggsave("ridge_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ridge_qq); ggplot2::ggsave("ridge_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ridge" && device == "svg"){
+    print(ridge_pred_vs_actual); ggplot2::ggsave("ridge_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ridge_resid_vs_actual); ggplot2::ggsave("ridge_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ridge_hist_residuals); ggplot2::ggsave("ridge_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ridge_qq); ggplot2::ggsave("ridge_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 }
 
@@ -5652,11 +6409,41 @@ if (data_visualizations[1] == "Rpart") {
   gridExtra::grid.arrange(rpart_resid_vs_actual)
   gridExtra::grid.arrange(rpart_hist_residuals)
   gridExtra::grid.arrange(rpart_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Rpart"){
-    print(rpart_pred_vs_actual); ggplot2::ggsave("rpart_pred_vs_actual.pdf", width = width, height = height)
-    print(rpart_resid_vs_actual); ggplot2::ggsave("rpart_resid_vs_actual.pdf", width = width, height = height)
-    print(rpart_hist_residuals); ggplot2::ggsave("rpart_hist_residuals.pdf", width = width, height = height)
-    print(rpart_qq); ggplot2::ggsave("rpart_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Rpart" && device == "eps"){
+    print(rpart_pred_vs_actual); ggplot2::ggsave("rpart_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rpart_resid_vs_actual); ggplot2::ggsave("rpart_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rpart_hist_residuals); ggplot2::ggsave("rpart_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rpart_qq); ggplot2::ggsave("rpart_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Rpart" && device == "pdf"){
+    print(rpart_pred_vs_actual); ggplot2::ggsave("rpart_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rpart_resid_vs_actual); ggplot2::ggsave("rpart_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rpart_hist_residuals); ggplot2::ggsave("rpart_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rpart_qq); ggplot2::ggsave("rpart_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Rpart" && device == "jpeg"){
+    print(rpart_pred_vs_actual); ggplot2::ggsave("rpart_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rpart_resid_vs_actual); ggplot2::ggsave("rpart_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rpart_hist_residuals); ggplot2::ggsave("rpart_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rpart_qq); ggplot2::ggsave("rpart_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Rpart" && device == "tiff"){
+    print(rpart_pred_vs_actual); ggplot2::ggsave("rpart_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rpart_resid_vs_actual); ggplot2::ggsave("rpart_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rpart_hist_residuals); ggplot2::ggsave("rpart_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rpart_qq); ggplot2::ggsave("rpart_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Rpart" && device == "png"){
+    print(rpart_pred_vs_actual); ggplot2::ggsave("rpart_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rpart_resid_vs_actual); ggplot2::ggsave("rpart_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rpart_hist_residuals); ggplot2::ggsave("rpart_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rpart_qq); ggplot2::ggsave("rpart_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Rpart" && device == "svg"){
+    print(rpart_pred_vs_actual); ggplot2::ggsave("rpart_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rpart_resid_vs_actual); ggplot2::ggsave("rpart_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rpart_hist_residuals); ggplot2::ggsave("rpart_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(rpart_qq); ggplot2::ggsave("rpart_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 }
 
@@ -5666,11 +6453,41 @@ if (data_visualizations[1] == "SVM") {
   gridExtra::grid.arrange(svm_resid_vs_actual)
   gridExtra::grid.arrange(svm_hist_residuals)
   gridExtra::grid.arrange(svm_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "SVM"){
-    print(svm_pred_vs_actual); ggplot2::ggsave("svm_pred_vs_actual.pdf", width = width, height = height)
-    print(svm_resid_vs_actual); ggplot2::ggsave("svm_resid_vs_actual.pdf", width = width, height = height)
-    print(svm_hist_residuals); ggplot2::ggsave("svm_hist_residuals.pdf", width = width, height = height)
-    print(svm_qq); ggplot2::ggsave("svm_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "SVM" && device == "eps"){
+    print(svm_pred_vs_actual); ggplot2::ggsave("svm_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(svm_resid_vs_actual); ggplot2::ggsave("svm_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(svm_hist_residuals); ggplot2::ggsave("svm_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(svm_qq); ggplot2::ggsave("svm_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "SVM" && device == "pdf"){
+    print(svm_pred_vs_actual); ggplot2::ggsave("svm_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(svm_resid_vs_actual); ggplot2::ggsave("svm_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(svm_hist_residuals); ggplot2::ggsave("svm_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(svm_qq); ggplot2::ggsave("svm_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "SVM" && device == "jpeg"){
+    print(svm_pred_vs_actual); ggplot2::ggsave("svm_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(svm_resid_vs_actual); ggplot2::ggsave("svm_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(svm_hist_residuals); ggplot2::ggsave("svm_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(svm_qq); ggplot2::ggsave("svm_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "SVM" && device == "tiff"){
+    print(svm_pred_vs_actual); ggplot2::ggsave("svm_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(svm_resid_vs_actual); ggplot2::ggsave("svm_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(svm_hist_residuals); ggplot2::ggsave("svm_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(svm_qq); ggplot2::ggsave("svm_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "SVM" && device == "png"){
+    print(svm_pred_vs_actual); ggplot2::ggsave("svm_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(svm_resid_vs_actual); ggplot2::ggsave("svm_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(svm_hist_residuals); ggplot2::ggsave("svm_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(svm_qq); ggplot2::ggsave("svm_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "SVM" && device == "svg"){
+    print(svm_pred_vs_actual); ggplot2::ggsave("svm_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(svm_resid_vs_actual); ggplot2::ggsave("svm_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(svm_hist_residuals); ggplot2::ggsave("svm_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(svm_qq); ggplot2::ggsave("svm_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 }
 
@@ -5680,11 +6497,41 @@ if (data_visualizations[1] == "Tree") {
   gridExtra::grid.arrange(tree_resid_vs_actual)
   gridExtra::grid.arrange(tree_hist_residuals)
   gridExtra::grid.arrange(tree_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Tree"){
-    print(tree_pred_vs_actual); ggplot2::ggsave("tree_pred_vs_actual.pdf", width = width, height = height)
-    print(tree_resid_vs_actual); ggplot2::ggsave("tree_resid_vs_actual.pdf", width = width, height = height)
-    print(tree_hist_residuals); ggplot2::ggsave("tree_hist_residuals.pdf", width = width, height = height)
-    print(tree_qq); ggplot2::ggsave("tree_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Tree" && device == "eps"){
+    print(tree_pred_vs_actual); ggplot2::ggsave("tree_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(tree_resid_vs_actual); ggplot2::ggsave("tree_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(tree_hist_residuals); ggplot2::ggsave("tree_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(tree_qq); ggplot2::ggsave("tree_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Tree" && device == "pdf"){
+    print(tree_pred_vs_actual); ggplot2::ggsave("tree_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(tree_resid_vs_actual); ggplot2::ggsave("tree_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(tree_hist_residuals); ggplot2::ggsave("tree_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(tree_qq); ggplot2::ggsave("tree_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Tree" && device == "jpeg"){
+    print(tree_pred_vs_actual); ggplot2::ggsave("tree_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(tree_resid_vs_actual); ggplot2::ggsave("tree_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(tree_hist_residuals); ggplot2::ggsave("tree_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(tree_qq); ggplot2::ggsave("tree_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Tree" && device == "tiff"){
+    print(tree_pred_vs_actual); ggplot2::ggsave("tree_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(tree_resid_vs_actual); ggplot2::ggsave("tree_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(tree_hist_residuals); ggplot2::ggsave("tree_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(tree_qq); ggplot2::ggsave("tree_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Tree" && device == "png"){
+    print(tree_pred_vs_actual); ggplot2::ggsave("tree_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(tree_resid_vs_actual); ggplot2::ggsave("tree_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(tree_hist_residuals); ggplot2::ggsave("tree_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(tree_qq); ggplot2::ggsave("tree_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "Tree" && device == "svg"){
+    print(tree_pred_vs_actual); ggplot2::ggsave("tree_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(tree_resid_vs_actual); ggplot2::ggsave("tree_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(tree_hist_residuals); ggplot2::ggsave("tree_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(tree_qq); ggplot2::ggsave("tree_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 }
 
@@ -5694,11 +6541,41 @@ if (data_visualizations[1] == "XGBoost") {
   gridExtra::grid.arrange(xgb_resid_vs_actual)
   gridExtra::grid.arrange(xgb_hist_residuals)
   gridExtra::grid.arrange(xgb_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "XGBoost"){
-    print(xgb_pred_vs_actual); ggplot2::ggsave("xgb_pred_vs_actual.pdf", width = width, height = height)
-    print(xgb_resid_vs_actual); ggplot2::ggsave("xgb_resid_vs_actual.pdf", width = width, height = height)
-    print(xgb_hist_residuals); ggplot2::ggsave("xgb_hist_residuals.pdf", width = width, height = height)
-    print(xgb_qq); ggplot2::ggsave("xgb_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "XGBoost" && device == "eps"){
+    print(xgb_pred_vs_actual); ggplot2::ggsave("xgb_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(xgb_resid_vs_actual); ggplot2::ggsave("xgb_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(xgb_hist_residuals); ggplot2::ggsave("xgb_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(xgb_qq); ggplot2::ggsave("xgb_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "XGBoost" && device == "pdf"){
+    print(xgb_pred_vs_actual); ggplot2::ggsave("xgb_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(xgb_resid_vs_actual); ggplot2::ggsave("xgb_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(xgb_hist_residuals); ggplot2::ggsave("xgb_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(xgb_qq); ggplot2::ggsave("xgb_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "XGBoost" && device == "jpeg"){
+    print(xgb_pred_vs_actual); ggplot2::ggsave("xgb_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(xgb_resid_vs_actual); ggplot2::ggsave("xgb_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(xgb_hist_residuals); ggplot2::ggsave("xgb_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(xgb_qq); ggplot2::ggsave("xgb_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "XGBoost" && device == "tiff"){
+    print(xgb_pred_vs_actual); ggplot2::ggsave("xgb_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(xgb_resid_vs_actual); ggplot2::ggsave("xgb_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(xgb_hist_residuals); ggplot2::ggsave("xgb_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(xgb_qq); ggplot2::ggsave("xgb_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "XGBoost" && device == "png"){
+    print(xgb_pred_vs_actual); ggplot2::ggsave("xgb_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(xgb_resid_vs_actual); ggplot2::ggsave("xgb_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(xgb_hist_residuals); ggplot2::ggsave("xgb_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(xgb_qq); ggplot2::ggsave("xgb_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "XGBoost" && device == "svg"){
+    print(xgb_pred_vs_actual); ggplot2::ggsave("xgb_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(xgb_resid_vs_actual); ggplot2::ggsave("xgb_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(xgb_hist_residuals); ggplot2::ggsave("xgb_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(xgb_qq); ggplot2::ggsave("xgb_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 }
 
@@ -5708,12 +6585,42 @@ if (data_visualizations[1] == "Ensemble Bagged Random Forest") {
   gridExtra::grid.arrange(ensemble_bag_rf_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_bag_rf_hist_residuals)
   gridExtra::grid.arrange(ensemble_bag_rf_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Bagged Random Forest"){
-    print(ensemble_bag_rf_pred_vs_actual); ggplot2::ggsave("ensemble_bag_rf_pred_vs_actual.pdf", width = width, height = height)
-    print(ensemble_bag_rf_resid_vs_actual); ggplot2::ggsave("ensemble_bag_rf_resid_vs_actual.pdf", width = width, height = height)
-    print(ensemble_bag_rf_hist_residuals); ggplot2::ggsave("ensemble_bag_rf_hist_residuals.pdf", width = width, height = height)
-    print(ensemble_bag_rf_qq); ggplot2::ggsave("ensemble_bag_rf_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Bagged Random Forest" && device == "eps"){
+    print(ensemble_bag_rf_pred_vs_actual); ggplot2::ggsave("ensemble_bag_rf_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_bag_rf_resid_vs_actual); ggplot2::ggsave("ensemble_bag_rf_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_bag_rf_hist_residuals); ggplot2::ggsave("ensemble_bag_rf_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_bag_rf_qq); ggplot2::ggsave("ensemble_bag_rf_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Bagged Random Forest" && device == "pdf"){
+  print(ensemble_bag_rf_pred_vs_actual); ggplot2::ggsave("ensemble_bag_rf_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bag_rf_resid_vs_actual); ggplot2::ggsave("ensemble_bag_rf_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bag_rf_hist_residuals); ggplot2::ggsave("ensemble_bag_rf_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bag_rf_qq); ggplot2::ggsave("ensemble_bag_rf_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Bagged Random Forest" && device == "jpeg"){
+  print(ensemble_bag_rf_pred_vs_actual); ggplot2::ggsave("ensemble_bag_rf_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bag_rf_resid_vs_actual); ggplot2::ggsave("ensemble_bag_rf_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bag_rf_hist_residuals); ggplot2::ggsave("ensemble_bag_rf_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bag_rf_qq); ggplot2::ggsave("ensemble_bag_rf_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Bagged Random Forest" && device == "tiff"){
+  print(ensemble_bag_rf_pred_vs_actual); ggplot2::ggsave("ensemble_bag_rf_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bag_rf_resid_vs_actual); ggplot2::ggsave("ensemble_bag_rf_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bag_rf_hist_residuals); ggplot2::ggsave("ensemble_bag_rf_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bag_rf_qq); ggplot2::ggsave("ensemble_bag_rf_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Bagged Random Forest" && device == "png"){
+  print(ensemble_bag_rf_pred_vs_actual); ggplot2::ggsave("ensemble_bag_rf_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bag_rf_resid_vs_actual); ggplot2::ggsave("ensemble_bag_rf_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bag_rf_hist_residuals); ggplot2::ggsave("ensemble_bag_rf_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bag_rf_qq); ggplot2::ggsave("ensemble_bag_rf_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Bagged Random Forest" && device == "svg"){
+  print(ensemble_bag_rf_pred_vs_actual); ggplot2::ggsave("ensemble_bag_rf_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bag_rf_resid_vs_actual); ggplot2::ggsave("ensemble_bag_rf_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bag_rf_hist_residuals); ggplot2::ggsave("ensemble_bag_rf_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bag_rf_qq); ggplot2::ggsave("ensemble_bag_rf_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 }
 
 if (data_visualizations[1] == "Ensemble Bagging") {
@@ -5722,12 +6629,42 @@ if (data_visualizations[1] == "Ensemble Bagging") {
   gridExtra::grid.arrange(ensemble_bagging_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_bagging_hist_residuals)
   gridExtra::grid.arrange(ensemble_bagging_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Bagging"){
-    print(ensemble_bagging_pred_vs_actual); ggplot2::ggsave("ensemble_bagging_pred_vs_actual.pdf", width = width, height = height)
-    print(ensemble_bagging_resid_vs_actual); ggplot2::ggsave("ensemble_bagging_resid_vs_actual.pdf", width = width, height = height)
-    print(ensemble_bagging_hist_residuals); ggplot2::ggsave("ensemble_bagging_hist_residuals.pdf", width = width, height = height)
-    print(ensemble_bagging_qq); ggplot2::ggsave("ensemble_bagging_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Bagging" && device == "eps"){
+    print(ensemble_bagging_pred_vs_actual); ggplot2::ggsave("ensemble_bagging_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_bagging_resid_vs_actual); ggplot2::ggsave("ensemble_bagging_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_bagging_hist_residuals); ggplot2::ggsave("ensemble_bagging_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_bagging_qq); ggplot2::ggsave("ensemble_bagging_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Bagging" && device == "pdf"){
+  print(ensemble_bagging_pred_vs_actual); ggplot2::ggsave("ensemble_bagging_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bagging_resid_vs_actual); ggplot2::ggsave("ensemble_bagging_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bagging_hist_residuals); ggplot2::ggsave("ensemble_bagging_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bagging_qq); ggplot2::ggsave("ensemble_bagging_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Bagging" && device == "jpeg"){
+  print(ensemble_bagging_pred_vs_actual); ggplot2::ggsave("ensemble_bagging_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bagging_resid_vs_actual); ggplot2::ggsave("ensemble_bagging_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bagging_hist_residuals); ggplot2::ggsave("ensemble_bagging_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bagging_qq); ggplot2::ggsave("ensemble_bagging_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Bagging" && device == "tiff"){
+  print(ensemble_bagging_pred_vs_actual); ggplot2::ggsave("ensemble_bagging_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bagging_resid_vs_actual); ggplot2::ggsave("ensemble_bagging_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bagging_hist_residuals); ggplot2::ggsave("ensemble_bagging_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bagging_qq); ggplot2::ggsave("ensemble_bagging_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Bagging" && device == "png"){
+  print(ensemble_bagging_pred_vs_actual); ggplot2::ggsave("ensemble_bagging_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bagging_resid_vs_actual); ggplot2::ggsave("ensemble_bagging_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bagging_hist_residuals); ggplot2::ggsave("ensemble_bagging_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bagging_qq); ggplot2::ggsave("ensemble_bagging_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Bagging" && device == "svg"){
+  print(ensemble_bagging_pred_vs_actual); ggplot2::ggsave("ensemble_bagging_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bagging_resid_vs_actual); ggplot2::ggsave("ensemble_bagging_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bagging_hist_residuals); ggplot2::ggsave("ensemble_bagging_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bagging_qq); ggplot2::ggsave("ensemble_bagging_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 }
 
 if (data_visualizations[1] == "Ensemble BayesGLM") {
@@ -5736,12 +6673,42 @@ if (data_visualizations[1] == "Ensemble BayesGLM") {
   gridExtra::grid.arrange(ensemble_bayesglm_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_bayesglm_hist_residuals)
   gridExtra::grid.arrange(ensemble_bayesglm_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble BayesGLM"){
-    print(ensemble_bayesglm_pred_vs_actual); ggplot2::ggsave("ensemble_bayesglm_pred_vs_actual.pdf", width = width, height = height)
-    print(ensemble_bayesglm_resid_vs_actual); ggplot2::ggsave("ensemble_bayesglm_resid_vs_actual.pdf", width = width, height = height)
-    print(ensemble_bayesglm_hist_residuals); ggplot2::ggsave("ensemble_bayesglm_hist_residuals.pdf", width = width, height = height)
-    print(ensemble_bayesglm_qq); ggplot2::ggsave("ensemble_bayesglm_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble BayesGLM" && device == "eps"){
+    print(ensemble_bayesglm_pred_vs_actual); ggplot2::ggsave("ensemble_bayesglm_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_bayesglm_resid_vs_actual); ggplot2::ggsave("ensemble_bayesglm_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_bayesglm_hist_residuals); ggplot2::ggsave("ensemble_bayesglm_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_bayesglm_qq); ggplot2::ggsave("ensemble_bayesglm_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble BayesGLM" && device == "pdf"){
+  print(ensemble_bayesglm_pred_vs_actual); ggplot2::ggsave("ensemble_bayesglm_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesglm_resid_vs_actual); ggplot2::ggsave("ensemble_bayesglm_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesglm_hist_residuals); ggplot2::ggsave("ensemble_bayesglm_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesglm_qq); ggplot2::ggsave("ensemble_bayesglm_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble BayesGLM" && device == "jpeg"){
+  print(ensemble_bayesglm_pred_vs_actual); ggplot2::ggsave("ensemble_bayesglm_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesglm_resid_vs_actual); ggplot2::ggsave("ensemble_bayesglm_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesglm_hist_residuals); ggplot2::ggsave("ensemble_bayesglm_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesglm_qq); ggplot2::ggsave("ensemble_bayesglm_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble BayesGLM" && device == "tiff"){
+  print(ensemble_bayesglm_pred_vs_actual); ggplot2::ggsave("ensemble_bayesglm_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesglm_resid_vs_actual); ggplot2::ggsave("ensemble_bayesglm_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesglm_hist_residuals); ggplot2::ggsave("ensemble_bayesglm_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesglm_qq); ggplot2::ggsave("ensemble_bayesglm_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble BayesGLM" && device == "png"){
+  print(ensemble_bayesglm_pred_vs_actual); ggplot2::ggsave("ensemble_bayesglm_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesglm_resid_vs_actual); ggplot2::ggsave("ensemble_bayesglm_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesglm_hist_residuals); ggplot2::ggsave("ensemble_bayesglm_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesglm_qq); ggplot2::ggsave("ensemble_bayesglm_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble BayesGLM" && device == "svg"){
+  print(ensemble_bayesglm_pred_vs_actual); ggplot2::ggsave("ensemble_bayesglm_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesglm_resid_vs_actual); ggplot2::ggsave("ensemble_bayesglm_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesglm_hist_residuals); ggplot2::ggsave("ensemble_bayesglm_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesglm_qq); ggplot2::ggsave("ensemble_bayesglm_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 }
 
 if (data_visualizations[1] == "Ensemble BayesRNN") {
@@ -5750,12 +6717,42 @@ if (data_visualizations[1] == "Ensemble BayesRNN") {
   gridExtra::grid.arrange(ensemble_bayesrnn_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_bayesrnn_hist_residuals)
   gridExtra::grid.arrange(ensemble_bayesrnn_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble BayesRNN"){
-    print(ensemble_bayesrnn_pred_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_pred_vs_actual.pdf", width = width, height = height)
-    print(ensemble_bayesrnn_resid_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_resid_vs_actual.pdf", width = width, height = height)
-    print(ensemble_bayesrnn_hist_residuals); ggplot2::ggsave("ensemble_bayesrnn_hist_residuals.pdf", width = width, height = height)
-    print(ensemble_bayesrnn_qq); ggplot2::ggsave("ensemble_bayesrnn_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble BayesRNN" && device == "eps"){
+    print(ensemble_bayesrnn_pred_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_bayesrnn_resid_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_bayesrnn_hist_residuals); ggplot2::ggsave("ensemble_bayesrnn_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_bayesrnn_qq); ggplot2::ggsave("ensemble_bayesrnn_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble BayesRNN" && device == "pdf"){
+  print(ensemble_bayesrnn_pred_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesrnn_resid_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesrnn_hist_residuals); ggplot2::ggsave("ensemble_bayesrnn_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesrnn_qq); ggplot2::ggsave("ensemble_bayesrnn_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble BayesRNN" && device == "jpeg"){
+  print(ensemble_bayesrnn_pred_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesrnn_resid_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesrnn_hist_residuals); ggplot2::ggsave("ensemble_bayesrnn_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesrnn_qq); ggplot2::ggsave("ensemble_bayesrnn_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble BayesRNN" && device == "tiff"){
+  print(ensemble_bayesrnn_pred_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesrnn_resid_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesrnn_hist_residuals); ggplot2::ggsave("ensemble_bayesrnn_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesrnn_qq); ggplot2::ggsave("ensemble_bayesrnn_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble BayesRNN" && device == "png"){
+  print(ensemble_bayesrnn_pred_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesrnn_resid_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesrnn_hist_residuals); ggplot2::ggsave("ensemble_bayesrnn_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesrnn_qq); ggplot2::ggsave("ensemble_bayesrnn_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble BayesRNN" && device == "svg"){
+  print(ensemble_bayesrnn_pred_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesrnn_resid_vs_actual); ggplot2::ggsave("ensemble_bayesrnn_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesrnn_hist_residuals); ggplot2::ggsave("ensemble_bayesrnn_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_bayesrnn_qq); ggplot2::ggsave("ensemble_bayesrnn_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 }
 
 if (data_visualizations[1] == "Ensemble Boosted RF") {
@@ -5764,12 +6761,42 @@ if (data_visualizations[1] == "Ensemble Boosted RF") {
   gridExtra::grid.arrange(ensemble_boost_rf_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_boost_rf_hist_residuals)
   gridExtra::grid.arrange(ensemble_boost_rf_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Boosted RF"){
-    print(ensemble_boost_rf_pred_vs_actual); ggplot2::ggsave("ensemble_boost_rf_pred_vs_actual.pdf", width = width, height = height)
-    print(ensemble_boost_rf_resid_vs_actual); ggplot2::ggsave("ensemble_boost_rf_resid_vs_actual.pdf", width = width, height = height)
-    print(ensemble_boost_rf_hist_residuals); ggplot2::ggsave("ensemble_boost_rf_hist_residuals.pdf", width = width, height = height)
-    print(ensemble_boost_rf_qq); ggplot2::ggsave("ensemble_boost_rf_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Boosted RF" && device == "eps"){
+    print(ensemble_boost_rf_pred_vs_actual); ggplot2::ggsave("ensemble_boost_rf_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_boost_rf_resid_vs_actual); ggplot2::ggsave("ensemble_boost_rf_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_boost_rf_hist_residuals); ggplot2::ggsave("ensemble_boost_rf_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_boost_rf_qq); ggplot2::ggsave("ensemble_boost_rf_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Boosted RF" && device == "pdf"){
+  print(ensemble_boost_rf_pred_vs_actual); ggplot2::ggsave("ensemble_boost_rf_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_boost_rf_resid_vs_actual); ggplot2::ggsave("ensemble_boost_rf_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_boost_rf_hist_residuals); ggplot2::ggsave("ensemble_boost_rf_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_boost_rf_qq); ggplot2::ggsave("ensemble_boost_rf_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Boosted RF" && device == "jpeg"){
+  print(ensemble_boost_rf_pred_vs_actual); ggplot2::ggsave("ensemble_boost_rf_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_boost_rf_resid_vs_actual); ggplot2::ggsave("ensemble_boost_rf_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_boost_rf_hist_residuals); ggplot2::ggsave("ensemble_boost_rf_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_boost_rf_qq); ggplot2::ggsave("ensemble_boost_rf_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Boosted RF" && device == "tiff"){
+  print(ensemble_boost_rf_pred_vs_actual); ggplot2::ggsave("ensemble_boost_rf_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_boost_rf_resid_vs_actual); ggplot2::ggsave("ensemble_boost_rf_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_boost_rf_hist_residuals); ggplot2::ggsave("ensemble_boost_rf_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_boost_rf_qq); ggplot2::ggsave("ensemble_boost_rf_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Boosted RF" && device == "png"){
+  print(ensemble_boost_rf_pred_vs_actual); ggplot2::ggsave("ensemble_boost_rf_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_boost_rf_resid_vs_actual); ggplot2::ggsave("ensemble_boost_rf_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_boost_rf_hist_residuals); ggplot2::ggsave("ensemble_boost_rf_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_boost_rf_qq); ggplot2::ggsave("ensemble_boost_rf_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Boosted RF" && device == "svg"){
+  print(ensemble_boost_rf_pred_vs_actual); ggplot2::ggsave("ensemble_boost_rf_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_boost_rf_resid_vs_actual); ggplot2::ggsave("ensemble_boost_rf_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_boost_rf_hist_residuals); ggplot2::ggsave("ensemble_boost_rf_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_boost_rf_qq); ggplot2::ggsave("ensemble_boost_rf_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 }
 
 if (data_visualizations[1] == "Ensemble Cubist") {
@@ -5778,12 +6805,42 @@ if (data_visualizations[1] == "Ensemble Cubist") {
   gridExtra::grid.arrange(ensemble_cubist_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_cubist_hist_residuals)
   gridExtra::grid.arrange(ensemble_cubist_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Cubist"){
-    print(ensemble_cubist_pred_vs_actual); ggplot2::ggsave("ensemble_cubist_pred_vs_actual.pdf", width = width, height = height)
-    print(ensemble_cubist_resid_vs_actual); ggplot2::ggsave("ensemble_cubist_resid_vs_actual.pdf", width = width, height = height)
-    print(ensemble_cubist_hist_residuals); ggplot2::ggsave("ensemble_cubist_hist_residuals.pdf", width = width, height = height)
-    print(ensemble_cubist_qq); ggplot2::ggsave("ensemble_cubist_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Cubist" && device == "eps"){
+    print(ensemble_cubist_pred_vs_actual); ggplot2::ggsave("ensemble_cubist_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_cubist_resid_vs_actual); ggplot2::ggsave("ensemble_cubist_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_cubist_hist_residuals); ggplot2::ggsave("ensemble_cubist_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_cubist_qq); ggplot2::ggsave("ensemble_cubist_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Cubist" && device == "pdf"){
+  print(ensemble_cubist_pred_vs_actual); ggplot2::ggsave("ensemble_cubist_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_cubist_resid_vs_actual); ggplot2::ggsave("ensemble_cubist_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_cubist_hist_residuals); ggplot2::ggsave("ensemble_cubist_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_cubist_qq); ggplot2::ggsave("ensemble_cubist_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Cubist" && device == "jpeg"){
+  print(ensemble_cubist_pred_vs_actual); ggplot2::ggsave("ensemble_cubist_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_cubist_resid_vs_actual); ggplot2::ggsave("ensemble_cubist_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_cubist_hist_residuals); ggplot2::ggsave("ensemble_cubist_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_cubist_qq); ggplot2::ggsave("ensemble_cubist_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Cubist" && device == "tiff"){
+  print(ensemble_cubist_pred_vs_actual); ggplot2::ggsave("ensemble_cubist_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_cubist_resid_vs_actual); ggplot2::ggsave("ensemble_cubist_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_cubist_hist_residuals); ggplot2::ggsave("ensemble_cubist_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_cubist_qq); ggplot2::ggsave("ensemble_cubist_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Cubist" && device == "png"){
+  print(ensemble_cubist_pred_vs_actual); ggplot2::ggsave("ensemble_cubist_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_cubist_resid_vs_actual); ggplot2::ggsave("ensemble_cubist_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_cubist_hist_residuals); ggplot2::ggsave("ensemble_cubist_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_cubist_qq); ggplot2::ggsave("ensemble_cubist_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Cubist" && device == "svg"){
+  print(ensemble_cubist_pred_vs_actual); ggplot2::ggsave("ensemble_cubist_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_cubist_resid_vs_actual); ggplot2::ggsave("ensemble_cubist_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_cubist_hist_residuals); ggplot2::ggsave("ensemble_cubist_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_cubist_qq); ggplot2::ggsave("ensemble_cubist_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 }
 
 if (data_visualizations[1] == "Ensemble Earth") {
@@ -5792,12 +6849,42 @@ if (data_visualizations[1] == "Ensemble Earth") {
   gridExtra::grid.arrange(ensemble_earth_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_earth_hist_residuals)
   gridExtra::grid.arrange(ensemble_earth_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Earth"){
-    print(ensemble_earth_pred_vs_actual); ggplot2::ggsave("ensemble_earth_pred_vs_actual.pdf", width = width, height = height)
-    print(ensemble_earth_resid_vs_actual); ggplot2::ggsave("ensemble_earth_resid_vs_actual.pdf", width = width, height = height)
-    print(ensemble_earth_hist_residuals); ggplot2::ggsave("ensemble_earth_hist_residuals.pdf", width = width, height = height)
-    print(ensemble_earth_qq); ggplot2::ggsave("ensemble_earth_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Earth" && device == "eps"){
+    print(ensemble_earth_pred_vs_actual); ggplot2::ggsave("ensemble_earth_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_earth_resid_vs_actual); ggplot2::ggsave("ensemble_earth_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_earth_hist_residuals); ggplot2::ggsave("ensemble_earth_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_earth_qq); ggplot2::ggsave("ensemble_earth_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Earth" && device == "pdf"){
+  print(ensemble_earth_pred_vs_actual); ggplot2::ggsave("ensemble_earth_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_earth_resid_vs_actual); ggplot2::ggsave("ensemble_earth_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_earth_hist_residuals); ggplot2::ggsave("ensemble_earth_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_earth_qq); ggplot2::ggsave("ensemble_earth_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Earth" && device == "jpeg"){
+  print(ensemble_earth_pred_vs_actual); ggplot2::ggsave("ensemble_earth_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_earth_resid_vs_actual); ggplot2::ggsave("ensemble_earth_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_earth_hist_residuals); ggplot2::ggsave("ensemble_earth_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_earth_qq); ggplot2::ggsave("ensemble_earth_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Earth" && device == "tiff"){
+  print(ensemble_earth_pred_vs_actual); ggplot2::ggsave("ensemble_earth_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_earth_resid_vs_actual); ggplot2::ggsave("ensemble_earth_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_earth_hist_residuals); ggplot2::ggsave("ensemble_earth_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_earth_qq); ggplot2::ggsave("ensemble_earth_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Earth" && device == "png"){
+  print(ensemble_earth_pred_vs_actual); ggplot2::ggsave("ensemble_earth_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_earth_resid_vs_actual); ggplot2::ggsave("ensemble_earth_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_earth_hist_residuals); ggplot2::ggsave("ensemble_earth_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_earth_qq); ggplot2::ggsave("ensemble_earth_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Earth" && device == "svg"){
+  print(ensemble_earth_pred_vs_actual); ggplot2::ggsave("ensemble_earth_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_earth_resid_vs_actual); ggplot2::ggsave("ensemble_earth_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_earth_hist_residuals); ggplot2::ggsave("ensemble_earth_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_earth_qq); ggplot2::ggsave("ensemble_earth_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 }
 
 if (data_visualizations[1] == "Ensemble_Elastic") {
@@ -5806,12 +6893,42 @@ if (data_visualizations[1] == "Ensemble_Elastic") {
   gridExtra::grid.arrange(ensemble_elastic_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_elastic_hist_residuals)
   gridExtra::grid.arrange(ensemble_elastic_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Elastic"){
-    print(ensemble_elastic_pred_vs_actual); ggplot2::ggsave("ensemble_elastic_pred_vs_actual.pdf", width = width, height = height)
-    print(ensemble_elastic_resid_vs_actual); ggplot2::ggsave("ensemble_elastic_resid_vs_actual.pdf", width = width, height = height)
-    print(ensemble_elastic_hist_residuals); ggplot2::ggsave("ensemble_elastic_hist_residuals.pdf", width = width, height = height)
-    print(ensemble_elastic_qq); ggplot2::ggsave("ensemble_elastic_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Elastic" && device == "eps"){
+    print(ensemble_elastic_pred_vs_actual); ggplot2::ggsave("ensemble_elastic_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_elastic_resid_vs_actual); ggplot2::ggsave("ensemble_elastic_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_elastic_hist_residuals); ggplot2::ggsave("ensemble_elastic_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_elastic_qq); ggplot2::ggsave("ensemble_elastic_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Elastic" && device == "pdf"){
+  print(ensemble_elastic_pred_vs_actual); ggplot2::ggsave("ensemble_elastic_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_elastic_resid_vs_actual); ggplot2::ggsave("ensemble_elastic_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_elastic_hist_residuals); ggplot2::ggsave("ensemble_elastic_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_elastic_qq); ggplot2::ggsave("ensemble_elastic_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Elastic" && device == "jpeg"){
+  print(ensemble_elastic_pred_vs_actual); ggplot2::ggsave("ensemble_elastic_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_elastic_resid_vs_actual); ggplot2::ggsave("ensemble_elastic_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_elastic_hist_residuals); ggplot2::ggsave("ensemble_elastic_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_elastic_qq); ggplot2::ggsave("ensemble_elastic_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Elastic" && device == "tiff"){
+  print(ensemble_elastic_pred_vs_actual); ggplot2::ggsave("ensemble_elastic_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_elastic_resid_vs_actual); ggplot2::ggsave("ensemble_elastic_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_elastic_hist_residuals); ggplot2::ggsave("ensemble_elastic_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_elastic_qq); ggplot2::ggsave("ensemble_elastic_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Elastic" && device == "png"){
+  print(ensemble_elastic_pred_vs_actual); ggplot2::ggsave("ensemble_elastic_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_elastic_resid_vs_actual); ggplot2::ggsave("ensemble_elastic_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_elastic_hist_residuals); ggplot2::ggsave("ensemble_elastic_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_elastic_qq); ggplot2::ggsave("ensemble_elastic_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Elastic" && device == "svg"){
+  print(ensemble_elastic_pred_vs_actual); ggplot2::ggsave("ensemble_elastic_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_elastic_resid_vs_actual); ggplot2::ggsave("ensemble_elastic_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_elastic_hist_residuals); ggplot2::ggsave("ensemble_elastic_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_elastic_qq); ggplot2::ggsave("ensemble_elastic_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 }
 
 if (data_visualizations[1] == "Ensemble Gradient Boosted") {
@@ -5820,12 +6937,42 @@ if (data_visualizations[1] == "Ensemble Gradient Boosted") {
   gridExtra::grid.arrange(ensemble_gb_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_gb_hist_residuals)
   gridExtra::grid.arrange(ensemble_gb_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Gradient Boosted"){
-    print(ensemble_gb_pred_vs_actual); ggplot2::ggsave("ensemble_gb_pred_vs_actual.pdf", width = width, height = height)
-    print(ensemble_gb_resid_vs_actual); ggplot2::ggsave("ensemble_gb_resid_vs_actual.pdf", width = width, height = height)
-    print(ensemble_gb_hist_residuals); ggplot2::ggsave("ensemble_gb_hist_residuals.pdf", width = width, height = height)
-    print(ensemble_gb_qq); ggplot2::ggsave("ensemble_gb_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Gradient Boosted" && device == "eps"){
+    print(ensemble_gb_pred_vs_actual); ggplot2::ggsave("ensemble_gb_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_gb_resid_vs_actual); ggplot2::ggsave("ensemble_gb_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_gb_hist_residuals); ggplot2::ggsave("ensemble_gb_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_gb_qq); ggplot2::ggsave("ensemble_gb_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Gradient Boosted" && device == "pdf"){
+  print(ensemble_gb_pred_vs_actual); ggplot2::ggsave("ensemble_gb_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_gb_resid_vs_actual); ggplot2::ggsave("ensemble_gb_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_gb_hist_residuals); ggplot2::ggsave("ensemble_gb_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_gb_qq); ggplot2::ggsave("ensemble_gb_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Gradient Boosted" && device == "jpeg"){
+  print(ensemble_gb_pred_vs_actual); ggplot2::ggsave("ensemble_gb_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_gb_resid_vs_actual); ggplot2::ggsave("ensemble_gb_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_gb_hist_residuals); ggplot2::ggsave("ensemble_gb_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_gb_qq); ggplot2::ggsave("ensemble_gb_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Gradient Boosted" && device == "tiff"){
+  print(ensemble_gb_pred_vs_actual); ggplot2::ggsave("ensemble_gb_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_gb_resid_vs_actual); ggplot2::ggsave("ensemble_gb_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_gb_hist_residuals); ggplot2::ggsave("ensemble_gb_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_gb_qq); ggplot2::ggsave("ensemble_gb_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Gradient Boosted" && device == "png"){
+  print(ensemble_gb_pred_vs_actual); ggplot2::ggsave("ensemble_gb_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_gb_resid_vs_actual); ggplot2::ggsave("ensemble_gb_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_gb_hist_residuals); ggplot2::ggsave("ensemble_gb_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_gb_qq); ggplot2::ggsave("ensemble_gb_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Gradient Boosted" && device == "svg"){
+  print(ensemble_gb_pred_vs_actual); ggplot2::ggsave("ensemble_gb_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_gb_resid_vs_actual); ggplot2::ggsave("ensemble_gb_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_gb_hist_residuals); ggplot2::ggsave("ensemble_gb_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_gb_qq); ggplot2::ggsave("ensemble_gb_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 }
 
 if (data_visualizations[1] == "Ensemble K-Nearest Neighbors") {
@@ -5834,12 +6981,42 @@ if (data_visualizations[1] == "Ensemble K-Nearest Neighbors") {
   gridExtra::grid.arrange(ensemble_knn_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_knn_hist_residuals)
   gridExtra::grid.arrange(ensemble_knn_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble K-Nearest Neighbors"){
-    print(ensemble_knn_pred_vs_actual); ggplot2::ggsave("ensemble_knn_pred_vs_actual.pdf", width = width, height = height)
-    print(ensemble_knn_resid_vs_actual); ggplot2::ggsave("ensemble_knn_resid_vs_actual.pdf", width = width, height = height)
-    print(ensemble_knn_hist_residuals); ggplot2::ggsave("ensemble_knn_hist_residuals.pdf", width = width, height = height)
-    print(ensemble_knn_qq); ggplot2::ggsave("ensemble_knn_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble K-Nearest Neighbors" && device == "eps"){
+    print(ensemble_knn_pred_vs_actual); ggplot2::ggsave("ensemble_knn_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_knn_resid_vs_actual); ggplot2::ggsave("ensemble_knn_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_knn_hist_residuals); ggplot2::ggsave("ensemble_knn_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_knn_qq); ggplot2::ggsave("ensemble_knn_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble K-Nearest Neighbors" && device == "pdf"){
+  print(ensemble_knn_pred_vs_actual); ggplot2::ggsave("ensemble_knn_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_knn_resid_vs_actual); ggplot2::ggsave("ensemble_knn_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_knn_hist_residuals); ggplot2::ggsave("ensemble_knn_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_knn_qq); ggplot2::ggsave("ensemble_knn_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble K-Nearest Neighbors" && device == "jpeg"){
+  print(ensemble_knn_pred_vs_actual); ggplot2::ggsave("ensemble_knn_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_knn_resid_vs_actual); ggplot2::ggsave("ensemble_knn_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_knn_hist_residuals); ggplot2::ggsave("ensemble_knn_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_knn_qq); ggplot2::ggsave("ensemble_knn_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble K-Nearest Neighbors" && device == "tiff"){
+  print(ensemble_knn_pred_vs_actual); ggplot2::ggsave("ensemble_knn_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_knn_resid_vs_actual); ggplot2::ggsave("ensemble_knn_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_knn_hist_residuals); ggplot2::ggsave("ensemble_knn_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_knn_qq); ggplot2::ggsave("ensemble_knn_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble K-Nearest Neighbors" && device == "png"){
+  print(ensemble_knn_pred_vs_actual); ggplot2::ggsave("ensemble_knn_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_knn_resid_vs_actual); ggplot2::ggsave("ensemble_knn_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_knn_hist_residuals); ggplot2::ggsave("ensemble_knn_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_knn_qq); ggplot2::ggsave("ensemble_knn_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble K-Nearest Neighbors" && device == "svg"){
+  print(ensemble_knn_pred_vs_actual); ggplot2::ggsave("ensemble_knn_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_knn_resid_vs_actual); ggplot2::ggsave("ensemble_knn_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_knn_hist_residuals); ggplot2::ggsave("ensemble_knn_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_knn_qq); ggplot2::ggsave("ensemble_knn_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 }
 
 if (data_visualizations[1] == "Ensemble_Lasso") {
@@ -5848,12 +7025,42 @@ if (data_visualizations[1] == "Ensemble_Lasso") {
   gridExtra::grid.arrange(ensemble_lasso_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_lasso_hist_residuals)
   gridExtra::grid.arrange(ensemble_lasso_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Lasso"){
-    print(ensemble_lasso_pred_vs_actual); ggplot2::ggsave("ensemble_lasso_pred_vs_actual.pdf", width = width, height = height)
-    print(ensemble_lasso_resid_vs_actual); ggplot2::ggsave("ensemble_lasso_resid_vs_actual.pdf", width = width, height = height)
-    print(ensemble_lasso_hist_residuals); ggplot2::ggsave("ensemble_lasso_hist_residuals.pdf", width = width, height = height)
-    print(ensemble_lasso_qq); ggplot2::ggsave("ensemble_lasso_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Lasso" && device == "eps"){
+    print(ensemble_lasso_pred_vs_actual); ggplot2::ggsave("ensemble_lasso_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_lasso_resid_vs_actual); ggplot2::ggsave("ensemble_lasso_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_lasso_hist_residuals); ggplot2::ggsave("ensemble_lasso_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_lasso_qq); ggplot2::ggsave("ensemble_lasso_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Lasso" && device == "pdf"){
+  print(ensemble_lasso_pred_vs_actual); ggplot2::ggsave("ensemble_lasso_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_lasso_resid_vs_actual); ggplot2::ggsave("ensemble_lasso_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_lasso_hist_residuals); ggplot2::ggsave("ensemble_lasso_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_lasso_qq); ggplot2::ggsave("ensemble_lasso_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Lasso" && device == "jpeg"){
+  print(ensemble_lasso_pred_vs_actual); ggplot2::ggsave("ensemble_lasso_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_lasso_resid_vs_actual); ggplot2::ggsave("ensemble_lasso_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_lasso_hist_residuals); ggplot2::ggsave("ensemble_lasso_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_lasso_qq); ggplot2::ggsave("ensemble_lasso_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Lasso" && device == "tiff"){
+  print(ensemble_lasso_pred_vs_actual); ggplot2::ggsave("ensemble_lasso_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_lasso_resid_vs_actual); ggplot2::ggsave("ensemble_lasso_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_lasso_hist_residuals); ggplot2::ggsave("ensemble_lasso_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_lasso_qq); ggplot2::ggsave("ensemble_lasso_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Lasso" && device == "png"){
+  print(ensemble_lasso_pred_vs_actual); ggplot2::ggsave("ensemble_lasso_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_lasso_resid_vs_actual); ggplot2::ggsave("ensemble_lasso_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_lasso_hist_residuals); ggplot2::ggsave("ensemble_lasso_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_lasso_qq); ggplot2::ggsave("ensemble_lasso_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Lasso" && device == "svg"){
+  print(ensemble_lasso_pred_vs_actual); ggplot2::ggsave("ensemble_lasso_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_lasso_resid_vs_actual); ggplot2::ggsave("ensemble_lasso_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_lasso_hist_residuals); ggplot2::ggsave("ensemble_lasso_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_lasso_qq); ggplot2::ggsave("ensemble_lasso_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 }
 
 if (data_visualizations[1] == "Ensemble Linear") {
@@ -5862,12 +7069,42 @@ if (data_visualizations[1] == "Ensemble Linear") {
   gridExtra::grid.arrange(ensemble_linear_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_linear_hist_residuals)
   gridExtra::grid.arrange(ensemble_linear_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Linear"){
-    print(ensemble_linear_pred_vs_actual); ggplot2::ggsave("ensemble_linear_pred_vs_actual.pdf", width = width, height = height)
-    print(ensemble_linear_resid_vs_actual); ggplot2::ggsave("ensemble_linear_resid_vs_actual.pdf", width = width, height = height)
-    print(ensemble_linear_hist_residuals); ggplot2::ggsave("ensemble_linear_hist_residuals.pdf", width = width, height = height)
-    print(ensemble_linear_qq); ggplot2::ggsave("ensemble_linear_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Linear" && device == "eps"){
+    print(ensemble_linear_pred_vs_actual); ggplot2::ggsave("ensemble_linear_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_linear_resid_vs_actual); ggplot2::ggsave("ensemble_linear_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_linear_hist_residuals); ggplot2::ggsave("ensemble_linear_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_linear_qq); ggplot2::ggsave("ensemble_linear_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Linear" && device == "pdf"){
+  print(ensemble_linear_pred_vs_actual); ggplot2::ggsave("ensemble_linear_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_linear_resid_vs_actual); ggplot2::ggsave("ensemble_linear_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_linear_hist_residuals); ggplot2::ggsave("ensemble_linear_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_linear_qq); ggplot2::ggsave("ensemble_linear_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Linear" && device == "jpeg"){
+  print(ensemble_linear_pred_vs_actual); ggplot2::ggsave("ensemble_linear_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_linear_resid_vs_actual); ggplot2::ggsave("ensemble_linear_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_linear_hist_residuals); ggplot2::ggsave("ensemble_linear_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_linear_qq); ggplot2::ggsave("ensemble_linear_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Linear" && device == "tiff"){
+  print(ensemble_linear_pred_vs_actual); ggplot2::ggsave("ensemble_linear_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_linear_resid_vs_actual); ggplot2::ggsave("ensemble_linear_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_linear_hist_residuals); ggplot2::ggsave("ensemble_linear_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_linear_qq); ggplot2::ggsave("ensemble_linear_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Linear" && device == "png"){
+  print(ensemble_linear_pred_vs_actual); ggplot2::ggsave("ensemble_linear_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_linear_resid_vs_actual); ggplot2::ggsave("ensemble_linear_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_linear_hist_residuals); ggplot2::ggsave("ensemble_linear_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_linear_qq); ggplot2::ggsave("ensemble_linear_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Linear" && device == "svg"){
+  print(ensemble_linear_pred_vs_actual); ggplot2::ggsave("ensemble_linear_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_linear_resid_vs_actual); ggplot2::ggsave("ensemble_linear_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_linear_hist_residuals); ggplot2::ggsave("ensemble_linear_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_linear_qq); ggplot2::ggsave("ensemble_linear_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 }
 
 if (data_visualizations[1] == "Ensemble RF") {
@@ -5876,12 +7113,42 @@ if (data_visualizations[1] == "Ensemble RF") {
   gridExtra::grid.arrange(ensemble_rf_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_rf_hist_residuals)
   gridExtra::grid.arrange(ensemble_rf_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble RF"){
-    print(ensemble_rf_pred_vs_actual); ggplot2::ggsave("ensemble_rf_pred_vs_actual.pdf", width = width, height = height)
-    print(ensemble_rf_resid_vs_actual); ggplot2::ggsave("ensemble_rf_resid_vs_actual.pdf", width = width, height = height)
-    print(ensemble_rf_hist_residuals); ggplot2::ggsave("ensemble_rf_hist_residuals.pdf", width = width, height = height)
-    print(ensemble_rf_qq); ggplot2::ggsave("ensemble_rf_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble RF" && device == "eps"){
+    print(ensemble_rf_pred_vs_actual); ggplot2::ggsave("ensemble_rf_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_rf_resid_vs_actual); ggplot2::ggsave("ensemble_rf_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_rf_hist_residuals); ggplot2::ggsave("ensemble_rf_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_rf_qq); ggplot2::ggsave("ensemble_rf_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble RF" && device == "pdf"){
+  print(ensemble_rf_pred_vs_actual); ggplot2::ggsave("ensemble_rf_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rf_resid_vs_actual); ggplot2::ggsave("ensemble_rf_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rf_hist_residuals); ggplot2::ggsave("ensemble_rf_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rf_qq); ggplot2::ggsave("ensemble_rf_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble RF" && device == "jpeg"){
+  print(ensemble_rf_pred_vs_actual); ggplot2::ggsave("ensemble_rf_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rf_resid_vs_actual); ggplot2::ggsave("ensemble_rf_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rf_hist_residuals); ggplot2::ggsave("ensemble_rf_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rf_qq); ggplot2::ggsave("ensemble_rf_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble RF" && device == "tiff"){
+  print(ensemble_rf_pred_vs_actual); ggplot2::ggsave("ensemble_rf_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rf_resid_vs_actual); ggplot2::ggsave("ensemble_rf_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rf_hist_residuals); ggplot2::ggsave("ensemble_rf_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rf_qq); ggplot2::ggsave("ensemble_rf_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble RF" && device == "png"){
+  print(ensemble_rf_pred_vs_actual); ggplot2::ggsave("ensemble_rf_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rf_resid_vs_actual); ggplot2::ggsave("ensemble_rf_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rf_hist_residuals); ggplot2::ggsave("ensemble_rf_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rf_qq); ggplot2::ggsave("ensemble_rf_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble RF" && device == "svg"){
+  print(ensemble_rf_pred_vs_actual); ggplot2::ggsave("ensemble_rf_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rf_resid_vs_actual); ggplot2::ggsave("ensemble_rf_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rf_hist_residuals); ggplot2::ggsave("ensemble_rf_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rf_qq); ggplot2::ggsave("ensemble_rf_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 }
 
 if (data_visualizations[1] == "Ensemble_Ridge") {
@@ -5890,12 +7157,42 @@ if (data_visualizations[1] == "Ensemble_Ridge") {
   gridExtra::grid.arrange(ensemble_ridge_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_ridge_hist_residuals)
   gridExtra::grid.arrange(ensemble_ridge_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Ridge"){
-    print(ensemble_ridge_pred_vs_actual); ggplot2::ggsave("ensemble_ridge_pred_vs_actual.pdf", width = width, height = height)
-    print(ensemble_ridge_resid_vs_actual); ggplot2::ggsave("ensemble_ridge_resid_vs_actual.pdf", width = width, height = height)
-    print(ensemble_ridge_hist_residuals); ggplot2::ggsave("ensemble_ridge_hist_residuals.pdf", width = width, height = height)
-    print(ensemble_ridge_qq); ggplot2::ggsave("ensemble_ridge_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Ridge" && device == "eps"){
+    print(ensemble_ridge_pred_vs_actual); ggplot2::ggsave("ensemble_ridge_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_ridge_resid_vs_actual); ggplot2::ggsave("ensemble_ridge_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_ridge_hist_residuals); ggplot2::ggsave("ensemble_ridge_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_ridge_qq); ggplot2::ggsave("ensemble_ridge_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Ridge" && device == "pdf"){
+  print(ensemble_ridge_pred_vs_actual); ggplot2::ggsave("ensemble_ridge_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_ridge_resid_vs_actual); ggplot2::ggsave("ensemble_ridge_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_ridge_hist_residuals); ggplot2::ggsave("ensemble_ridge_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_ridge_qq); ggplot2::ggsave("ensemble_ridge_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Ridge" && device == "jpeg"){
+  print(ensemble_ridge_pred_vs_actual); ggplot2::ggsave("ensemble_ridge_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_ridge_resid_vs_actual); ggplot2::ggsave("ensemble_ridge_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_ridge_hist_residuals); ggplot2::ggsave("ensemble_ridge_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_ridge_qq); ggplot2::ggsave("ensemble_ridge_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Ridge" && device == "tiff"){
+  print(ensemble_ridge_pred_vs_actual); ggplot2::ggsave("ensemble_ridge_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_ridge_resid_vs_actual); ggplot2::ggsave("ensemble_ridge_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_ridge_hist_residuals); ggplot2::ggsave("ensemble_ridge_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_ridge_qq); ggplot2::ggsave("ensemble_ridge_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Ridge" && device == "png"){
+  print(ensemble_ridge_pred_vs_actual); ggplot2::ggsave("ensemble_ridge_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_ridge_resid_vs_actual); ggplot2::ggsave("ensemble_ridge_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_ridge_hist_residuals); ggplot2::ggsave("ensemble_ridge_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_ridge_qq); ggplot2::ggsave("ensemble_ridge_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble_Ridge" && device == "svg"){
+  print(ensemble_ridge_pred_vs_actual); ggplot2::ggsave("ensemble_ridge_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_ridge_resid_vs_actual); ggplot2::ggsave("ensemble_ridge_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_ridge_hist_residuals); ggplot2::ggsave("ensemble_ridge_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_ridge_qq); ggplot2::ggsave("ensemble_ridge_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 }
 
 if (data_visualizations[1] == "Ensemble Rpart") {
@@ -5904,12 +7201,42 @@ if (data_visualizations[1] == "Ensemble Rpart") {
   gridExtra::grid.arrange(ensemble_rpart_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_rpart_hist_residuals)
   gridExtra::grid.arrange(ensemble_rpart_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Rpart"){
-    print(ensemble_rpart_pred_vs_actual); ggplot2::ggsave("ensemble_rpart_pred_vs_actual.pdf", width = width, height = height)
-    print(ensemble_rpart_resid_vs_actual); ggplot2::ggsave("ensemble_rpart_resid_vs_actual.pdf", width = width, height = height)
-    print(ensemble_rpart_hist_residuals); ggplot2::ggsave("ensemble_rpart_hist_residuals.pdf", width = width, height = height)
-    print(ensemble_rpart_qq); ggplot2::ggsave("ensemble_rpart_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Rpart" && device == "eps"){
+    print(ensemble_rpart_pred_vs_actual); ggplot2::ggsave("ensemble_rpart_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_rpart_resid_vs_actual); ggplot2::ggsave("ensemble_rpart_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_rpart_hist_residuals); ggplot2::ggsave("ensemble_rpart_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_rpart_qq); ggplot2::ggsave("ensemble_rpart_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Rpart" && device == "pdf"){
+  print(ensemble_rpart_pred_vs_actual); ggplot2::ggsave("ensemble_rpart_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rpart_resid_vs_actual); ggplot2::ggsave("ensemble_rpart_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rpart_hist_residuals); ggplot2::ggsave("ensemble_rpart_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rpart_qq); ggplot2::ggsave("ensemble_rpart_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Rpart" && device == "jpeg"){
+  print(ensemble_rpart_pred_vs_actual); ggplot2::ggsave("ensemble_rpart_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rpart_resid_vs_actual); ggplot2::ggsave("ensemble_rpart_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rpart_hist_residuals); ggplot2::ggsave("ensemble_rpart_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rpart_qq); ggplot2::ggsave("ensemble_rpart_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Rpart" && device == "tiff"){
+  print(ensemble_rpart_pred_vs_actual); ggplot2::ggsave("ensemble_rpart_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rpart_resid_vs_actual); ggplot2::ggsave("ensemble_rpart_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rpart_hist_residuals); ggplot2::ggsave("ensemble_rpart_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rpart_qq); ggplot2::ggsave("ensemble_rpart_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Rpart" && device == "png"){
+  print(ensemble_rpart_pred_vs_actual); ggplot2::ggsave("ensemble_rpart_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rpart_resid_vs_actual); ggplot2::ggsave("ensemble_rpart_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rpart_hist_residuals); ggplot2::ggsave("ensemble_rpart_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rpart_qq); ggplot2::ggsave("ensemble_rpart_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Rpart" && device == "svg"){
+  print(ensemble_rpart_pred_vs_actual); ggplot2::ggsave("ensemble_rpart_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rpart_resid_vs_actual); ggplot2::ggsave("ensemble_rpart_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rpart_hist_residuals); ggplot2::ggsave("ensemble_rpart_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_rpart_qq); ggplot2::ggsave("ensemble_rpart_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 }
 
 if (data_visualizations[1] == "Ensemble Support Vector Machines") {
@@ -5918,12 +7245,42 @@ if (data_visualizations[1] == "Ensemble Support Vector Machines") {
   gridExtra::grid.arrange(ensemble_svm_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_svm_hist_residuals)
   gridExtra::grid.arrange(ensemble_svm_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Support Vector Machines"){
-    print(ensemble_svm_pred_vs_actual); ggplot2::ggsave("ensemble_svm_pred_vs_actual.pdf", width = width, height = height)
-    print(ensemble_svm_resid_vs_actual); ggplot2::ggsave("ensemble_svm_resid_vs_actual.pdf", width = width, height = height)
-    print(ensemble_svm_hist_residuals); ggplot2::ggsave("ensemble_svm_hist_residuals.pdf", width = width, height = height)
-    print(ensemble_svm_qq); ggplot2::ggsave("ensemble_svm_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Support Vector Machines" && device == "eps"){
+    print(ensemble_svm_pred_vs_actual); ggplot2::ggsave("ensemble_svm_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_svm_resid_vs_actual); ggplot2::ggsave("ensemble_svm_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_svm_hist_residuals); ggplot2::ggsave("ensemble_svm_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_svm_qq); ggplot2::ggsave("ensemble_svm_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Support Vector Machines" && device == "pdf"){
+  print(ensemble_svm_pred_vs_actual); ggplot2::ggsave("ensemble_svm_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_svm_resid_vs_actual); ggplot2::ggsave("ensemble_svm_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_svm_hist_residuals); ggplot2::ggsave("ensemble_svm_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_svm_qq); ggplot2::ggsave("ensemble_svm_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Support Vector Machines" && device == "jpeg"){
+  print(ensemble_svm_pred_vs_actual); ggplot2::ggsave("ensemble_svm_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_svm_resid_vs_actual); ggplot2::ggsave("ensemble_svm_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_svm_hist_residuals); ggplot2::ggsave("ensemble_svm_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_svm_qq); ggplot2::ggsave("ensemble_svm_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Support Vector Machines" && device == "tiff"){
+  print(ensemble_svm_pred_vs_actual); ggplot2::ggsave("ensemble_svm_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_svm_resid_vs_actual); ggplot2::ggsave("ensemble_svm_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_svm_hist_residuals); ggplot2::ggsave("ensemble_svm_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_svm_qq); ggplot2::ggsave("ensemble_svm_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Support Vector Machines" && device == "png"){
+  print(ensemble_svm_pred_vs_actual); ggplot2::ggsave("ensemble_svm_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_svm_resid_vs_actual); ggplot2::ggsave("ensemble_svm_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_svm_hist_residuals); ggplot2::ggsave("ensemble_svm_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_svm_qq); ggplot2::ggsave("ensemble_svm_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Support Vector Machines" && device == "svg"){
+  print(ensemble_svm_pred_vs_actual); ggplot2::ggsave("ensemble_svm_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_svm_resid_vs_actual); ggplot2::ggsave("ensemble_svm_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_svm_hist_residuals); ggplot2::ggsave("ensemble_svm_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_svm_qq); ggplot2::ggsave("ensemble_svm_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 }
 
 if (data_visualizations[1] == "Ensemble Trees") {
@@ -5932,12 +7289,42 @@ if (data_visualizations[1] == "Ensemble Trees") {
   gridExtra::grid.arrange(ensemble_tree_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_tree_hist_residuals)
   gridExtra::grid.arrange(ensemble_tree_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Trees"){
-    print(ensemble_tree_pred_vs_actual); ggplot2::ggsave("ensemble_tree_pred_vs_actual.pdf", width = width, height = height)
-    print(ensemble_tree_resid_vs_actual); ggplot2::ggsave("ensemble_tree_resid_vs_actual.pdf", width = width, height = height)
-    print(ensemble_tree_hist_residuals); ggplot2::ggsave("ensemble_tree_hist_residuals.pdf", width = width, height = height)
-    print(ensemble_tree_qq); ggplot2::ggsave("ensemble_tree_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Trees" && device == "eps"){
+    print(ensemble_tree_pred_vs_actual); ggplot2::ggsave("ensemble_tree_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_tree_resid_vs_actual); ggplot2::ggsave("ensemble_tree_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_tree_hist_residuals); ggplot2::ggsave("ensemble_tree_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_tree_qq); ggplot2::ggsave("ensemble_tree_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Trees" && device == "pdf"){
+  print(ensemble_tree_pred_vs_actual); ggplot2::ggsave("ensemble_tree_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_tree_resid_vs_actual); ggplot2::ggsave("ensemble_tree_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_tree_hist_residuals); ggplot2::ggsave("ensemble_tree_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_tree_qq); ggplot2::ggsave("ensemble_tree_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Trees" && device == "jpeg"){
+  print(ensemble_tree_pred_vs_actual); ggplot2::ggsave("ensemble_tree_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_tree_resid_vs_actual); ggplot2::ggsave("ensemble_tree_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_tree_hist_residuals); ggplot2::ggsave("ensemble_tree_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_tree_qq); ggplot2::ggsave("ensemble_tree_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Trees" && device == "tiff"){
+  print(ensemble_tree_pred_vs_actual); ggplot2::ggsave("ensemble_tree_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_tree_resid_vs_actual); ggplot2::ggsave("ensemble_tree_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_tree_hist_residuals); ggplot2::ggsave("ensemble_tree_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_tree_qq); ggplot2::ggsave("ensemble_tree_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Trees" && device == "png"){
+  print(ensemble_tree_pred_vs_actual); ggplot2::ggsave("ensemble_tree_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_tree_resid_vs_actual); ggplot2::ggsave("ensemble_tree_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_tree_hist_residuals); ggplot2::ggsave("ensemble_tree_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_tree_qq); ggplot2::ggsave("ensemble_tree_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble Trees" && device == "svg"){
+  print(ensemble_tree_pred_vs_actual); ggplot2::ggsave("ensemble_tree_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_tree_resid_vs_actual); ggplot2::ggsave("ensemble_tree_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_tree_hist_residuals); ggplot2::ggsave("ensemble_tree_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_tree_qq); ggplot2::ggsave("ensemble_tree_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 }
 
 if (data_visualizations[1] == "Ensemble XGBoost") {
@@ -5946,12 +7333,42 @@ if (data_visualizations[1] == "Ensemble XGBoost") {
   gridExtra::grid.arrange(ensemble_xgb_resid_vs_actual)
   gridExtra::grid.arrange(ensemble_xgb_hist_residuals)
   gridExtra::grid.arrange(ensemble_xgb_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble XGBoost"){
-    print(ensemble_xgb_pred_vs_actual); ggplot2::ggsave("ensemble_xgb_pred_vs_actual.pdf", width = width, height = height)
-    print(ensemble_xgb_resid_vs_actual); ggplot2::ggsave("ensemble_xgb_resid_vs_actual.pdf", width = width, height = height)
-    print(ensemble_xgb_hist_residuals); ggplot2::ggsave("ensemble_xgb_hist_residuals.pdf", width = width, height = height)
-    print(ensemble_xgb_qq); ggplot2::ggsave("ensemble_xgb_qq.pdf", width = width, height = height)
+  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble XGBoost" && device == "eps"){
+    print(ensemble_xgb_pred_vs_actual); ggplot2::ggsave("ensemble_xgb_pred_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_xgb_resid_vs_actual); ggplot2::ggsave("ensemble_xgb_resid_vs_actual.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_xgb_hist_residuals); ggplot2::ggsave("ensemble_xgb_hist_residuals.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    print(ensemble_xgb_qq); ggplot2::ggsave("ensemble_xgb_qq.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble XGBoost" && device == "pdf"){
+  print(ensemble_xgb_pred_vs_actual); ggplot2::ggsave("ensemble_xgb_pred_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_xgb_resid_vs_actual); ggplot2::ggsave("ensemble_xgb_resid_vs_actual.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_xgb_hist_residuals); ggplot2::ggsave("ensemble_xgb_hist_residuals.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_xgb_qq); ggplot2::ggsave("ensemble_xgb_qq.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble XGBoost" && device == "jpeg"){
+  print(ensemble_xgb_pred_vs_actual); ggplot2::ggsave("ensemble_xgb_pred_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_xgb_resid_vs_actual); ggplot2::ggsave("ensemble_xgb_resid_vs_actual.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_xgb_hist_residuals); ggplot2::ggsave("ensemble_xgb_hist_residuals.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_xgb_qq); ggplot2::ggsave("ensemble_xgb_qq.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble XGBoost" && device == "tiff"){
+  print(ensemble_xgb_pred_vs_actual); ggplot2::ggsave("ensemble_xgb_pred_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_xgb_resid_vs_actual); ggplot2::ggsave("ensemble_xgb_resid_vs_actual.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_xgb_hist_residuals); ggplot2::ggsave("ensemble_xgb_hist_residuals.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_xgb_qq); ggplot2::ggsave("ensemble_xgb_qq.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble XGBoost" && device == "png"){
+  print(ensemble_xgb_pred_vs_actual); ggplot2::ggsave("ensemble_xgb_pred_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_xgb_resid_vs_actual); ggplot2::ggsave("ensemble_xgb_resid_vs_actual.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_xgb_hist_residuals); ggplot2::ggsave("ensemble_xgb_hist_residuals.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_xgb_qq); ggplot2::ggsave("ensemble_xgb_qq.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble XGBoost" && device == "svg"){
+  print(ensemble_xgb_pred_vs_actual); ggplot2::ggsave("ensemble_xgb_pred_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_xgb_resid_vs_actual); ggplot2::ggsave("ensemble_xgb_resid_vs_actual.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_xgb_hist_residuals); ggplot2::ggsave("ensemble_xgb_hist_residuals.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  print(ensemble_xgb_qq); ggplot2::ggsave("ensemble_xgb_qq.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 }
 
 accuracy_data <-
@@ -6016,10 +7433,24 @@ accuracy_plot <- ggplot2::ggplot(data = accuracy_data, mapping = ggplot2::aes(x 
   ggplot2::ggtitle("Accuracy data, fixed scales\nRoot Mean Squared Error by model, lower is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 0.") +
   ggplot2::labs(y = "Root Mean Squared Error (RMSE), lower is better \n The horizontal line is the mean of the results, the red line is 0.") +
   ggplot2::theme(legend.position = "none")
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("accuracy_plot.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("accuracy_plot.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
-
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("accuracy_plot.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("accuracy_plot.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("accuracy_plot.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("accuracy_plot.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("accuracy_plot.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 accuracy_plot2 <- ggplot2::ggplot(data = accuracy_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = data)) +
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
@@ -6029,10 +7460,24 @@ accuracy_plot2 <- ggplot2::ggplot(data = accuracy_data, mapping = ggplot2::aes(x
   ggplot2::ggtitle("Accuracy data free scales\nRoot Mean Squared Error by model, lower is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 0.") +
   ggplot2::labs(y = "Root Mean Squared Error (RMSE), lower is better \n The horizontal line is the mean of the results, the red line is 0.") +
   ggplot2::theme(legend.position = "none")
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("accuracy_plot2.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("accuracy_plot2.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
-
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("accuracy_plot2.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("accuracy_plot2.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("accuracy_plot2.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("accuracy_plot2.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("accuracy_plot2.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 total_data <-
   data.frame(
     "count" = 1:numresamples,
@@ -6105,10 +7550,24 @@ total_plot <- ggplot2::ggplot(data = total_data, mapping = ggplot2::aes(x = coun
     values = c(
       "train" = "blue", "holdout" = "red")
   )
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("total_plot.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("total_plot2.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
-
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("total_plot2.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("total_plot2.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("total_plot2.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("total_plot2.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("total_plot2.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 total_plot2 <- ggplot2::ggplot(data = total_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = train, color = "train")) +
   ggplot2::geom_point(mapping = aes(x = count, y = train)) +
@@ -6124,10 +7583,24 @@ total_plot2 <- ggplot2::ggplot(data = total_data, mapping = ggplot2::aes(x = cou
     values = c(
       "train" = "blue", "holdout" = "red")
   )
-if(save_all_plots == "Y"){
-  ggplot2::ggsave("total_plot2.pdf", width = width, height = height)
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("total_plot22.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
-
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("total_plot22.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("total_plot22.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("total_plot22.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("total_plot22.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("total_plot22.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
 
 
 #########################################################################
@@ -6150,15 +7623,7 @@ if (predict_on_new_data == "Y") {
   new_knn <- predict(object = knn_train_fit$best.model, newdata = new_data[, 1:ncol(new_data) - 1], k = knn_train_fit$best_model$k)
   new_lasso <- rowMeans(predict(object = best_lasso_model, newdata = new_data, newx = as.matrix(new_data[, 1:ncol(new_data) - 1])))
   new_linear <- predict(object = linear_train_fit$best.model, newdata = new_data)
-
-  maxs <- apply(new_data, 2, max)
-  mins <- apply(new_data, 2, min)
-  scaled <- as.data.frame(scale(new_data, center = mins, scale = maxs - mins))
-  n <- names(new_data)
-  f <- as.formula(paste("y ~", paste(n[!n %in% "y"], collapse = " + ")))
-  nn <- neuralnet(f, data = new_data, hidden = c(5, 3), linear.output = T)
-  new_neuralnet <- neuralnet::compute(nn, new_data[, 1:ncol(new_data) - 1])$net.result[, 1]
-
+  new_neuralnet <- predict(object = neuralnet_train_fit, newdata = new_data)
   new_pls <- predict(object = pls_train_fit, newdata = new_data)[, , 1]
   new_pcr <- predict(object = pcr_train_fit, newdata = new_data)[, , 1]
   new_rf <- predict(object = rf_train_fit$best.model, newdata = new_data)
@@ -6331,7 +7796,7 @@ if (predict_on_new_data == "Y") {
     knn_train_fit <<- knn_train_fit # K-Nearest Neighbors
     best_lasso_model <<- best_lasso_model # Lasso models
     linear_train_fit <<- linear_train_fit # Linear models
-    nn <<- nn # neuralnet models
+    neuralnet_train_fit <<- neuralnet_train_fit # neuralnet models
     pls_train_fit <<- pls_train_fit # pls models
     pcr_train_fit <<- pcr_train_fit # Principal Components Regression models
     rf_train_fit <<- rf_train_fit # Random Forest models
@@ -6391,7 +7856,7 @@ if (save_all_trained_models == "Y") {
   knn_train_fit <<- knn_train_fit # K-Nearest Neighbors
   best_lasso_model <<- best_lasso_model # Lasso models
   linear_train_fit <<- linear_train_fit # Linear models
-  nn <<- nn # neuralnet models
+  neuralnet_train_fit <<- neuralnet_train_fit # neuralnet models
   pls_train_fit <<- pls_train_fit # pls models
   pcr_train_fit <<- pcr_train_fit # Principal Components Regression models
   rf_train_fit <<- rf_train_fit # Random Forest models
