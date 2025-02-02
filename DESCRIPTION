@@ -24,7 +24,7 @@ Depends:
     gridExtra,
     ipred,
     leaps,
-    neuralnet,
+    nnet,
     parallel,
     pls,
     purrr,
