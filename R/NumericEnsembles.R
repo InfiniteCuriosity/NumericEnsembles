@@ -9,7 +9,7 @@
 #' @param save_all_plots Saves all plots to the working directory
 #' @param scale_data "Y" or "N" to scale numeric data
 #' @param data_reduction_method 0(none), BIC (1, 2, 3, 4) or Mallow's_cp (5, 6, 7, 8) for Forward, Backward, Exhaustive and SeqRep
-#' @param remove_ensemble_correlations_greater_than Enter a number to remove correlations in the ensembles
+#' @param ensemble_reduction_method 0(none), BIC (1, 2, 3, 4) or Mallow's_cp (5, 6, 7, 8) for Forward, Backward, Exhaustive and SeqRep
 #' @param use_parallel "Y" or "N" for parallel processing
 #' @param train_amount set the amount for the training data
 #' @param test_amount set the amount for the testing data
@@ -55,8 +55,10 @@
 
 
 Numeric <- function(data, colnum, numresamples, how_to_handle_strings = c(0("none"), 1("factor levels"), 2("One-hot encoding"), 3("One-hot encoding with jitter")), predict_on_new_data = c("Y", "N"),
-                    save_all_trained_models = c("Y", "N"), remove_ensemble_correlations_greater_than, save_all_plots = c("Y", "N"),
+                    save_all_trained_models = c("Y", "N"), save_all_plots = c("Y", "N"),
                     data_reduction_method = c(0("none"), 1("BIC exhaustive"), 2("BIC forward"), 3("BIC backward"), 4("BIC seqrep"),
+                    5("Mallows_cp exhaustive"), 6("Mallows_cp forward"), 7("Mallows_cp backward"), 8("Mallows_cp, seqrep")),
+                    ensemble_reduction_method = c(0("none"), 1("BIC exhaustive"), 2("BIC forward"), 3("BIC backward"), 4("BIC seqrep"),
                     5("Mallows_cp exhaustive"), 6("Mallows_cp forward"), 7("Mallows_cp backward"), 8("Mallows_cp, seqrep")),
                     scale_data = c("Y", "N"), use_parallel = c("Y", "N"),
                     train_amount, test_amount, validation_amount) {
@@ -2525,6 +2527,7 @@ for (i in 1:numresamples) {
     "XGBoost" = y_hat_xgb * 1 / xgb_holdout_RMSE_mean
   )
 
+  ensemble$Row_mean <- rowMeans(ensemble)
   ensemble$y_ensemble <- c(test$y, validation$y)
   y_ensemble <- c(test$y, validation$y)
 
@@ -2534,18 +2537,120 @@ for (i in 1:numresamples) {
 
   ensemble <- Filter(function(x) stats::var(x) != 0, ensemble) # Removes columns with no variation
 
+  tmp <- stats::cor(ensemble) # This section removes strongly correlated (>0.995) rows and columns from the ensemble
+  tmp[upper.tri(tmp)] <- 0
+  diag(tmp) <- 0
+  data_new <- ensemble[, !apply(tmp, 2, function(x) any(abs(x) > 0.995, na.rm = TRUE))]
+  ensemble <- data_new # new ensemble without strongly correlated predictors
+
+  if(ensemble_reduction_method == 1){
+    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "exhaustive")
+
+    cols_sel <- ensemble_regsubsets |>
+      broom::tidy() |>
+      filter(BIC == min(BIC)) |>
+      dplyr::select(dplyr::where(~.x == TRUE)) |>
+      colnames()
+
+    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
+    ensemble <- cbind(ensemble, y_ensemble)
+  }
+
+  if(ensemble_reduction_method == 2){
+    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "forward")
+
+    cols_sel <- ensemble_regsubsets |>
+      broom::tidy() |>
+      filter(BIC == min(BIC)) |>
+      dplyr::select(dplyr::where(~.x == TRUE)) |>
+      colnames()
+
+    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
+    ensemble <- cbind(ensemble, y_ensemble)
+  }
+
+  if(ensemble_reduction_method == 3){
+    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "backward")
+
+    cols_sel <- ensemble_regsubsets |>
+      broom::tidy() |>
+      filter(BIC == min(BIC)) |>
+      dplyr::select(dplyr::where(~.x == TRUE)) |>
+      colnames()
+
+    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
+    ensemble <- cbind(ensemble, y_ensemble)
+  }
+
+  if(ensemble_reduction_method == 4){
+    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "seqrep")
+
+    cols_sel <- ensemble_regsubsets |>
+      broom::tidy() |>
+      filter(BIC == min(BIC)) |>
+      dplyr::select(dplyr::where(~.x == TRUE)) |>
+      colnames()
+
+    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
+    ensemble <- cbind(ensemble, y_ensemble)
+  }
+
+  if(ensemble_reduction_method == 5){
+    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "exhaustive")
+
+    cols_sel <- ensemble_regsubsets |>
+      broom::tidy() |>
+      filter(mallows_cp == min(mallows_cp)) |>
+      dplyr::select(dplyr::where(~.x == TRUE)) |>
+      colnames()
+
+    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
+    ensemble <- cbind(ensemble, y_ensemble)
+  }
+
+
+  if(ensemble_reduction_method == 6){
+    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "forward")
+
+    cols_sel <- ensemble_regsubsets |>
+      broom::tidy() |>
+      filter(mallows_cp == min(mallows_cp)) |>
+      dplyr::select(dplyr::where(~.x == TRUE)) |>
+      colnames()
+
+    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
+    ensemble <- cbind(ensemble, y_ensemble)
+  }
+
+  if(ensemble_reduction_method == 7){
+    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "backward")
+
+    cols_sel <- ensemble_regsubsets |>
+      broom::tidy() |>
+      filter(mallows_cp == min(mallows_cp)) |>
+      dplyr::select(dplyr::where(~.x == TRUE)) |>
+      colnames()
+
+    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
+    ensemble <- cbind(ensemble, y_ensemble)
+  }
+
+  if(ensemble_reduction_method == 8){
+    ensemble_regsubsets <- leaps::regsubsets(y_ensemble ~ ., data = ensemble, method = "seqrep")
+
+    cols_sel <- ensemble_regsubsets |>
+      broom::tidy() |>
+      filter(mallows_cp == min(mallows_cp)) |>
+      dplyr::select(dplyr::where(~.x == TRUE)) |>
+      colnames()
+
+    ensemble <- dplyr::select(ensemble, dplyr::any_of(cols_sel))
+    ensemble <- cbind(ensemble, y_ensemble)
+  }
+
   print(noquote(""))
   print("Working on the Ensembles section")
   print(noquote(""))
-
-
-  if (remove_ensemble_correlations_greater_than > 0) {
-    tmp <- stats::cor(ensemble)
-    tmp[upper.tri(tmp)] <- 0
-    diag(tmp) <- 0
-    data_new <- ensemble[, !apply(tmp, 2, function(x) any(abs(x) > remove_ensemble_correlations_greater_than, na.rm = TRUE))]
-    ensemble <- data_new
-  }
 
   head_ensemble <- head(ensemble)
   head_ensemble <- # Head of the ensemble
@@ -7679,11 +7784,9 @@ if (predict_on_new_data == "Y") {
   new_ensemble$Row_mean <- rowMeans(new_ensemble)
   new_ensemble$y_ensemble <- new_data$y
 
-  if (remove_ensemble_correlations_greater_than > 0) {
     thing1 <- colnames(new_ensemble)
 
     new_ensemble <- dplyr::select(new_ensemble, thing1)
-  }
 
   new_ensemble_bag_rf <- predict(object = ensemble_bag_rf_train_fit$best.model, newdata = new_ensemble, mtry = ncol(new_ensemble) - 1)
   new_ensemble_bagging <- predict(object = ensemble_bagging_train_fit, newdata = new_ensemble)
@@ -7833,8 +7936,7 @@ if (predict_on_new_data == "Y") {
     "bias_barchart" = bias_barchart, "MSE_barchart" = MSE_barchart, "MAE_barchart" = MAE_barchart, "SSE_barchart" = SSE_barchart,
     "bias_plot" = bias_plot, "MSE_plot" = MSE_plot, "MAE_plot" = MAE_plot, "SSE_plot" = SSE_plot, "Kolmogorov-Smirnov test p-score" = k_s_test_barchart,
     "colnum" = colnum, "numresamples" = numresamples, "predict_on_new_data" = predictions_of_new_data, "save_all_trained_models" = save_all_trained_models,
-    "how_to_handle_strings" = how_to_handle_strings, "data_reduction_method" = data_reduction_method,
-    "remove_ensemble_correlations_greater_than" = remove_ensemble_correlations_greater_than, "scale_data" = scale_data,
+    "how_to_handle_strings" = how_to_handle_strings, "data_reduction_method" = data_reduction_method, "scale_data" = scale_data,
     "train_amount" = train_amount, "test_amount" = test_amount, "validation_amount" = validation_amount
   )
   )
@@ -7913,7 +8015,6 @@ return(list(
   "bias_barchart" = bias_barchart, "MSE_barchart" = MSE_barchart, "MAE_barchart" = MAE_barchart, "SSE_barchart" = SSE_barchart, "Kolmogorov-Smirnov test p-score" = k_s_test_barchart,
   "bias_plot" = bias_plot, "MSE_plot" = MSE_plot, "MAE_plot" = MAE_plot, "SSE_plot" = SSE_plot,
   "colnum" = colnum, "numresamples" = numresamples, "save_all_trained_modesl" = save_all_trained_models, "how_to_handle_strings" = how_to_handle_strings,
-  "remove_ensemble_correlations_greater_than" = remove_ensemble_correlations_greater_than,
   "data_reduction_method" = data_reduction_method, "scale_data" = scale_data,
   "train_amount" = train_amount, "test_amount" = test_amount, "validation_amount" = validation_amount
 )
