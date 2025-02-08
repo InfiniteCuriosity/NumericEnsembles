@@ -4056,7 +4056,7 @@ summary_results <- data.frame(
     ensemble_rpart_validation_RMSE_mean, ensemble_svm_validation_RMSE_mean,
     ensemble_tree_validation_RMSE_mean, ensemble_xgb_validation_RMSE_mean
   ), 4),
-  "holdout_vs_train_mean" = round(c(
+  "Holdout_vs_train_mean" = round(c(
     0, bag_rf_holdout_vs_train_mean, bagging_holdout_vs_train_mean, bayesglm_holdout_vs_train_mean, bayesrnn_holdout_vs_train_mean,
     boost_rf_holdout_vs_train_mean, cubist_holdout_vs_train_mean, earth_holdout_vs_train_mean, elastic_holdout_vs_train_mean, gam_holdout_vs_train_mean, gb_holdout_vs_train_mean,
     knn_holdout_vs_train_mean, lasso_holdout_vs_train_mean, linear_holdout_vs_train_mean, neuralnet_holdout_vs_train_mean,
@@ -4070,7 +4070,7 @@ summary_results <- data.frame(
     ensemble_svm_holdout_vs_train_mean, ensemble_tree_holdout_vs_train_mean, ensemble_xgb_holdout_vs_train_mean
   ), 4),
 
-  "holdout_vs_train_sd" = round(c(
+  "Holdout_vs_train_sd" = round(c(
     0, bag_rf_holdout_vs_train_sd, bagging_holdout_vs_train_sd, bayesglm_holdout_vs_train_sd, bayesrnn_holdout_vs_train_sd,
     boost_rf_holdout_vs_train_sd, cubist_holdout_vs_train_sd, earth_holdout_vs_train_sd, elastic_holdout_vs_train_sd, gam_holdout_vs_train_sd, gb_holdout_vs_train_sd,
     knn_holdout_vs_train_sd, lasso_holdout_vs_train_sd, linear_holdout_vs_train_sd, neuralnet_holdout_vs_train_sd,
@@ -4197,25 +4197,25 @@ holdout_vs_train_plot2 <- ggplot2::ggplot(data = holdout_vs_train_data, mapping 
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
   ggplot2::facet_wrap(~model, ncol = 5, scales = "free") +
   ggplot2::ggtitle("Holdout vs train data\nholdout_vs_train by model, free scales, closer to one is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 1.") +
-  ggplot2::labs(y = "holdout_vs_train, closer to one is better \n The black horizontal line is the mean of the results, the red line is 1.") +
+  ggplot2::labs(y = "Holdout_vs_train, closer to one is better \n The black horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("holdout_vs_train_plot2.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("Holdout_vs_train_plot2.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("holdout_vs_train_plot2.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("Holdout_vs_train_plot2.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("holdout_vs_train_plot2.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("Holdout_vs_train_plot2.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("holdout_vs_train_plot2.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("Holdout_vs_train_plot2.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("holdout_vs_train_plot2.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("Holdout_vs_train_plot2.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("holdout_vs_train_plot2.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("Holdout_vs_train_plot2.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 bias_data <-
@@ -5573,22 +5573,22 @@ holdout_vs_train_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Mo
   ggplot2::ylim(0, max(max(summary_results$holdout_vs_train_mean[!is.infinite(summary_results$holdout_vs_train_mean)])) +2) +
   ggplot2::geom_errorbar(aes(x=Model, ymin=holdout_vs_train_mean-holdout_vs_train_sd, ymax = holdout_vs_train_mean+holdout_vs_train_sd))
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("holdout_vs_train_barchart.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("Holdout_vs_train_barchart.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("holdout_vs_train_barchart.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("Holdout_vs_train_barchart.jpeg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("holdout_vs_train_barchart.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("Holdout_vs_train_barchart.pdf", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("holdout_vs_train_barchart.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("Holdout_vs_train_barchart.png", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("holdout_vs_train_barchart.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("Holdout_vs_train_barchart.svg", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("holdout_vs_train_barchart.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("Holdout_vs_train_barchart.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 duration_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Duration), y = Duration)) +
   ggplot2::geom_col(width = 0.5)+
