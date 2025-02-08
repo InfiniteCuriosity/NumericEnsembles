@@ -19,7 +19,8 @@ Numeric(
   ensemble_reduction_method = c(0("none"), 1("BIC exhaustive"), 2("BIC forward"),
     3("BIC backward"), 4("BIC seqrep"), 5("Mallows_cp exhaustive"),
     6("Mallows_cp forward"), 7("Mallows_cp backward"), 8("Mallows_cp, seqrep")),
-  scale_data = c("Y", "N"),
+  remove_ensemble_correlations_greater_than = 0.98,
+  scale_all_predictors_in_data = c("Y", "N"),
   use_parallel = c("Y", "N"),
   train_amount,
   test_amount,
@@ -45,7 +46,9 @@ Numeric(
 
 \item{ensemble_reduction_method}{0(none), BIC (1, 2, 3, 4) or Mallow's_cp (5, 6, 7, 8) for Forward, Backward, Exhaustive and SeqRep}
 
-\item{scale_data}{"Y" or "N" to scale numeric data}
+\item{remove_ensemble_correlations_greater_than}{maximum value for correlations of the ensemble}
+
+\item{scale_all_predictors_in_data}{"Y" or "N" to scale numeric data}
 
 \item{use_parallel}{"Y" or "N" for parallel processing}
 
