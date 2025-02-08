@@ -5565,13 +5565,13 @@ if(save_all_plots == "Y" && device == "svg"){
 if(save_all_plots == "Y" && device == "tiff"){
   ggplot2::ggsave("k_s_test_barchart.tiff", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
-holdout_vs_train_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, holdout_vs_train_mean), y = holdout_vs_train_mean)) +
+holdout_vs_train_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_holdout_RMSE), y = Mean_holdout_RMSE)) +
   ggplot2::geom_col(width = 0.5)+
   ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1, hjust=1)) +
   ggplot2::labs(x = "Model", y = "Holdout vs train Mean", title = "Holdout vs train, closer to 1 is better, 1 std deviation error bars") +
-  ggplot2::geom_text(aes(label = holdout_vs_train_mean), vjust = 0,hjust = -0.5, angle = 90) +
-  ggplot2::ylim(0, max(max(summary_results$holdout_vs_train_mean[!is.infinite(summary_results$holdout_vs_train_mean)])) +2) +
-  ggplot2::geom_errorbar(aes(x=Model, ymin=holdout_vs_train_mean-holdout_vs_train_sd, ymax = holdout_vs_train_mean+holdout_vs_train_sd))
+  ggplot2::geom_text(aes(label = Mean_holdout_RMSE), vjust = 0,hjust = -0.5, angle = 90) +
+  ggplot2::ylim(0, max(max(summary_results$Mean_holdout_RMSE[!is.infinite(summary_results$Mean_holdout_RMSE)])) +2) +
+  ggplot2::geom_errorbar(aes(x=Model, ymin=Mean_holdout_RMSE-Std_Deviation_of_holdout_RMSE, ymax = Mean_holdout_RMSE+Std_Deviation_of_holdout_RMSE))
 if(save_all_plots == "Y" && device == "eps"){
   ggplot2::ggsave("Holdout_vs_train_barchart.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
