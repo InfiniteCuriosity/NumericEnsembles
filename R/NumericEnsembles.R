@@ -4168,7 +4168,7 @@ holdout_vs_train_plot <- ggplot2::ggplot(data = holdout_vs_train_data, mapping =
   ggplot2::geom_hline(aes(yintercept = mean)) +
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
   ggplot2::facet_wrap(~model, ncol = 5) +
-  ggplot2::ggtitle("Holdout vs train data\nholdout_vs_train by model, fixed scales, closer to one is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 1.") +
+  ggplot2::ggtitle("Holdout vs train data\nHoldout vs train by model, fixed scales, closer to one is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 1.") +
   ggplot2::labs(y = "Holdout vs train, closer to one is better \n The black horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 if(save_all_plots == "Y" && device == "eps"){
@@ -4196,7 +4196,7 @@ holdout_vs_train_plot2 <- ggplot2::ggplot(data = holdout_vs_train_data, mapping 
   ggplot2::geom_hline(aes(yintercept = mean)) +
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
   ggplot2::facet_wrap(~model, ncol = 5, scales = "free") +
-  ggplot2::ggtitle("Holdout vs train data\nholdout_vs_train by model, free scales, closer to one is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 1.") +
+  ggplot2::ggtitle("Holdout vs train data\nHoldout vs train by model, free scales, closer to one is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 1.") +
   ggplot2::labs(y = "Holdout vs train, closer to one is better \n The black horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 if(save_all_plots == "Y" && device == "eps"){
