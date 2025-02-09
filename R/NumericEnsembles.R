@@ -7944,7 +7944,7 @@ if (predict_on_new_data == "Y") {
   return(list(
     "head_of_data" = head_df, "accuracy_plot" = accuracy_plot, "accuracy_plot_free_scales" = accuracy_plot2, "holdout_vs_train_plot" = holdout_vs_train_plot, "holdout_vs_train_plot_2" = holdout_vs_train_plot2,
     "histograms" = histograms, "boxplots" = boxplots, "predictor_vs_target" = predictor_vs_target,
-    "final_results_table" = final_results, "data_correlation" = M1, "data_summary" = data_summary, "head_of_ensemble" = head_ensemble, "ensemble_correlation" = ensemble_correlation,
+    "final_results_table" = final_results, "data_correlation" = data_correlation, "data_summary" = data_summary, "head_of_ensemble" = head_ensemble, "ensemble_correlation" = ensemble_correlation,
     "accuracy_barchart" = accuracy_barchart, "train_vs_holdout" = total_plot, "duration_barchart" = duration_barchart, "holdout_vs_train_barchart" = holdout_vs_train_barchart,
     "bias_barchart" = bias_barchart, "MSE_barchart" = MSE_barchart, "MAE_barchart" = MAE_barchart, "SSE_barchart" = SSE_barchart,
     "bias_plot" = bias_plot, "MSE_plot" = MSE_plot, "MAE_plot" = MAE_plot, "SSE_plot" = SSE_plot, "Kolmogorov-Smirnov test p-score" = k_s_test_barchart,
@@ -8023,7 +8023,7 @@ for (i in 1:ncol(df2)) {
 return(list(
   "head_of_data" = head_df, "accuracy_plot" = accuracy_plot, "accuracy_free_scales" = accuracy_plot2, "holdout_vs_train_plot" = holdout_vs_train_plot, "holdout_vs_train_plot2" = holdout_vs_train_plot2,
   "histograms" = histograms, "boxplots" = boxplots, "predictor_vs_target" = predictor_vs_target, "final_results_table" = final_results,
-  "data_correlation" = M1, "data_summary" = data_summary, "head_of_ensemble" = head_ensemble, "ensemble_correlation" = ensemble_correlation,
+  "data_correlation" = data_correlation, "data_summary" = data_summary, "head_of_ensemble" = head_ensemble, "ensemble_correlation" = ensemble_correlation,
   "accuracy_barchart" = accuracy_barchart, "train_vs_holdout" = total_plot, "train_vs_holdout_free_scales" = total_plot2, "duration_barchart" = duration_barchart, "holdout_vs_train_barchart" = holdout_vs_train_barchart,
   "bias_barchart" = bias_barchart, "MSE_barchart" = MSE_barchart, "MAE_barchart" = MAE_barchart, "SSE_barchart" = SSE_barchart, "Kolmogorov-Smirnov test p-score" = k_s_test_barchart,
   "bias_plot" = bias_plot, "MSE_plot" = MSE_plot, "MAE_plot" = MAE_plot, "SSE_plot" = SSE_plot,
