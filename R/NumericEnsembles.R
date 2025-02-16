@@ -90,6 +90,16 @@ for (i in 1:ncol(df)) {
   }
 }
 
+VIF <- reactable::reactable(as.data.frame(vif),
+                     searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
+                     striped = TRUE, highlight = TRUE, resizable = TRUE
+)%>%
+  reactablefmtr::add_title("Variance Inflation Factor")
+
+if(save_all_plots == "Y"){
+  reactablefmtr::save_reactable_test(VIF, "Variance Inflation Factor.html")
+}
+
 if(data_reduction_method == 1){
   data_regsubsets <- leaps::regsubsets(y ~ ., data = df, method = "exhaustive")
 
@@ -7958,7 +7968,7 @@ if (predict_on_new_data == "Y") {
     "bias_barchart" = bias_barchart, "MSE_barchart" = MSE_barchart, "MAE_barchart" = MAE_barchart, "SSE_barchart" = SSE_barchart,
     "bias_plot" = bias_plot, "MSE_plot" = MSE_plot, "MAE_plot" = MAE_plot, "SSE_plot" = SSE_plot, "Kolmogorov-Smirnov test p-score" = k_s_test_barchart,
     "colnum" = colnum, "numresamples" = numresamples, "predict_on_new_data" = predictions_of_new_data, "save_all_trained_models" = save_all_trained_models,
-    "how_to_handle_strings" = how_to_handle_strings, "data_reduction_method" = data_reduction_method, "scale_data" = scale_all_predictors_in_data,
+    "how_to_handle_strings" = how_to_handle_strings, "data_reduction_method" = data_reduction_method, 'VIF' = VIF, "scale_data" = scale_all_predictors_in_data,
     "train_amount" = train_amount, "test_amount" = test_amount, "validation_amount" = validation_amount
   )
   )
@@ -8037,7 +8047,7 @@ return(list(
   "bias_barchart" = bias_barchart, "MSE_barchart" = MSE_barchart, "MAE_barchart" = MAE_barchart, "SSE_barchart" = SSE_barchart, "Kolmogorov-Smirnov test p-score" = k_s_test_barchart,
   "bias_plot" = bias_plot, "MSE_plot" = MSE_plot, "MAE_plot" = MAE_plot, "SSE_plot" = SSE_plot,
   "colnum" = colnum, "numresamples" = numresamples, "save_all_trained_modesl" = save_all_trained_models, "how_to_handle_strings" = how_to_handle_strings,
-  "data_reduction_method" = data_reduction_method, "scale_data" = scale_all_predictors_in_data,
+  "data_reduction_method" = data_reduction_method, 'VIF' = VIF, "scale_data" = scale_all_predictors_in_data,
   "train_amount" = train_amount, "test_amount" = test_amount, "validation_amount" = validation_amount
 )
 )
