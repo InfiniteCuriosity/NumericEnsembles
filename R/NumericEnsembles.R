@@ -300,9 +300,8 @@ if(save_all_plots == "Y"){
 }
 title <- "Correlation plot of the numerical data"
 corrplot::corrplot(stats::cor(df1), method = "number", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
-corrplot::corrplot(stats::cor(df1), method = "circle", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
 
-## Boxplots of the numeric data ##
+corrplot::corrplot(stats::cor(df1), method = "circle", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
 
 ## Boxplots of the numeric data ##
 boxplots <- df %>%
@@ -4196,9 +4195,9 @@ holdout_vs_train_plot <- ggplot2::ggplot(data = holdout_vs_train_data, mapping =
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = mean)) +
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 5) +
-  ggplot2::ggtitle("Holdout RMSE / train RMSE\nHoldout RMSE / train RMSE by model, fixed scales, closer to one is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 1.") +
-  ggplot2::labs(y = "Holdout RMSE / train RMSE, closer to one is better \n The black horizontal line is the mean of the results, the red line is 1.") +
+  ggplot2::facet_wrap(~model, ncol = 5, scales = "fixed") +
+  ggplot2::ggtitle("Holdout RMSE / train RMSE, fixed scales\nHoldout RMSE / train RMSE by model, fixed scales, closer to one is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 1.") +
+  ggplot2::labs(y = "Holdout RMSE / train RMSE, fixed scales closer to one is better \n The black horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 if(save_all_plots == "Y" && device == "eps"){
   ggplot2::ggsave("holdout_vs_train_plot.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
@@ -4225,8 +4224,8 @@ holdout_vs_train_plot2 <- ggplot2::ggplot(data = holdout_vs_train_data, mapping 
   ggplot2::geom_hline(aes(yintercept = mean)) +
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
   ggplot2::facet_wrap(~model, ncol = 5, scales = "free") +
-  ggplot2::ggtitle("Holdout RMSE / train RMSE\nHoldout RMSE / train RMSE by model, free scales, closer to one is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 1.") +
-  ggplot2::labs(y = "Holdout RMSE / train RMSE, closer to one is better \n The black horizontal line is the mean of the results, the red line is 1.") +
+  ggplot2::ggtitle("Holdout RMSE / train RMSE, free scales\nHoldout RMSE / train RMSE by model, closer to one is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 1.") +
+  ggplot2::labs(y = "Holdout RMSE / train RMSE, free scales closer to one is better \n The black horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 if(save_all_plots == "Y" && device == "eps"){
   ggplot2::ggsave("Holdout_vs_train_plot2.eps", width = width, height = height, units = units, scale = scale, device = device, dpi = dpi)
@@ -7563,7 +7562,7 @@ accuracy_plot <- ggplot2::ggplot(data = accuracy_data, mapping = ggplot2::aes(x 
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = mean)) +
   ggplot2::geom_hline(aes(yintercept = 0, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 5) +
+  ggplot2::facet_wrap(~model, ncol = 5, scales = "fixed") +
   ggplot2::ggtitle("Accuracy data (RMSE), fixed scales\nRoot Mean Squared Error by model, lower is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 0.") +
   ggplot2::labs(y = "Root Mean Squared Error (RMSE), lower is better \n The horizontal line is the mean of the results, the red line is 0.") +
   ggplot2::theme(legend.position = "none")
@@ -7709,7 +7708,7 @@ total_plot2 <- ggplot2::ggplot(data = total_data, mapping = ggplot2::aes(x = cou
   ggplot2::geom_line(mapping = aes(x = count, y = holdout, color = "holdout")) +
   ggplot2::geom_point(mapping = aes(x = count, y = holdout)) +
   ggplot2::geom_hline(aes(yintercept = 0, color = "optimal")) +
-  ggplot2::facet_wrap(~model, ncol = 5) +
+  ggplot2::facet_wrap(~model, ncol = 5, scales = "fixed") +
   ggplot2::ggtitle("Train vs holdout data by resample and model. Fixed scales \nRoot Mean Squared Error by model, lower is better. \nThe black horizontal line is 0.") +
   ggplot2::labs(y = "Root Mean Squared Error (RMSE), lower is better \nthe black line is 0.\n") +
   ggplot2::scale_color_manual(
