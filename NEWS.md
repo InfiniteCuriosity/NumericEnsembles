@@ -1,3 +1,5 @@
+# NumericEnsembles 0.4.0
+
 # NumericEnsembles 0.3.0
 
 # NumericEnsembles 0.2.0
