@@ -2549,7 +2549,6 @@ for (i in 1:numresamples) {
     "XGBoost" = y_hat_xgb * 1 / xgb_holdout_RMSE_mean
   )
 
-  ensemble$Row_mean <- rowMeans(ensemble)
   ensemble$y_ensemble <- c(test$y, validation$y)
   y_ensemble <- c(test$y, validation$y)
 
