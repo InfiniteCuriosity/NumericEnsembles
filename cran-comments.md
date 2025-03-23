@@ -17,3 +17,11 @@ If the p-value for a model (such as SVM) is below the desired value, the test in
 
 * Added a small function to remove NAs from the ensemble.
 The ensemble virtually never has NAs, but this is just in case.
+
+* Corrected description to less than 65 characters
+
+* Added details to the Description to provide more details what the NumericEnsembles package can do for the user
+
+* Changed all print commands to message.
+
+* Ensured the package does not write by default, but to tempdir.
