@@ -1,5 +1,5 @@
 Package: NumericEnsembles
-Title: Automatically Runs 23 Individual Numeric Models and 17 Ensembles of Models
+Title: Automatically Runs 23 Individual and 17 Ensembles of Models
 Version: 0.4.0
 Authors@R: 
     person("Russ", "Conte", , "russconte@mac.com", role = c("aut", "cre", "cph"))
@@ -40,7 +40,18 @@ Depends:
     utils,
     xgboost,
     R (>= 4.1.0)
-Description: Automatically runs 23 individual models and 17 ensembles on numeric data. The package returns complete results on all 40 models, 25 charts, multiple tables. You simply provide the data, answer a few questions, and the package does the rest.
+Description: Automatically runs 23 individual models and 17 ensembles on numeric data. The package automatically returns complete results on all 40 models,
+    25 charts, multiple tables. The user simply provides the data, and answers a few questions (for example, how many times would you like to resample the data).
+    From there the package randomly splits the data into train, test and validation sets, builds models on the training data, makes predictions on the test and validation sets,
+    measures root mean squared error (RMSE), removes features above a user-set level of Variance Inflation Factor (VIF), and has several optional features including scaling
+    all numeric data, four different ways to handle strings in the data. Perhaps the most significant feature is the package's ability to make predictions
+    using the 40 pre-trained models on totally new (untrained) data if the user selects that feature. This feature alone represents a very effective solution
+    to the issue of reproducibility of models in data science. The package can also randomly resample the data as many times as the user sets, thus giving more
+    accurate results than a single run. The graphs provide many results that are not typically found. For example, the package automatically calculates the Kolmogorov-Smirnov
+    test for each of the 40 models and plots a bar chart of the results, a bias barchart of each of the 40 models, as well as several plots for exploratory data
+    analysis (automatic histograms of the numeric data, automatic histograms of the numeric data). The package also automatically creates a summary report
+    that is both sortable and searchable for each of the 40 models, including RMSE, bias, train RMSE, test RMSE, validation RMSE, overfitting and duration.
+    The best results on the holdout data typically beat the best results in data science competitions and published results for the same data set.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
