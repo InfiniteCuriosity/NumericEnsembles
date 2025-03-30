@@ -18,10 +18,20 @@ If the p-value for a model (such as SVM) is below the desired value, the test in
 * Added a small function to remove NAs from the ensemble.
 The ensemble virtually never has NAs, but this is just in case.
 
-* Corrected description to less than 65 characters
+* Please reduce the length of the title to less than 65 characters.
+Done
 
-* Added details to the Description to provide more details what the NumericEnsembles package can do for the user
+* The Description field is intended to be a (one paragraph) description of what the package does and why it may be useful.
+* Please add more details about the package functionality and implemented methods in your Description text.
+Done, thank you for the note, the new description has more the motivation for the ensemble, and how it can be used to solve real problems
 
-* Changed all print commands to message.
+*Please add small executable examples in your Rd-files to illustrate the use of the exported function but also enable automatic testing.
+All my attempts to create an example that runs in five seconds or less have failed. This package totally automates the entire analytics process for
+numeric data, and takes more than five seconds even with the smallest data set.
 
-* Ensured the package does not write by default, but to tempdir.
+* You write information messages to the console that cannot be easily suppressed.
+Thank you for the note, changed all print commands to message.
+
+* Please ensure that your functions do not write by default or in your examples/vignettes/tests in the user's home filespace (including the package directory and getwd()).
+* This is not allowed by CRAN policies. Please omit any default path in writing functions. In your examples/vignettes/tests you can write to tempdir().
+This took a very large amount of work, but is fiexed. Nothing writes to the user's home filespace now, it all writes to tempdir1.
