@@ -207,12 +207,14 @@ if (scale_all_predictors_in_data == "Y"){
 
 if (predict_on_new_data == "Y") {
   new_data <- readline("What is the URL of the new data? ")
-  new_data <- read.csv("https://raw.githubusercontent.com/InfiniteCuriosity/EnsemblesData/refs/heads/main/NewBoston.csv")
+  new_data <- read.csv(new_data)
 
   y <- 0
   colnames(new_data)[colnum] <- "y"
 
-  new_data <- new_data %>% dplyr::relocate(y, .after = last_col()) # Moves the target column to the last column on the right
+  new_data <- new_data %>% dplyr::select(colnames(df))
+
+  new_data <- new_data %>% dplyr::relocate(y, .after = last_col()) # Moves the target column in the new data to the last column on the right
 }
 
 
@@ -7787,7 +7789,6 @@ if (predict_on_new_data == "Y") {
     "XGBoost" = new_XGBoost / xgb_holdout_RMSE_mean
   )
 
-  new_ensemble$Row_mean <- rowMeans(new_ensemble)
   new_ensemble$y_ensemble <- new_data$y
 
   thing1 <- colnames(new_ensemble)
