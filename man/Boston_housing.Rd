@@ -14,7 +14,7 @@ An object of class \code{data.frame} with 501 rows and 14 columns.
 Boston_housing
 }
 \description{
-This is a modified version of the famous Boston housing data set. The first five rows have been removed, we will use those to make predictions on new data. The data here is complete except for the first five rows.
+This is a modified version of the famous Boston housing data set. This data set includes rows 4:209 and 212:506. The data here is complete except for the data use to make New_Boston.
 The data first appeared in a paper by David Harrison, Jr. and Daniel L. Rubenfeld, Hedonic housing Prices and the demand for clean air. This was published in March, 1978.
 Journal of Environmental Economics and Management 5(1):81-102. The descriptions below are quoted from the original paper:
 \describe{
