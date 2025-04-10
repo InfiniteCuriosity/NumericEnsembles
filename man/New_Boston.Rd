@@ -3,7 +3,7 @@
 \docType{data}
 \name{New_Boston}
 \alias{New_Boston}
-\title{NewBoston—This is the first five rows of the original Boston Housing data set. This can be used as new data, and the Boston data set as the original. The numeric function will return predictions on the new data.}
+\title{NewBoston—These are only the five rows c(1:3, 210:211) from Boston Housing data set. This can be used as new data, and the Boston_housing data set as the original. The numeric function will return predictions on the new data.}
 \format{
 An object of class \code{data.frame} with 5 rows and 14 columns.
 }
