@@ -1,6 +1,6 @@
 #' Boston_housing data
 #'
-#' This is a modified version of the famous Boston housing data set. The first five rows have been removed, we will use those to make predictions on new data. The data here is complete except for the first five rows.
+#' This is a modified version of the famous Boston housing data set. This data set includes rows 4:209 and 212:506. The data here is complete except for the data use to make New_Boston.
 #' The data first appeared in a paper by David Harrison, Jr. and Daniel L. Rubenfeld, Hedonic housing Prices and the demand for clean air. This was published in March, 1978.
 #' Journal of Environmental Economics and Management 5(1):81-102. The descriptions below are quoted from the original paper:
 #' \describe{
@@ -24,7 +24,7 @@
 "Boston_housing"
 
 
-#' NewBoston—This is the first five rows of the original Boston Housing data set. This can be used as new data, and the Boston data set as the original. The numeric function will return predictions on the new data.
+#' NewBoston—These are only the five rows c(1:3, 210:211) from Boston Housing data set. This can be used as new data, and the Boston_housing data set as the original. The numeric function will return predictions on the new data.
 #'
 #' @description
 #' This is the first five rows of the Boston housing data set, which have been removed from the Boston data set included here. It is otherwise identical to the Boston data set.
