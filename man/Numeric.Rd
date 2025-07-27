@@ -20,6 +20,7 @@ Numeric(
   how_to_handle_strings = c(0("none"), 1("factor levels"), 2("One-hot encoding"),
     3("One-hot encoding with jitter")),
   predict_on_new_data = c("Y", "N"),
+  set_seed = c("Y", "N"),
   save_all_trained_models = c("Y", "N"),
   save_all_plots = c("Y", "N"),
   use_parallel = c("Y", "N"),
@@ -48,6 +49,8 @@ Numeric(
 \item{how_to_handle_strings}{0: No strings, 1: Factor values, 2: One-hot encoding, 3: One-hot encoding AND jitter}
 
 \item{predict_on_new_data}{"Y" or "N". If "Y", then you will be asked for the new data}
+
+\item{set_seed}{"Y" or "N" to set the seed to make the results fully reproducible}
 
 \item{save_all_trained_models}{"Y" or "N". If "Y", then places all the trained models in the Environment}
 
