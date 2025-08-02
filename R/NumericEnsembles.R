@@ -1545,10 +1545,10 @@ tempdir1 <- tempdir()
     bag_rf_t_test_p_value_mean <- mean(as.numeric(bag_rf_t_test_p_value))
     bag_rf_t_test_p_value_sd <- sd(as.numeric(bag_rf_t_test_p_value))
 
-    bag_rf_ks_p_value[i] <- stats::ks.test(x = y_hat_bag_rf, y = c(train$y, validation$y), exact = TRUE)$p.value
+    bag_rf_ks_p_value[i] <- stats::ks.test(x = y_hat_bag_rf, y = c(test$y, validation$y), exact = TRUE)$p.value
     bag_rf_ks_p_value_mean <- mean(bag_rf_ks_p_value)
     bag_rf_ks_p_value_sd <- sd(bag_rf_ks_p_value)
-    bag_rf_ks_stat[i] <- stats::ks.test(x = y_hat_bag_rf, y = c(train$y, validation$y), exact = TRUE)$statistic
+    bag_rf_ks_stat[i] <- stats::ks.test(x = y_hat_bag_rf, y = c(test$y, validation$y), exact = TRUE)$statistic
     bag_rf_ks_stat_mean <- mean(bag_rf_ks_stat)
     bag_rf_ks_test <- c(bag_rf_ks_stat_mean, bag_rf_ks_p_value_mean)
 
@@ -1607,10 +1607,10 @@ tempdir1 <- tempdir()
     bagging_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(bagging_test_predict_value, bagging_validation_predict_value))
     bagging_SSE_mean <- mean(bagging_SSE)
     bagging_SSE_sd <- sd(bagging_SSE)
-    bagging_ks_p_value[i] <- stats::ks.test(x = y_hat_bagging, y = c(train$y, validation$y), exact = TRUE)$p.value
+    bagging_ks_p_value[i] <- stats::ks.test(x = y_hat_bagging, y = c(test$y, validation$y), exact = TRUE)$p.value
     bagging_ks_p_value_mean <- mean(bagging_ks_p_value)
     bagging_ks_p_value_sd <- sd(bagging_ks_p_value)
-    bagging_ks_stat[i] <- stats::ks.test(x = y_hat_bagging, y = c(train$y, validation$y), exact = TRUE)$statistic
+    bagging_ks_stat[i] <- stats::ks.test(x = y_hat_bagging, y = c(test$y, validation$y), exact = TRUE)$statistic
     bagging_ks_stat_mean <- mean(bagging_ks_stat)
     bagging_ks_test <- c(bagging_ks_stat_mean, bagging_ks_p_value_mean)
     bagging_end <- Sys.time()
@@ -1667,10 +1667,10 @@ tempdir1 <- tempdir()
     bayesglm_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(bayesglm_test_predict_value, bayesglm_validation_predict_value))
     bayesglm_SSE_mean <- mean(bayesglm_SSE)
     bayesglm_SSE_sd <- sd(bayesglm_SSE)
-    bayesglm_ks_p_value[i] <- stats::ks.test(x = y_hat_bayesglm, y = c(train$y, validation$y), exact = TRUE)$p.value
+    bayesglm_ks_p_value[i] <- stats::ks.test(x = y_hat_bayesglm, y = c(test$y, validation$y), exact = TRUE)$p.value
     bayesglm_ks_p_value_mean <- mean(bayesglm_ks_p_value)
     bayesglm_ks_p_value_sd <- sd(bayesglm_ks_p_value)
-    bayesglm_ks_stat[i] <- stats::ks.test(x = y_hat_bayesglm, y = c(train$y, validation$y), exact = TRUE)$statistic
+    bayesglm_ks_stat[i] <- stats::ks.test(x = y_hat_bayesglm, y = c(test$y, validation$y), exact = TRUE)$statistic
     bayesglm_ks_stat_mean <- mean(bayesglm_ks_stat)
     bayesglm_ks_test <- c(bayesglm_ks_stat_mean, bayesglm_ks_p_value_mean)
 
@@ -1727,10 +1727,10 @@ tempdir1 <- tempdir()
     bayesrnn_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(bayesrnn_test_predict_value, bayesrnn_validation_predict_value))
     bayesrnn_SSE_mean <- mean(bayesrnn_SSE)
     bayesrnn_SSE_sd <- sd(bayesrnn_SSE)
-    bayesrnn_ks_p_value[i] <- stats::ks.test(x = y_hat_bayesrnn, y = c(train$y, validation$y), exact = TRUE)$p.value
+    bayesrnn_ks_p_value[i] <- stats::ks.test(x = y_hat_bayesrnn, y = c(test$y, validation$y), exact = TRUE)$p.value
     bayesrnn_ks_p_value_mean <- mean(bayesrnn_ks_p_value)
     bayesrnn_ks_p_value_sd <- sd(bayesrnn_ks_p_value)
-    bayesrnn_ks_stat[i] <- stats::ks.test(x = y_hat_bayesrnn, y = c(train$y, validation$y), exact = TRUE)$statistic
+    bayesrnn_ks_stat[i] <- stats::ks.test(x = y_hat_bayesrnn, y = c(test$y, validation$y), exact = TRUE)$statistic
     bayesrnn_ks_stat_mean <- mean(bayesrnn_ks_stat)
     bayesrnn_ks_test <- c(bayesrnn_ks_stat_mean, bayesrnn_ks_p_value_mean)
 
@@ -1797,10 +1797,10 @@ tempdir1 <- tempdir()
     boost_rf_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(boost_rf_test_predict_value, boost_rf_validation_predict_value))
     boost_rf_SSE_mean <- mean(boost_rf_SSE)
     boost_rf_SSE_sd <- sd(boost_rf_SSE)
-    boost_rf_ks_p_value[i] <- stats::ks.test(x = y_hat_boost_rf, y = c(train$y, validation$y), exact = TRUE)$p.value
+    boost_rf_ks_p_value[i] <- stats::ks.test(x = y_hat_boost_rf, y = c(test$y, validation$y), exact = TRUE)$p.value
     boost_rf_ks_p_value_mean <- mean(boost_rf_ks_p_value)
     boost_rf_ks_p_value_sd <- sd(boost_rf_ks_p_value)
-    boost_rf_ks_stat[i] <- stats::ks.test(x = y_hat_boost_rf, y = c(train$y, validation$y), exact = TRUE)$statistic
+    boost_rf_ks_stat[i] <- stats::ks.test(x = y_hat_boost_rf, y = c(test$y, validation$y), exact = TRUE)$statistic
     boost_rf_ks_stat_mean <- mean(boost_rf_ks_stat)
     boost_rf_ks_test <- c(boost_rf_ks_stat_mean, boost_rf_ks_p_value_mean)
 
@@ -1858,10 +1858,10 @@ tempdir1 <- tempdir()
     cubist_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(cubist_test_predict_value, cubist_validation_predict_value))
     cubist_SSE_mean <- mean(cubist_SSE)
     cubist_SSE_sd <- sd(cubist_SSE)
-    cubist_ks_p_value[i] <- stats::ks.test(x = y_hat_cubist, y = c(train$y, validation$y), exact = TRUE)$p.value
+    cubist_ks_p_value[i] <- stats::ks.test(x = y_hat_cubist, y = c(test$y, validation$y), exact = TRUE)$p.value
     cubist_ks_p_value_mean <- mean(cubist_ks_p_value)
     cubist_ks_p_value_sd <- sd(cubist_ks_p_value)
-    cubist_ks_stat[i] <- stats::ks.test(x = y_hat_cubist, y = c(train$y, validation$y), exact = TRUE)$statistic
+    cubist_ks_stat[i] <- stats::ks.test(x = y_hat_cubist, y = c(test$y, validation$y), exact = TRUE)$statistic
     cubist_ks_stat_mean <- mean(cubist_ks_stat)
     cubist_ks_test <- c(cubist_ks_stat_mean, cubist_ks_p_value_mean)
 
@@ -1919,10 +1919,10 @@ tempdir1 <- tempdir()
     earth_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(earth_test_predict_value, earth_validation_predict_value))
     earth_SSE_mean <- mean(earth_SSE)
     earth_SSE_sd <- sd(earth_SSE)
-    earth_ks_p_value[i] <- stats::ks.test(x = y_hat_earth, y = c(train$y, validation$y), exact = TRUE)$p.value
+    earth_ks_p_value[i] <- stats::ks.test(x = y_hat_earth, y = c(test$y, validation$y), exact = TRUE)$p.value
     earth_ks_p_value_mean <- mean(earth_ks_p_value)
     earth_ks_p_value_sd <- sd(earth_ks_p_value)
-    earth_ks_stat[i] <- stats::ks.test(x = y_hat_earth, y = c(train$y, validation$y), exact = TRUE)$statistic
+    earth_ks_stat[i] <- stats::ks.test(x = y_hat_earth, y = c(test$y, validation$y), exact = TRUE)$statistic
     earth_ks_stat_mean <- mean(earth_ks_stat)
     earth_ks_test <- c(earth_ks_stat_mean, earth_ks_p_value_mean)
 
@@ -2022,10 +2022,10 @@ tempdir1 <- tempdir()
     elastic_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = as.numeric(c(elastic_test_pred, elastic_validation_pred)))
     elastic_SSE_mean <- mean(elastic_SSE)
     elastic_SSE_sd <- sd(elastic_SSE)
-    elastic_ks_p_value[i] <- stats::ks.test(x = y_hat_elastic, y = c(train$y, validation$y), exact = TRUE)$p.value
+    elastic_ks_p_value[i] <- stats::ks.test(x = y_hat_elastic, y = c(test$y, validation$y), exact = TRUE)$p.value
     elastic_ks_p_value_mean <- mean(elastic_ks_p_value)
     elastic_ks_p_value_sd <- sd(elastic_ks_p_value)
-    elastic_ks_stat[i] <- stats::ks.test(x = y_hat_elastic, y = c(train$y, validation$y), exact = TRUE)$statistic
+    elastic_ks_stat[i] <- stats::ks.test(x = y_hat_elastic, y = c(test$y, validation$y), exact = TRUE)$statistic
     elastic_ks_stat_mean <- mean(elastic_ks_stat)
     elastic_ks_test <- c(elastic_ks_stat_mean, elastic_ks_p_value_mean)
 
@@ -2104,10 +2104,10 @@ tempdir1 <- tempdir()
     gam_t_test_t_mean <- mean(as.numeric(gam_t_test_t))
     gam_t_test_p_value_mean <- mean(as.numeric(gam_t_test_p_value))
     gam_t_test_p_value_sd <- sd(as.numeric(gam_t_test_p_value))
-    gam_ks_p_value[i] <- stats::ks.test(x = y_hat_gam, y = c(train$y, validation$y), exact = TRUE)$p.value
+    gam_ks_p_value[i] <- stats::ks.test(x = y_hat_gam, y = c(test$y, validation$y), exact = TRUE)$p.value
     gam_ks_p_value_mean <- mean(gam_ks_p_value)
     gam_ks_p_value_sd <- sd(gam_ks_p_value)
-    gam_ks_stat[i] <- stats::ks.test(x = y_hat_gam, y = c(train$y, validation$y), exact = TRUE)$statistic
+    gam_ks_stat[i] <- stats::ks.test(x = y_hat_gam, y = c(test$y, validation$y), exact = TRUE)$statistic
     gam_ks_stat_mean <- mean(gam_ks_stat)
     gam_ks_test <- c(gam_ks_stat_mean, gam_ks_p_value_mean)
 
@@ -2165,10 +2165,10 @@ tempdir1 <- tempdir()
     gb_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(gb_test_predict_value, gb_validation_predict_value))
     gb_SSE_mean <- mean(gb_SSE)
     gb_SSE_sd <- sd(gb_SSE)
-    gb_ks_p_value[i] <- stats::ks.test(x = y_hat_gb, y = c(train$y, validation$y), exact = TRUE)$p.value
+    gb_ks_p_value[i] <- stats::ks.test(x = y_hat_gb, y = c(test$y, validation$y), exact = TRUE)$p.value
     gb_ks_p_value_mean <- mean(gb_ks_p_value)
     gb_ks_p_value_sd <- sd(gb_ks_p_value)
-    gb_ks_stat[i] <- stats::ks.test(x = y_hat_gb, y = c(train$y, validation$y), exact = TRUE)$statistic
+    gb_ks_stat[i] <- stats::ks.test(x = y_hat_gb, y = c(test$y, validation$y), exact = TRUE)$statistic
     gb_ks_stat_mean <- mean(gb_ks_stat)
     gb_ks_test <- c(gb_ks_stat_mean, gb_ks_p_value_mean)
 
@@ -2245,10 +2245,10 @@ tempdir1 <- tempdir()
     knn_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(knn_test_predict_value, knn_validation_predict_value))
     knn_SSE_mean <- mean(knn_SSE)
     knn_SSE_sd <- sd(knn_SSE)
-    knn_ks_p_value[i] <- stats::ks.test(x = y_hat_knn, y = c(train$y, validation$y), exact = TRUE)$p.value
+    knn_ks_p_value[i] <- stats::ks.test(x = y_hat_knn, y = c(test$y, validation$y), exact = TRUE)$p.value
     knn_ks_p_value_mean <- mean(knn_ks_p_value)
     knn_ks_p_value_sd <- sd(knn_ks_p_value)
-    knn_ks_stat[i] <- stats::ks.test(x = y_hat_knn, y = c(train$y, validation$y), exact = TRUE)$statistic
+    knn_ks_stat[i] <- stats::ks.test(x = y_hat_knn, y = c(test$y, validation$y), exact = TRUE)$statistic
     knn_ks_stat_mean <- mean(knn_ks_stat)
     knn_ks_test <- c(knn_ks_stat_mean, knn_ks_p_value_mean)
 
@@ -2338,10 +2338,10 @@ tempdir1 <- tempdir()
     lasso_SSE_mean <- mean(lasso_SSE)
     lasso_SSE_sd <- sd(lasso_SSE)
 
-    lasso_ks_p_value[i] <- stats::ks.test(x = y_hat_lasso, y = c(train$y, validation$y), exact = TRUE)$p.value
+    lasso_ks_p_value[i] <- stats::ks.test(x = y_hat_lasso, y = c(test$y, validation$y), exact = TRUE)$p.value
     lasso_ks_p_value_mean <- mean(lasso_ks_p_value)
     lasso_ks_p_value_sd <- sd(lasso_ks_p_value)
-    lasso_ks_stat[i] <- stats::ks.test(x = y_hat_lasso, y = c(train$y, validation$y), exact = TRUE)$statistic
+    lasso_ks_stat[i] <- stats::ks.test(x = y_hat_lasso, y = c(test$y, validation$y), exact = TRUE)$statistic
     lasso_ks_stat_mean <- mean(lasso_ks_stat)
     lasso_ks_test <- c(lasso_ks_stat_mean, lasso_ks_p_value_mean)
 
@@ -2410,10 +2410,10 @@ tempdir1 <- tempdir()
     linear_t_test_t_mean <- mean(as.numeric(linear_t_test_t))
     linear_t_test_p_value_mean <- mean(as.numeric(linear_t_test_p_value))
     linear_t_test_p_value_sd <- sd(as.numeric(linear_t_test_p_value))
-    linear_ks_p_value[i] <- stats::ks.test(x = y_hat_linear, y = c(train$y, validation$y), exact = TRUE)$p.value
+    linear_ks_p_value[i] <- stats::ks.test(x = y_hat_linear, y = c(test$y, validation$y), exact = TRUE)$p.value
     linear_ks_p_value_mean <- mean(linear_ks_p_value)
     linear_ks_p_value_sd <- sd(linear_ks_p_value)
-    linear_ks_stat[i] <- stats::ks.test(x = y_hat_linear, y = c(train$y, validation$y), exact = TRUE)$statistic
+    linear_ks_stat[i] <- stats::ks.test(x = y_hat_linear, y = c(test$y, validation$y), exact = TRUE)$statistic
     linear_ks_stat_mean <- mean(linear_ks_stat)
     linear_ks_test <- c(linear_ks_stat_mean, linear_ks_p_value_mean)
 
@@ -2471,10 +2471,10 @@ tempdir1 <- tempdir()
     neuralnet_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(neuralnet_test_predict_value, neuralnet_validation_predict_value))
     neuralnet_SSE_mean <- mean(neuralnet_SSE)
     neuralnet_SSE_sd <- sd(neuralnet_SSE)
-    neuralnet_ks_p_value[i] <- stats::ks.test(x = y_hat_neuralnet, y = c(train$y, validation$y), exact = TRUE)$p.value
+    neuralnet_ks_p_value[i] <- stats::ks.test(x = y_hat_neuralnet, y = c(test$y, validation$y), exact = TRUE)$p.value
     neuralnet_ks_p_value_mean <- mean(neuralnet_ks_p_value)
     neuralnet_ks_p_value_sd <- sd(neuralnet_ks_p_value)
-    neuralnet_ks_stat[i] <- stats::ks.test(x = y_hat_neuralnet, y = c(train$y, validation$y), exact = TRUE)$statistic
+    neuralnet_ks_stat[i] <- stats::ks.test(x = y_hat_neuralnet, y = c(test$y, validation$y), exact = TRUE)$statistic
     neuralnet_ks_stat_mean <- mean(neuralnet_ks_stat)
     neuralnet_ks_test <- c(neuralnet_ks_stat_mean, neuralnet_ks_p_value_mean)
 
@@ -2532,10 +2532,10 @@ tempdir1 <- tempdir()
     pls_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(pls_test_predict_value, pls_validation_predict_value))
     pls_SSE_mean <- mean(pls_SSE)
     pls_SSE_sd <- sd(pls_SSE)
-    pls_ks_p_value[i] <- stats::ks.test(x = y_hat_pls, y = c(train$y, validation$y), exact = TRUE)$p.value
+    pls_ks_p_value[i] <- stats::ks.test(x = y_hat_pls, y = c(test$y, validation$y), exact = TRUE)$p.value
     pls_ks_p_value_mean <- mean(pls_ks_p_value)
     pls_ks_p_value_sd <- sd(pls_ks_p_value)
-    pls_ks_stat[i] <- stats::ks.test(x = y_hat_pls, y = c(train$y, validation$y), exact = TRUE)$statistic
+    pls_ks_stat[i] <- stats::ks.test(x = y_hat_pls, y = c(test$y, validation$y), exact = TRUE)$statistic
     pls_ks_stat_mean <- mean(pls_ks_stat)
     pls_ks_test <- c(pls_ks_stat_mean, pls_ks_p_value_mean)
 
@@ -2593,10 +2593,10 @@ tempdir1 <- tempdir()
     pcr_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(pcr_test_predict_value, pcr_validation_predict_value))
     pcr_SSE_mean <- mean(pcr_SSE)
     pcr_SSE_sd <- sd(pcr_SSE)
-    pcr_ks_p_value[i] <- stats::ks.test(x = y_hat_pcr, y = c(train$y, validation$y), exact = TRUE)$p.value
+    pcr_ks_p_value[i] <- stats::ks.test(x = y_hat_pcr, y = c(test$y, validation$y), exact = TRUE)$p.value
     pcr_ks_p_value_mean <- mean(pcr_ks_p_value)
     pcr_ks_p_value_sd <- sd(pcr_ks_p_value)
-    pcr_ks_stat[i] <- stats::ks.test(x = y_hat_pcr, y = c(train$y, validation$y), exact = TRUE)$statistic
+    pcr_ks_stat[i] <- stats::ks.test(x = y_hat_pcr, y = c(test$y, validation$y), exact = TRUE)$statistic
     pcr_ks_stat_mean <- mean(pcr_ks_stat)
     pcr_ks_test <- c(pcr_ks_stat_mean, pcr_ks_p_value_mean)
 
@@ -2654,10 +2654,10 @@ tempdir1 <- tempdir()
     rf_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(rf_test_predict_value, rf_validation_predict_value))
     rf_SSE_mean <- mean(rf_SSE)
     rf_SSE_sd <- sd(rf_SSE)
-    rf_ks_p_value[i] <- stats::ks.test(x = y_hat_rf, y = c(train$y, validation$y), exact = TRUE)$p.value
+    rf_ks_p_value[i] <- stats::ks.test(x = y_hat_rf, y = c(test$y, validation$y), exact = TRUE)$p.value
     rf_ks_p_value_mean <- mean(rf_ks_p_value)
     rf_ks_p_value_sd <- sd(rf_ks_p_value)
-    rf_ks_stat[i] <- stats::ks.test(x = y_hat_rf, y = c(train$y, validation$y), exact = TRUE)$statistic
+    rf_ks_stat[i] <- stats::ks.test(x = y_hat_rf, y = c(test$y, validation$y), exact = TRUE)$statistic
     rf_ks_stat_mean <- mean(rf_ks_stat)
     rf_ks_test <- c(rf_ks_stat_mean, rf_ks_p_value_mean)
 
@@ -2757,10 +2757,10 @@ tempdir1 <- tempdir()
     ridge_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = as.numeric(c(ridge_test_pred, ridge_validation_pred)))
     ridge_SSE_mean <- mean(ridge_SSE)
     ridge_SSE_sd <- sd(ridge_SSE)
-    ridge_ks_p_value[i] <- stats::ks.test(x = y_hat_ridge, y = c(train$y, validation$y), exact = TRUE)$p.value
+    ridge_ks_p_value[i] <- stats::ks.test(x = y_hat_ridge, y = c(test$y, validation$y), exact = TRUE)$p.value
     ridge_ks_p_value_mean <- mean(ridge_ks_p_value)
     ridge_ks_p_value_sd <- sd(ridge_ks_p_value)
-    ridge_ks_stat[i] <- stats::ks.test(x = y_hat_ridge, y = c(train$y, validation$y), exact = TRUE)$statistic
+    ridge_ks_stat[i] <- stats::ks.test(x = y_hat_ridge, y = c(test$y, validation$y), exact = TRUE)$statistic
     ridge_ks_stat_mean <- mean(ridge_ks_stat)
     ridge_ks_test <- c(ridge_ks_stat_mean, ridge_ks_p_value_mean)
 
@@ -2818,10 +2818,10 @@ tempdir1 <- tempdir()
     rpart_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(rpart_test_predict_value, rpart_validation_predict_value))
     rpart_SSE_mean <- mean(rpart_SSE)
     rpart_SSE_sd <- sd(rpart_SSE)
-    rpart_ks_p_value[i] <- stats::ks.test(x = y_hat_rpart, y = c(train$y, validation$y), exact = TRUE)$p.value
+    rpart_ks_p_value[i] <- stats::ks.test(x = y_hat_rpart, y = c(test$y, validation$y), exact = TRUE)$p.value
     rpart_ks_p_value_mean <- mean(rpart_ks_p_value)
     rpart_ks_p_value_sd <- sd(rpart_ks_p_value)
-    rpart_ks_stat[i] <- stats::ks.test(x = y_hat_rpart, y = c(train$y, validation$y), exact = TRUE)$statistic
+    rpart_ks_stat[i] <- stats::ks.test(x = y_hat_rpart, y = c(test$y, validation$y), exact = TRUE)$statistic
     rpart_ks_stat_mean <- mean(rpart_ks_stat)
     rpart_ks_test <- c(rpart_ks_stat_mean, rpart_ks_p_value_mean)
 
@@ -2880,10 +2880,10 @@ tempdir1 <- tempdir()
     svm_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(svm_test_predict_value, svm_validation_predict_value))
     svm_SSE_mean <- mean(svm_SSE)
     svm_SSE_sd <- sd(svm_SSE)
-    svm_ks_p_value[i] <- stats::ks.test(x = y_hat_svm, y = c(train$y, validation$y), exact = TRUE)$p.value
+    svm_ks_p_value[i] <- stats::ks.test(x = y_hat_svm, y = c(test$y, validation$y), exact = TRUE)$p.value
     svm_ks_p_value_mean <- mean(svm_ks_p_value)
     svm_ks_p_value_sd <- sd(svm_ks_p_value)
-    svm_ks_stat[i] <- stats::ks.test(x = y_hat_svm, y = c(train$y, validation$y), exact = TRUE)$statistic
+    svm_ks_stat[i] <- stats::ks.test(x = y_hat_svm, y = c(test$y, validation$y), exact = TRUE)$statistic
     svm_ks_stat_mean <- mean(svm_ks_stat)
     svm_ks_test <- c(svm_ks_stat_mean, svm_ks_p_value_mean)
 
@@ -2942,10 +2942,10 @@ tempdir1 <- tempdir()
     tree_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(tree_test_predict_value, tree_validation_predict_value))
     tree_SSE_mean <- mean(tree_SSE)
     tree_SSE_sd <- sd(tree_SSE)
-    tree_ks_p_value[i] <- stats::ks.test(x = y_hat_tree, y = c(train$y, validation$y), exact = TRUE)$p.value
+    tree_ks_p_value[i] <- stats::ks.test(x = y_hat_tree, y = c(test$y, validation$y), exact = TRUE)$p.value
     tree_ks_p_value_mean <- mean(tree_ks_p_value)
     tree_ks_p_value_sd <- sd(tree_ks_p_value)
-    tree_ks_stat[i] <- stats::ks.test(x = y_hat_tree, y = c(train$y, validation$y), exact = TRUE)$statistic
+    tree_ks_stat[i] <- stats::ks.test(x = y_hat_tree, y = c(test$y, validation$y), exact = TRUE)$statistic
     tree_ks_stat_mean <- mean(tree_ks_stat)
     tree_ks_test <- c(tree_ks_stat_mean, tree_ks_p_value_mean)
 
@@ -3030,10 +3030,10 @@ tempdir1 <- tempdir()
     xgb_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = y_hat_xgb)
     xgb_SSE_mean <- mean(xgb_SSE)
     xgb_SSE_sd <- sd(xgb_SSE)
-    xgb_ks_p_value[i] <- stats::ks.test(x = y_hat_xgb, y = c(train$y, validation$y), exact = TRUE)$p.value
+    xgb_ks_p_value[i] <- stats::ks.test(x = y_hat_xgb, y = c(test$y, validation$y), exact = TRUE)$p.value
     xgb_ks_p_value_mean <- mean(xgb_ks_p_value)
     xgb_ks_p_value_sd <- sd(xgb_ks_p_value)
-    xgb_ks_stat[i] <- stats::ks.test(x = y_hat_xgb, y = c(train$y, validation$y), exact = TRUE)$statistic
+    xgb_ks_stat[i] <- stats::ks.test(x = y_hat_xgb, y = c(test$y, validation$y), exact = TRUE)$statistic
     xgb_ks_stat_mean <- mean(xgb_ks_stat)
     xgb_ks_test <- c(xgb_ks_stat_mean, xgb_ks_p_value_mean)
 
@@ -3286,10 +3286,10 @@ tempdir1 <- tempdir()
     ensemble_bag_rf_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bag_rf_test_predict_value, ensemble_bag_rf_validation_predict_value))
     ensemble_bag_rf_SSE_mean <- mean(ensemble_bag_rf_SSE)
     ensemble_bag_rf_SSE_sd <- sd(ensemble_bag_rf_SSE)
-    ensemble_bag_rf_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_bag_rf, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+    ensemble_bag_rf_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_bag_rf, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_bag_rf_ks_p_value_mean <- mean(ensemble_bag_rf_ks_p_value)
     ensemble_bag_rf_ks_p_value_sd <- sd(ensemble_bag_rf_ks_p_value)
-    ensemble_bag_rf_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_bag_rf, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+    ensemble_bag_rf_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_bag_rf, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$statistic
     ensemble_bag_rf_ks_stat_mean <- mean(ensemble_bag_rf_ks_stat)
     ensemble_bag_rf_ks_test <- c(ensemble_bag_rf_ks_stat_mean, ensemble_bag_rf_ks_p_value_mean)
 
@@ -3356,10 +3356,10 @@ tempdir1 <- tempdir()
     ensemble_bagging_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bagging_test_predict_value, ensemble_bagging_validation_predict_value))
     ensemble_bagging_SSE_mean <- mean(ensemble_bagging_SSE)
     ensemble_bagging_SSE_sd <- sd(ensemble_bagging_SSE)
-    ensemble_bagging_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_bagging, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+    ensemble_bagging_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_bagging, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_bagging_ks_p_value_mean <- mean(ensemble_bagging_ks_p_value)
     ensemble_bagging_ks_p_value_sd <- sd(ensemble_bag_rf_ks_p_value)
-    ensemble_bagging_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_bagging, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+    ensemble_bagging_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_bagging, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$statistic
     ensemble_bagging_ks_stat_mean <- mean(ensemble_bagging_ks_stat)
     ensemble_bagging_ks_test <- c(ensemble_bagging_ks_stat_mean, ensemble_bagging_ks_p_value_mean)
 
@@ -3426,10 +3426,10 @@ tempdir1 <- tempdir()
     ensemble_bayesglm_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bayesglm_test_predict_value, ensemble_bayesglm_validation_predict_value))
     ensemble_bayesglm_SSE_mean <- mean(ensemble_bayesglm_SSE)
     ensemble_bayesglm_SSE_sd <- sd(ensemble_bayesglm_SSE)
-    ensemble_bayesglm_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_bayesglm , y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+    ensemble_bayesglm_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_bayesglm , y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_bayesglm_ks_p_value_mean <- mean(ensemble_bayesglm_ks_p_value)
     ensemble_bayesglm_ks_p_value_sd <- sd(ensemble_bayesglm_ks_p_value)
-    ensemble_bayesglm_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_bayesglm , y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+    ensemble_bayesglm_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_bayesglm , y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$statistic
     ensemble_bayesglm_ks_stat_mean <- mean(ensemble_bayesglm_ks_stat)
     ensemble_bayesglm_ks_test <- c(ensemble_bayesglm_ks_stat_mean, ensemble_bayesglm_ks_p_value_mean)
 
@@ -3496,10 +3496,10 @@ tempdir1 <- tempdir()
     ensemble_bayesrnn_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bayesrnn_test_predict_value, ensemble_bayesrnn_validation_predict_value))
     ensemble_bayesrnn_SSE_mean <- mean(ensemble_bayesrnn_SSE)
     ensemble_bayesrnn_SSE_sd <- sd(ensemble_bayesrnn_SSE)
-    ensemble_bayesrnn_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_bayesrnn, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+    ensemble_bayesrnn_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_bayesrnn, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_bayesrnn_ks_p_value_mean <- mean(ensemble_bayesrnn_ks_p_value)
     ensemble_bayesrnn_ks_p_value_sd <- sd(ensemble_bayesrnn_ks_p_value)
-    ensemble_bayesrnn_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_bayesrnn, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+    ensemble_bayesrnn_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_bayesrnn, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$statistic
     ensemble_bayesrnn_ks_stat_mean <- mean(ensemble_bayesrnn_ks_stat)
     ensemble_bayesrnn_ks_test <- c(ensemble_bayesrnn_ks_stat_mean, ensemble_bayesrnn_ks_p_value_mean)
 
@@ -3575,10 +3575,10 @@ tempdir1 <- tempdir()
     ensemble_boost_rf_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_boost_rf_test_predict_value, ensemble_boost_rf_validation_predict_value))
     ensemble_boost_rf_SSE_mean <- mean(ensemble_boost_rf_SSE)
     ensemble_boost_rf_SSE_sd <- sd(ensemble_boost_rf_SSE)
-    ensemble_boost_rf_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_boost_rf, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+    ensemble_boost_rf_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_boost_rf, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_boost_rf_ks_p_value_mean <- mean(ensemble_boost_rf_ks_p_value)
     ensemble_boost_rf_ks_p_value_sd <- sd(ensemble_boost_rf_ks_p_value)
-    ensemble_boost_rf_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_boost_rf, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+    ensemble_boost_rf_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_boost_rf, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$statistic
     ensemble_boost_rf_ks_stat_mean <- mean(ensemble_boost_rf_ks_stat)
     ensemble_boost_rf_ks_test <- c(ensemble_boost_rf_ks_stat_mean, ensemble_boost_rf_ks_p_value_mean)
 
@@ -3645,10 +3645,10 @@ tempdir1 <- tempdir()
     ensemble_cubist_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_cubist_test_predict_value, ensemble_cubist_validation_predict_value))
     ensemble_cubist_SSE_mean <- mean(ensemble_cubist_SSE)
     ensemble_cubist_SSE_sd <- sd(ensemble_cubist_SSE)
-    ensemble_cubist_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_cubist, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+    ensemble_cubist_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_cubist, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_cubist_ks_p_value_mean <- mean(ensemble_cubist_ks_p_value)
     ensemble_cubist_ks_p_value_sd <- sd(ensemble_cubist_ks_p_value)
-    ensemble_cubist_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_cubist, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+    ensemble_cubist_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_cubist, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$statistic
     ensemble_cubist_ks_stat_mean <- mean(ensemble_cubist_ks_stat)
     ensemble_cubist_ks_test <- c(ensemble_cubist_ks_stat_mean, ensemble_cubist_ks_p_value_mean)
 
@@ -3715,10 +3715,10 @@ tempdir1 <- tempdir()
     ensemble_earth_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_earth_test_predict_value, ensemble_earth_validation_predict_value))
     ensemble_earth_SSE_mean <- mean(ensemble_earth_SSE)
     ensemble_earth_SSE_sd <- sd(ensemble_earth_SSE)
-    ensemble_earth_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_earth, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+    ensemble_earth_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_earth, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_earth_ks_p_value_mean <- mean(ensemble_earth_ks_p_value)
     ensemble_earth_ks_p_value_sd <- sd(ensemble_earth_ks_p_value)
-    ensemble_earth_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_earth, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+    ensemble_earth_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_earth, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$statistic
     ensemble_earth_ks_stat_mean <- mean(ensemble_earth_ks_stat)
     ensemble_earth_ks_test <- c(ensemble_earth_ks_stat_mean, ensemble_earth_ks_p_value_mean)
 
@@ -3806,10 +3806,10 @@ tempdir1 <- tempdir()
     ensemble_elastic_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_elastic_test_predict_value, ensemble_elastic_validation_predict_value))
     ensemble_elastic_SSE_mean <- mean(ensemble_elastic_SSE)
     ensemble_elastic_SSE_sd <- sd(ensemble_elastic_SSE)
-    ensemble_elastic_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_elastic, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+    ensemble_elastic_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_elastic, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_elastic_ks_p_value_mean <- mean(ensemble_elastic_ks_p_value)
     ensemble_elastic_ks_p_value_sd <- sd(ensemble_elastic_ks_p_value)
-    ensemble_elastic_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_elastic, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+    ensemble_elastic_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_elastic, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$statistic
     ensemble_elastic_ks_stat_mean <- mean(ensemble_elastic_ks_stat)
     ensemble_elastic_ks_test <- c(ensemble_elastic_ks_stat_mean, ensemble_elastic_ks_p_value_mean)
 
@@ -3884,10 +3884,10 @@ tempdir1 <- tempdir()
     ensemble_gb_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_gb_test_predict_value, ensemble_gb_validation_predict_value))
     ensemble_gb_SSE_mean <- mean(ensemble_gb_SSE)
     ensemble_gb_SSE_sd <- sd(ensemble_gb_SSE)
-    ensemble_gb_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_gb, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+    ensemble_gb_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_gb, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_gb_ks_p_value_mean <- mean(ensemble_gb_ks_p_value)
     ensemble_gb_ks_p_value_sd <- sd(ensemble_gb_ks_p_value)
-    ensemble_gb_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_gb, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+    ensemble_gb_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_gb, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$statistic
     ensemble_gb_ks_stat_mean <- mean(ensemble_gb_ks_stat)
     ensemble_gb_ks_test <- c(ensemble_gb_ks_stat_mean, ensemble_gb_ks_p_value_mean)
 
@@ -3954,10 +3954,10 @@ tempdir1 <- tempdir()
     ensemble_knn_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_knn_test_predict_value, ensemble_knn_validation_predict_value))
     ensemble_knn_SSE_mean <- mean(ensemble_knn_SSE)
     ensemble_knn_SSE_sd <- sd(ensemble_knn_SSE)
-    ensemble_knn_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_knn, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+    ensemble_knn_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_knn, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_knn_ks_p_value_mean <- mean(ensemble_knn_ks_p_value)
     ensemble_knn_ks_p_value_sd <- sd(ensemble_knn_ks_p_value)
-    ensemble_knn_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_knn, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+    ensemble_knn_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_knn, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$statistic
     ensemble_knn_ks_stat_mean <- mean(ensemble_knn_ks_stat)
     ensemble_knn_ks_test <- c(ensemble_knn_ks_stat_mean, ensemble_knn_ks_p_value_mean)
 
@@ -4046,10 +4046,10 @@ tempdir1 <- tempdir()
     ensemble_lasso_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_lasso_test_predict_value, ensemble_lasso_validation_predict_value))
     ensemble_lasso_SSE_mean <- mean(ensemble_lasso_SSE)
     ensemble_lasso_SSE_sd <- sd(ensemble_lasso_SSE)
-    ensemble_lasso_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_lasso, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+    ensemble_lasso_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_lasso, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_lasso_ks_p_value_mean <- mean(ensemble_lasso_ks_p_value)
     ensemble_lasso_ks_p_value_sd <- sd(ensemble_lasso_ks_p_value)
-    ensemble_lasso_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_lasso, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+    ensemble_lasso_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_lasso, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$statistic
     ensemble_lasso_ks_stat_mean <- mean(ensemble_lasso_ks_stat)
     ensemble_lasso_ks_test <- c(ensemble_lasso_ks_stat_mean, ensemble_lasso_ks_p_value_mean)
 
@@ -4126,10 +4126,10 @@ tempdir1 <- tempdir()
     ensemble_linear_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_linear_test_predict_value, ensemble_linear_validation_predict_value))
     ensemble_linear_SSE_mean <- mean(ensemble_linear_SSE)
     ensemble_linear_SSE_sd <- sd(ensemble_linear_SSE)
-    ensemble_linear_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_linear, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+    ensemble_linear_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_linear, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_linear_ks_p_value_mean <- mean(ensemble_linear_ks_p_value)
     ensemble_linear_ks_p_value_sd <- sd(ensemble_linear_ks_p_value)
-    ensemble_linear_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_linear, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+    ensemble_linear_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_linear, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$statistic
     ensemble_linear_ks_stat_mean <- mean(ensemble_linear_ks_stat)
     ensemble_linear_ks_test <- c(ensemble_linear_ks_stat_mean, ensemble_linear_ks_p_value_mean)
 
@@ -4205,10 +4205,10 @@ tempdir1 <- tempdir()
     ensemble_rf_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_rf_test_predict_value, ensemble_rf_validation_predict_value))
     ensemble_rf_SSE_mean <- mean(ensemble_rf_SSE)
     ensemble_rf_SSE_sd <- sd(ensemble_rf_SSE)
-    ensemble_rf_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_rf, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+    ensemble_rf_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_rf, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_rf_ks_p_value_mean <- mean(ensemble_rf_ks_p_value)
     ensemble_rf_ks_p_value_sd <- sd(ensemble_rf_ks_p_value)
-    ensemble_rf_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_rf, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+    ensemble_rf_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_rf, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$statistic
     ensemble_rf_ks_stat_mean <- mean(ensemble_rf_ks_stat)
     ensemble_rf_ks_test <- c(ensemble_rf_ks_stat_mean, ensemble_rf_ks_p_value_mean)
 
@@ -4298,10 +4298,10 @@ tempdir1 <- tempdir()
     ensemble_ridge_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_ridge_test_predict_value, ensemble_ridge_validation_predict_value))
     ensemble_ridge_SSE_mean <- mean(ensemble_ridge_SSE)
     ensemble_ridge_SSE_sd <- sd(ensemble_ridge_SSE)
-    ensemble_ridge_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_ridge, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+    ensemble_ridge_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_ridge, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_ridge_ks_p_value_mean <- mean(ensemble_ridge_ks_p_value)
     ensemble_ridge_ks_p_value_sd <- sd(ensemble_ridge_ks_p_value)
-    ensemble_ridge_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_ridge, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+    ensemble_ridge_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_ridge, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$statistic
     ensemble_ridge_ks_stat_mean <- mean(ensemble_ridge_ks_stat)
     ensemble_ridge_ks_test <- c(ensemble_ridge_ks_stat_mean, ensemble_ridge_ks_p_value_mean)
 
@@ -4378,10 +4378,10 @@ tempdir1 <- tempdir()
     ensemble_rpart_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_rpart_test_predict_value, ensemble_rpart_validation_predict_value))
     ensemble_rpart_SSE_mean <- mean(ensemble_rpart_SSE)
     ensemble_rpart_SSE_sd <- sd(ensemble_rpart_SSE)
-    ensemble_rpart_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_rpart, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+    ensemble_rpart_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_rpart, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_rpart_ks_p_value_mean <- mean(ensemble_rpart_ks_p_value)
     ensemble_rpart_ks_p_value_sd <- sd(ensemble_rpart_ks_p_value)
-    ensemble_rpart_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_rpart, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+    ensemble_rpart_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_rpart, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$statistic
     ensemble_rpart_ks_stat_mean <- mean(ensemble_rpart_ks_stat)
     ensemble_rpart_ks_test <- c(ensemble_rpart_ks_stat_mean, ensemble_rpart_ks_p_value_mean)
 
@@ -4440,10 +4440,10 @@ tempdir1 <- tempdir()
     ensemble_svm_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_svm_test_predict_value, ensemble_svm_validation_predict_value))
     ensemble_svm_SSE_mean <- mean(ensemble_svm_SSE)
     ensemble_svm_SSE_sd <- sd(ensemble_svm_SSE)
-    ensemble_svm_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_svm , y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+    ensemble_svm_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_svm , y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_svm_ks_p_value_mean <- mean(ensemble_svm_ks_p_value)
     ensemble_svm_ks_p_value_sd <- sd(ensemble_svm_ks_p_value)
-    ensemble_svm_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_svm , y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+    ensemble_svm_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_svm , y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$statistic
     ensemble_svm_ks_stat_mean <- mean(ensemble_svm_ks_stat)
     ensemble_svm_ks_test <- c(ensemble_svm_ks_stat_mean, ensemble_svm_ks_p_value_mean)
 
@@ -4509,10 +4509,10 @@ tempdir1 <- tempdir()
     ensemble_tree_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_tree_test_predict_value, ensemble_tree_validation_predict_value))
     ensemble_tree_SSE_mean <- mean(ensemble_tree_SSE)
     ensemble_tree_SSE_sd <- sd(ensemble_tree_SSE)
-    ensemble_tree_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_tree, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+    ensemble_tree_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_tree, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_tree_ks_p_value_mean <- mean(ensemble_tree_ks_p_value)
     ensemble_tree_ks_p_value_sd <- sd(ensemble_tree_ks_p_value)
-    ensemble_tree_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_tree, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+    ensemble_tree_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_tree, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$statistic
     ensemble_tree_ks_stat_mean <- mean(ensemble_tree_ks_stat)
     ensemble_tree_ks_test <- c(ensemble_tree_ks_stat_mean, ensemble_tree_ks_p_value_mean)
 
@@ -4602,10 +4602,10 @@ tempdir1 <- tempdir()
     ensemble_xgb_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = ensemble_y_hat_xgb)
     ensemble_xgb_SSE_mean <- mean(ensemble_xgb_SSE)
     ensemble_xgb_SSE_sd <- sd(ensemble_xgb_SSE)
-    ensemble_xgb_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_xgb, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$p.value
+    ensemble_xgb_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_xgb, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_xgb_ks_p_value_mean <- mean(ensemble_xgb_ks_p_value)
     ensemble_xgb_ks_p_value_sd <- sd(ensemble_xgb_ks_p_value)
-    ensemble_xgb_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_xgb, y = c(ensemble_train$y, ensemble_validation$y), exact = TRUE)$statistic
+    ensemble_xgb_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_xgb, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$statistic
     ensemble_xgb_ks_stat_mean <- mean(ensemble_xgb_ks_stat)
     ensemble_xgb_ks_test <- c(ensemble_xgb_ks_stat_mean, ensemble_xgb_ks_p_value_mean)
 
