@@ -37,7 +37,7 @@ Numeric(data = MASS::Boston,
         colnum = 14,
         numresamples = 2,
         remove_VIF_above = 5.00,
-        remove_ensemble_correlations_greater_than = 1.00,
+        remove_ensemble_correlations_greater_than = 100,
         scale_all_predictors_in_data = "N",
         data_reduction_method = 0,
         ensemble_reduction_method = 0,
@@ -52,11 +52,13 @@ Numeric(data = MASS::Boston,
         validation_amount = 0.20)
 ```
 
-The function uses set.seed, so the results are consistent. The value used for the seed in this example is 12345.
+The function uses set.seed, so the results are consistent.
 
-The lowest RMSE is 0.1269 ± 0.027, as this shows:
+### **The value used for the seed in this example is 12345.**
 
-![Boston Housing, set.seed=12345](images/Boston_Housing_set_seed=12345.jpeg){width="948"}
+The lowest RMSE is 0.1206 ± 0.0131, as this shows:
+
+![set.seed=12345](images/setseed=12345.jpg)
 
 **The function will do the following, all completed automatically:**
 
@@ -244,20 +246,20 @@ The function automatically creates a summary table with the following results fo
 
 Here is an example of the head of the summary report when we ran the function on Boston Housing. Note that all the most accurate models are ensembles except one (BayesRNN):
 
-| Model            | RMSE   | 1 standard deviation |
-|------------------|--------|----------------------|
-| EnsembleEarth    | 0.1269 | 0.027                |
-| EnsembleCubist   | 0.1365 | 0.0435               |
-| BayesRNN         | 0.1385 | 0.0054               |
-| EnsembleBayesGLM | 0.1801 | 0.0675               |
-| EnsembleLasso    | 0.2217 | 0.0491               |
-| EnsembleBayesRNN | 0.2344 | 0.1346               |
+| Model                       | RMSE   | 1 standard deviation |
+|-----------------------------|--------|----------------------|
+| EnsembleBayesRNN            | 0.1206 | 0.0131               |
+| EnsembleBaggedRandomForest  | 0.2159 | 0.0187               |
+| EnsembleBoostedRF           | 0.2159 | 0.0187               |
+| EnsembleCubist              | 0.3923 | 0.1181               |
+| EnsembleEarth               | 0.3966 | 0.1271               |
+| Ensemble K-NearestNeighbors | 0.4397 | 0.0102               |
 
 **Automatic summary plots**
 
 The function automatically returns 25 plots, here is the predicted vs actual for the best model:
 
-![EnsembleEarth predicted vs actual using set.seed = 12345](images/EnsembleEarth_actual_vs_pred.jpeg)
+![Predicted vs actual for set.seed=12345](images/pred_vs_actual.jpeg)
 
 As a note, the overfitting by resample plot is potentially very useful. Clearly some of the models overfit more than others. This plot gives the results for each resample (25 in this case), and it's very easy to see some of the models are more consistent than others. Here is a closeup of a few of the results, so the difference between train and holdout can be easily seen:
 
@@ -265,25 +267,25 @@ As a note, the overfitting by resample plot is potentially very useful. Clearly 
 
 <br><br>
 
-![Model RMSE barchart, lower is better](Accuracy_barchart.jpeg){width="700"}
+![Accuracy barchart](images/Accuracy_barchart-01.jpeg)
 
 <br><br>
 
-![Mean bias by model, closer to 0 is better](Mean_bias_barchart.jpeg){width="700"}
+![Mean bias by model](images/Bias.jpeg)
 
 <br><br>
 
-![Duration by model, shorter is better](Duration.jpeg){width="700"}
+![Duration](images/Duration.jpeg)
 
 **Summary**: NumericEnsembles accomplishes all of these tasks in one code chunk, and typically the best model here beats the best models from previously published results.
 
 Lowest RMSE from the Kaggle competition: 2.09684
 
-Lowest RMSE from the NumericEnsembles package: 0.1269
+Lowest RMSE from the NumericEnsembles package: 0.1206
 
 Decrease in error rate:94.7397% decrease using Numeric Ensembles compared to the best result from the student Kaggle competition. In addition, NumericEnsembles returns tables, charts, and much more.
 
-Calculate percentage change: from V~1~ = 2.09684 to V~2~ = 0.1269 
+Calculate percentage change: from V~1~ = 2.09684 to V~2~ = 0.1206 
 
 #### (𝑉2−𝑉1)\|𝑉1\|×100
 
@@ -293,13 +295,13 @@ Calculate percentage change: from V~1~ = 2.09684 to V~2~ = 0.1269 
 
 #### =−0.947397×100
 
-#### =−94.7397% change
+#### =−94.2485% change
 
-#### =94.7397% decrease
+#### =94.2485 % decrease
 
 Source: <https://www.calculatorsoup.com/calculators/algebra/percent-change-calculator.php>
 
-**In fact, the 22nd most accurate model from NumericEnsembles was very close to the #1 result from the Kaggle results.** (22nd most accurate NumericEnsembles result = 2.1636, best result in the Kaggle competition = 2.09684). This shows that NumericEnsembles had 21 models that were more accurate than the winning example in the Kaggle competition with 49 teams and 699 submissions!
+**In fact, 22 models from NumericEnsembles beat the #1 result from the Kaggle results.** (22nd most accurate NumericEnsembles result = 1.9301, best result in the Kaggle competition = 2.09684). The Kaggle competition with 49 teams and 699 submissions!
 
 # **Example #2: Including categorical data in NumericEnsembles**
 
