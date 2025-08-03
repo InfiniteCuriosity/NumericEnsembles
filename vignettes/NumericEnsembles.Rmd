@@ -11,17 +11,19 @@ Welcome to the NumericEnsembles package! This package only does one thing, but i
 
 **How does NumericEnsembles automatically build the most accurate model?**
 
-The NumericEnsembles package builds 40 models. 23 of the models are individual models, and 17 are ensembles of models. Only one of the 40 will have the lowest RMSE on the holdout data, but that result virtually always beats the best published results, both in published research and data science contests. In past measures, multiple results from NumericEnsembles have beat the best published results.
+The NumericEnsembles package automatically builds 40 models. 23 of the models are individual models, and 17 are ensembles of models. Only one of the 40 will have the lowest RMSE on the holdout data, but that result virtually always beats the best published results, both in published research and data science contests. In past measures, multiple results from NumericEnsembles have beat all the best published results. We will see an example in this Vignette where our we have 22 results that beat all the results in a Kaggle competition.
 
 **Let's walk through the steps to see how this is done (example 1 of 2).**
 
 Our first example is one of the best known data sets of all time: Boston Housing. We will work for the same result as data science contests and professionally published articles: Minimizing the RMSE of the predicted sale price. Let's start with a baseline.
 
-**First example: The Boston Housing data set**
+**First example: Let's best the top score in a Kaggle competition on the Boston Housing data set**
 
-As we will see, the NumericEnsembles package will automatically return an RMSE that is more than 90% smaller than the winning entry in that Kaggle competition.
+The Kaggle competition is here: <https://www.kaggle.com/competitions/uou-g03784-2022-spring/leaderboard>
 
-The Boston Housing data set is in the MASS package.
+As we will see, the NumericEnsembles package will automatically return an RMSE that is more than 90% smaller than the winning entry in that Kaggle competition. That winning score in the Kaggle competition was 2.41243.
+
+The Boston Housing data set is in the MASS package. It can be found by MASS::Boston.
 
 The NumericEnsembles package only has one function, Numeric (with a capital N), and it automatically does everything for the user.
 
@@ -30,28 +32,31 @@ The NumericEnsembles package only has one function, Numeric (with a capital N), 
 Here is what the Numeric function looks like with comments about each part:
 
 ```         
-Numeric(data = df # though you may use any numeric data you wish
-
-  colnum = 14 # this is MEDV, the median sales price
-
-  numresamples = 2 # this will randomly resample the data two times
-
-  how_to_handle_strings = 0 # there are no strings in the Boston Housing data set
-
-  do_you_have_new_data = "N" # We do not have new data in this example, that is coming
-
-  save_all_trained_models = "N" # We are not saving trained models in this example, that is     coming
-
-  remove_ensemble_correlations_greater_than = 1.00 # We are not doing correlation reduction    in this example, that is coming
-
-  train_amount = 0.60 # set up values for train, the Kaggle contest used 0.50, so we will, too
-
-  test_amount = 0.25 # we will use 0.25 for test
-
-  validation_amount = 0.25 # we will use 0.25 for validation set
-
-)
+library(NumericEnsembles)
+Numeric(data = MASS::Boston,
+        colnum = 14,
+        numresamples = 2,
+        remove_VIF_above = 5.00,
+        remove_ensemble_correlations_greater_than = 1.00,
+        scale_all_predictors_in_data = "N",
+        data_reduction_method = 0,
+        ensemble_reduction_method = 0,
+        how_to_handle_strings = 0,
+        predict_on_new_data = "N",
+        save_all_trained_models = "N",
+        set_seed = "Y",
+        save_all_plots = "N",
+        use_parallel = "Y",
+        train_amount = 0.60,
+        test_amount = 0.20,
+        validation_amount = 0.20)
 ```
+
+The function uses set.seed, so the results are consistent. The value used for the seed in this example is 12345.
+
+The lowest RMSE is 0.1269 ± 0.027, as this shows:
+
+![Boston Housing, set.seed=12345](images/Boston_Housing_set_seed=12345.jpeg){width="948"}
 
 **The function will do the following, all completed automatically:**
 
@@ -215,7 +220,7 @@ The function automatically creates a summary table with the following results fo
 
 • Mean MAE
 
-• Mean MSE
+• Mean MSE
 
 • Mean SSE
 
@@ -239,20 +244,20 @@ The function automatically creates a summary table with the following results fo
 
 Here is an example of the head of the summary report when we ran the function on Boston Housing. Note that all the most accurate models are ensembles except one (BayesRNN):
 
-| Model            | RMSE   |
-|------------------|--------|
-| EnsembleEarth    | 0.1135 |
-| BayesRNN         | 0.1216 |
-| EnsembleBayesGLM | 0.1274 |
-| EnsembleCubist   | 0.1459 |
-| EnsembleBayesRNN | 0.2393 |
-| EnsembleLasso    | 0.2815 |
+| Model            | RMSE   | 1 standard deviation |
+|------------------|--------|----------------------|
+| EnsembleEarth    | 0.1269 | 0.027                |
+| EnsembleCubist   | 0.1365 | 0.0435               |
+| BayesRNN         | 0.1385 | 0.0054               |
+| EnsembleBayesGLM | 0.1801 | 0.0675               |
+| EnsembleLasso    | 0.2217 | 0.0491               |
+| EnsembleBayesRNN | 0.2344 | 0.1346               |
 
 **Automatic summary plots**
 
 The function automatically returns 25 plots, here is the predicted vs actual for the best model:
 
-![Best model, actual (x-axis) vs predicted (y-axis)](Best_model_actual_vs_predicted.jpeg){width="700"}
+![EnsembleEarth predicted vs actual using set.seed = 12345](images/EnsembleEarth_actual_vs_pred.jpeg)
 
 As a note, the overfitting by resample plot is potentially very useful. Clearly some of the models overfit more than others. This plot gives the results for each resample (25 in this case), and it's very easy to see some of the models are more consistent than others. Here is a closeup of a few of the results, so the difference between train and holdout can be easily seen:
 
@@ -270,29 +275,31 @@ As a note, the overfitting by resample plot is potentially very useful. Clearly 
 
 ![Duration by model, shorter is better](Duration.jpeg){width="700"}
 
-Summary: NumericEnsembles accomplishes all of these tasks in one code chunk, and typically the best model here beats the best models from previously published results.
+**Summary**: NumericEnsembles accomplishes all of these tasks in one code chunk, and typically the best model here beats the best models from previously published results.
 
 Lowest RMSE from the Kaggle competition: 2.09684
 
-Lowest RMSE from the NumericEnsembles package: 0.1135
+Lowest RMSE from the NumericEnsembles package: 0.1269
 
-Decrease in error rate:94.5871% decrease using Numeric Ensembles compared to the best result from the student Kaggle competition, and NumericEnsembles returns tables, charts, and much more, in only a few minutes.
+Decrease in error rate:94.7397% decrease using Numeric Ensembles compared to the best result from the student Kaggle competition. In addition, NumericEnsembles returns tables, charts, and much more.
 
-Calculate percentage change: from V~1~ = 2.09684 to V~2~ = 0.1135 
+Calculate percentage change: from V~1~ = 2.09684 to V~2~ = 0.1269 
 
-(𝑉2−𝑉1)\|𝑉1\|×100
+#### (𝑉2−𝑉1)\|𝑉1\|×100
 
-=(0.1135−2.09684)\|2.09684\|×100
+#### =(0.1269−2.41243)\|2.41243\|×100
 
-=−1.983342.09684×100
+#### =−2.285532.41243×100
 
-=−0.945871×100
+#### =−0.947397×100
 
-=−94.5871%change
+#### =−94.7397% change
 
-=94.5871%decrease
+#### =94.7397% decrease
 
-**In fact, the 21st most accurate model from NumericEnsembles was very close to the #1 result from the Kaggle results.** (21st most accurate NumericEnsembles result = 2.0973, best result in the Kaggle competition = 2.09684)
+Source: <https://www.calculatorsoup.com/calculators/algebra/percent-change-calculator.php>
+
+**In fact, the 22nd most accurate model from NumericEnsembles was very close to the #1 result from the Kaggle results.** (22nd most accurate NumericEnsembles result = 2.1636, best result in the Kaggle competition = 2.09684). This shows that NumericEnsembles had 21 models that were more accurate than the winning example in the Kaggle competition with 49 teams and 699 submissions!
 
 # **Example #2: Including categorical data in NumericEnsembles**
 
@@ -300,17 +307,38 @@ For this example we are going to model the price of carseats. The issue is there
 
 ![Head of Carseats data](Head_of_Carseats_data.jpg){width="700"}
 
-The NumericEnsembles function gives the user some options when there is categorical data. The options are:
+The NumericEnsembles function gives the user some options when there is categorical data. The options for categorical data are:
 
 0: No strings
 
 1: Factor Values
 
-2: One-Hot Encoding
+2: One-Hot Encoding (that's what will be used in this example)
 
 3: One-Hot Encoding with jitter
 
 Otherwise everything runs exactly the same as in the first example.
+
+```         
+library(NumericEnsembles)
+Numeric(data = ISLR::Carseats,
+        colnum = 1,
+        numresamples = 2,
+        remove_VIF_above = 5.00,
+        remove_ensemble_correlations_greater_than = 1.00,
+        scale_all_predictors_in_data = "N",
+        data_reduction_method = 0,
+        ensemble_reduction_method = 0,
+        how_to_handle_strings = 2,
+        predict_on_new_data = "N",
+        save_all_trained_models = "N",
+        set_seed = "Y",
+        save_all_plots = "N",
+        use_parallel = "Y",
+        train_amount = 0.60,
+        test_amount = 0.20,
+        validation_amount = 0.20)
+```
 
 # Example #3: Predicting on totally new data, saving all trained models
 
