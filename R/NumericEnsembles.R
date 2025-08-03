@@ -84,7 +84,6 @@ Numeric <- function(data, colnum, numresamples,
   colnames(data)[colnum] <- "y"
 
   df <- data %>% dplyr::relocate(y, .after = last_col()) # Moves the target column to the last column on the right
-  df <- df[sample(nrow(df)), ]
 
   vif <- car::vif(lm(y ~ ., data = df[, 1:ncol(df)]))
   for (i in 1:ncol(df)) {
