@@ -19,7 +19,7 @@ Our first example is one of the best known data sets of all time: Boston Housing
 
 **First example: Let's best the top score in a Kaggle competition on the Boston Housing data set**
 
-The Kaggle competition is here: <https://www.kaggle.com/competitions/uou-g03784-2022-spring/leaderboard>
+The Kaggle competition is named **UOU G03784 Spring 2022 Term Project.**
 
 As we will see, the NumericEnsembles package will automatically return an RMSE that is more than 90% smaller than the winning entry in that Kaggle competition. That winning score in the Kaggle competition was 2.41243.
 
