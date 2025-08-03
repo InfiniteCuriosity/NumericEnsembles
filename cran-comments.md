@@ -34,4 +34,6 @@ Thank you for the note, changed all print commands to message.
 
 * Please ensure that your functions do not write by default or in your examples/vignettes/tests in the user's home filespace (including the package directory and getwd()).
 * This is not allowed by CRAN policies. Please omit any default path in writing functions. In your examples/vignettes/tests you can write to tempdir().
-This took a very large amount of work, but is fiexed. Nothing writes to the user's home filespace now, it all writes to tempdir1.
+This took a very large amount of work, but is fixed. Nothing writes to the user's home filespace now, it all writes to tempdir1.
+
+* 0.9.2 updated the vignette so the code runs correctly, and corrected /R/NumericEnsembles.R code, so that set.seed runs correctly. (there was a line of code that was randomizing the data, that has been fixed).
