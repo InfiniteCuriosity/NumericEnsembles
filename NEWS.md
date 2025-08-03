@@ -1,3 +1,7 @@
+# 0.9.2
+## Corrected errors in the vignette, which now runs correctly
+## Corrected errors in set.seed, so the results are consistent if the same seed is used.
+
 # NumericEnsembles 0.9.0
 ## Corrected 160 plots (40 models x 4 plots each, pred_vs_actual, pred_vs_residuals, hist_residuals and qq plots. They were not printing the correct plot, that is now fixed.)
 
