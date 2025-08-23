@@ -26,6 +26,7 @@ Depends:
     ipred,
     leaps,
     nnet,
+    olsrr,
     parallel,
     pls,
     purrr,
