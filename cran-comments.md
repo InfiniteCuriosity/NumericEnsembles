@@ -37,3 +37,5 @@ Thank you for the note, changed all print commands to message.
 This took a very large amount of work, but is fixed. Nothing writes to the user's home filespace now, it all writes to tempdir1.
 
 * 0.9.2 updated the vignette so the code runs correctly, and corrected /R/NumericEnsembles.R code, so that set.seed runs correctly. (there was a line of code that was randomizing the data, that has been fixed).
+
+* 0.10.0, updated to show that NumericEnsembles runs 32 models now (used to run 40). The package runs in much less time than previously. Therefore the Vignette was updated to show the greatly improved speed.
