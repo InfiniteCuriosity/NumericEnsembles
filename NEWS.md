@@ -1,3 +1,5 @@
+# NumericEnsembles 0.10.1
+
 # 0.9.2
 ## Corrected errors in the vignette, which now runs correctly
 ## Corrected errors in set.seed, so the results are consistent if the same seed is used.
