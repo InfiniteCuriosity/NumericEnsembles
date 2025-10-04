@@ -4,7 +4,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of NumericEnsembles is to automatically conduct a thorough analysis of numeric data. The user only needs to provide the data and answer a few questions (such as which column to analyze). NumericEnsembles fits 23 individual models to the training data, and also makes predictions and checks accuracy for each of the individual models. It also builds 17 ensembles from the 23 individual data, fits each ensemble model to the training data then makes predictions and tracks accuracy for each ensemble. The package also automatically returns 26 plots (such as train vs holdout for the best model), 6 tables (such as head of the data), and a grand summary table sorted by accuracy with the best model at the top of the report.
+The goal of NumericEnsembles is to automatically conduct a thorough analysis of numeric data. The user only needs to provide the data and answer a few questions (such as which column to analyze). NumericEnsembles fits 18 individual models to the training data, and also makes predictions and checks accuracy for each of the individual models. It also builds 14 ensembles from the ensembles of data, fits each ensemble model to the training data then makes predictions and tracks accuracy for each ensemble. The package also automatically returns 26 plots (such as train vs holdout for the best model), 6 tables (such as head of the data), and a grand summary table sorted by accuracy with the best model at the top of the report.
 
 ## Installation
 
@@ -40,85 +40,107 @@ Numeric(data = MASS::Boston,
 
 ```
 
-The 40 models which are all built automatically and without error are:
+The 32 models which are all built automatically and without error are:
 
-1. Bagged Random Forest (tuned)
-2. Bagging
-3. BayesGLM
-4. BayesRNN
-5. BoostRF (tuned)
-6. Cubist
-7. Earth
-8. Elastic (optimized by cross-validation)
-9. Ensemble Bagged Random Forest (tuned)
-10. Ensemble Bagging
-11. Ensemble BayesGLM
-12. Ensemble BayesRNN
-13. Ensemble BoostRF (tuned)
-14. Ensemble Cubist
-15. Ensemble Earth
-16. Ensemble Elastic (optimized by cross-validation)
-17. Ensemble Gradient Boosted
-18. Ensemble K-Nearest Neighbors (tuned)
-19. Ensemble Lasso (optimized by cross-validation)
-20. Ensemble Linear (tuned)
-21. EnsembleRF (tuned)
-22. Ensemble Ridge (optimized by cross-validation)
-23. Ensemble RPart
-24. EnsembleSVM (tuned)
-25. Ensemble Trees
-26. Ensemble XGBoost
-27. GAM (Generalized Additive Models)
-28. Gradient Boosted
-29. KNN (K-Nearest Neighbors) (tuned)
-30. Lasso
-31. Linear (tuned)
-32. Neuralnet
-33. PCR (Principal Components Regression)
-34. PLS (Partial Least Squares)
-35. RF (Random Forest)
-36. Ridge (optimized by cross-validation)
-37. RPart
-38. SVM (Support Vector Machines, tuned)
-39. Tree
-40. XGBoost
+1. Bagging
+2. BayesGLM
+3. BayesRNN
+4. Cubist
+5. Earth
+6. Elastic (optimized by cross-validation)
+7. Ensemble Bagging
+8. Ensemble BayesGLM
+9. Ensemble BayesRNN
+10. Ensemble Cubist
+11. Ensemble Earth
+12. Ensemble Elastic (optimized by cross-validation)
+13. Ensemble Gradient Boosted
+14. Ensemble Lasso (optimized by cross-validation)
+15. Ensemble Linear (tuned)
+16. Ensemble Ridge (optimized by cross-validation)
+17. Ensemble RPart
+18. EnsembleSVM (tuned)
+19. Ensemble Trees
+20. Ensemble XGBoost
+21. GAM (Generalized Additive Models, with smoothing splines)
+22. Gradient Boosted (optimized)
+23. Lasso
+24. Linear (tuned)
+25. Neuralnet
+26. PCR (Principal Components Regression)
+27. PLS (Partial Least Squares)
+28. Ridge (optimized by cross-validation)
+29. RPart
+30. SVM (Support Vector Machines, tuned)
+31. Tree
+32. XGBoost
 
-The 26 plots created automatically:
+The 30 plots created automatically:
 
-1. SSE by model and resample
-2. MAE by model and resample
-3. MSE by model and resample
-4. Bias by model and resample
-5. Mean SSE barchart
-6. Mean MAE barchart
-7. Mean MSE barchart
-8. Mean bias barchart
-10. Over or underfitting barchart
-11. Duration barchart
-12. Train vs holdout by model and resample
-13. Model accuracy barchart
-14. y (predictor variable) vs target variables
-15. Boxplots of the numeric data
-16. Histograms of the numeric data
-17. Overfitting by model and resample
-18. Accuracy by model and resample
-19. Best model Q-Q plot
-20. Best model histogram of the residuals
-21. Best model residuals
-22. Best model predicted vs actual
-23. Best model four plots at once (Predicted vs actual, residuals, histogram of residuals, Q-Q plot)
-24. Correlation plot of the numeric data as circles and colors
-25. Correlation of the numeric data as numbers and colors
-26. Pairwise scatter plots
+01. Correlation plot of the numeric data (as numbers and colors)
+02. Correlation plot of the numeric data (as circles with colors)
+03. Cook's D Bar Plot
+04. Four plots in one for the most accurate model: Predicted vs actual, Residuals, Histogram of residuals, Q-Q plot
+05. Most accurate model: Predicted vs actual
+06. Most accurate model: Residuals
+07. Most accurate model: Histogram of residuals
+08. Most accurate model: Q-Q plot
+09. Accuracy by resample and model, fixed scales
+10. Accuracy by resample and model, free scales
+11. Holdout RMSE/train RMSE, fixed scales
+12. Holdout RMSE/train RMSE, free scales
+13. Histograms of each numeric column
+14. Boxplots of each numeric column
+15. Predictor vs target variable
+16. Model accuracy bar chart (RMSE)
+17. t-test p-value bar chart
+18. Train vs holdout by resample and model, free scales
+19. Train vs holdout by resampleand model, fixed scales
+20. Duration bar chart
+21. Holdout RMSE / train RMSE bar chart
+22. Mean bias bar chart
+23. Mean MSE bar chart
+24. Mean MAE bar chart
+25. Mean SSE bar chart
+26. Kolmogorov-Smirnof test bar chart
+27. Bias plot by model and resample
+28. MSE plot by model and resample
+29. MAE plot by model and resample
+30. SSE plot by model and resample
 
-The tables created automatically are:
+The tables created automatically (which are both searchable and sortable) are:
 
-1. Correlation of the ensemble
-2. Head of the ensemble
-3. Data summary
-4. Correlation of the data
-5. RMSE, means, fitting, model summaries of the train, test and validation sets
-6. Head of the data frame
+01. Variance Inflation Factor
+02. Correlation of the ensemble
+03. Head of the ensemble
+04. Data summary
+05. Correlation of the data
+06. Grand summary table includes:
+  1. Mean holdout RMSE
+  2. Standard deviation of mean holdout RMSE
+  3. t-test value
+  4. t-test p-value
+  5. t-test p-value standard deviation
+  6. Kolmogorov-Smirnov stat mean
+  7. Kolmogorov-Smirnov stat p-value
+  8. Kolmogorov-Smirnov stat standard deviation
+  9. Mean bias
+  10. Mean bias standard deviation
+  11. Mean MAE
+  12. Mean MAE standard deviation
+  13. Mean MSE
+  14. Mean MSE standard deviation
+  15. Mean SSE
+  16. Mean SSE standard deviation
+  17. Mean data (this is the mean of the target column in the original data set)
+  18. Standard deviation of mean data (this is the standard deviation of the data in the target column in the original data set)
+  19. Mean train RMSE
+  20. Mean test RMSE
+  21. Mean validation RMSE
+  22. Holdout vs train mean
+  23. Holdout vs train standard deviation
+  24. Duration
+  25. Duration standard deviation
 
 ## Example using pre-trained models on totally new data in the NumericEnsembles package
 
@@ -131,15 +153,20 @@ library(NumericEnsembles)
 Numeric(data = Boston_housing,
         colnum = 14,
         numresamples = 25,
-        how_to_handle_strings = 0,
-        do_you_have_new_data = "Y",
-        save_all_trained_models = "Y",
+        remove_VIF_above = 5.00,
         remove_ensemble_correlations_greater_than = 1.00,
+        scale_all_predictors_in_data = "N",
+        data_reduction_method = 0,
+        ensemble_reduction_method = 0,
+        how_to_handle_strings = 0,
+        predict_on_new_data = "Y",
+        set_seed = "N",
+        save_all_trained_models = "N",
+        save_all_plots = "N",
         use_parallel = "Y",
         train_amount = 0.60,
         test_amount = 0.20,
-        validation_amount = 0.20
-)
+        validation_amount = 0.20)
 
 ```
 
