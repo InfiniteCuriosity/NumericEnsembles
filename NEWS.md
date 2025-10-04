@@ -1,3 +1,6 @@
+# NumericEnsembles 0.10.2
+## Updated ReadMe to reflect recent changes (32 models instead of 40), added a report (in the Vignettes) in Quarto format
+
 # NumericEnsembles 0.10.1
 
 # 0.9.2
