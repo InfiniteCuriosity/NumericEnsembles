@@ -477,6 +477,8 @@ Most accurate model:
 
 4.  Q-Q chart
 
+# Optional: Predict on untrained data results
+
 # Strongest evidence based recommendations with margins of error(s)
 
 # Comparison of current results vs previous results
