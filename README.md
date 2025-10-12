@@ -16,7 +16,7 @@ devtools::install_github("InfiniteCuriosity/NumericEnsembles")
 
 ## Example
 
-NumericEnsembles will automatically build 40 models to predict the sale price of houses in Boston, from the Boston housing data set.
+NumericEnsembles will automatically build 32 models to predict the sale price of houses in Boston, from the Boston housing data set.
 
 ``` r
 library(NumericEnsembles)
