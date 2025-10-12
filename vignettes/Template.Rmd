@@ -479,6 +479,12 @@ Most accurate model:
 
 # Optional: Predict on untrained data results
 
+# Optional: Fully reproducible example using these trained models
+
+# Strongest predictive features
+
+# Strongest predictors of the predictors
+
 # Strongest evidence based recommendations with margins of error(s)
 
 # Comparison of current results vs previous results
