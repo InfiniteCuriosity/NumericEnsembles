@@ -413,6 +413,8 @@ ensemble_xgb_model_validation <- xgboost::xgb.train(data = ensemble_xgb_train, m
 
 3.  Mean bias barchart
 
+4.  Bias plot
+
 4.  Duration barchart
 
 5.  Head of the ensemble (report)
@@ -430,6 +432,10 @@ ensemble_xgb_model_validation <- xgboost::xgb.train(data = ensemble_xgb_train, m
 11. Summary report
 
 12. Variance Inflation Factor report
+
+13. Ensemble Correlation report
+
+14. Head of ensemble report
 
 # Final model selection
 
