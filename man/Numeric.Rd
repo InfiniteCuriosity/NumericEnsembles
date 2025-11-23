@@ -9,6 +9,7 @@ Numeric(
   colnum,
   numresamples,
   remove_VIF_above = 5,
+  remove_data_correlations_greater_than = 0.99,
   remove_ensemble_correlations_greater_than = 0.98,
   scale_all_predictors_in_data = c("Y", "N"),
   data_reduction_method = c(0("none"), 1("BIC exhaustive"), 2("BIC forward"),
@@ -37,6 +38,8 @@ Numeric(
 \item{numresamples}{the number of resamples}
 
 \item{remove_VIF_above}{remove columns with Variable Inflation Factor above value chosen by the user}
+
+\item{remove_data_correlations_greater_than}{maximum value for correlations of the original data (such as the Boston Housing data set)}
 
 \item{remove_ensemble_correlations_greater_than}{maximum value for correlations of the ensemble}
 
