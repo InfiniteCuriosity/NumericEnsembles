@@ -1,3 +1,6 @@
+# 0.10.6
+## Add back remove_data_correlations_greater_than. This addresses issues when data has columns that are highly correlated.
+
 # 0.10.5
 ## Fix name: Change holdout / RMSE to overfitting (both more accurate and easier to understand)
 
