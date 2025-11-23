@@ -400,7 +400,7 @@ Numeric <- function(data, colnum, numresamples,
   bagging_test_RMSE <- 0
   bagging_validation_RMSE <- 0
   bagging_sd <- 0
-  bagging_holdout_vs_train <- 0
+  bagging_overfitting <- 0
   bagging_duration <- 0
   bagging_holdout_RMSE <- 0
   bagging_holdout_RMSE_mean <- 0
@@ -417,7 +417,7 @@ Numeric <- function(data, colnum, numresamples,
   bayesglm_test_RMSE <- 0
   bayesglm_validation_RMSE <- 0
   bayesglm_sd <- 0
-  bayesglm_holdout_vs_train <- 0
+  bayesglm_overfitting <- 0
   bayesglm_duration <- 0
   bayesglm_duration_mean <- 0
   bayesglm_holdout_mean <- 0
@@ -436,7 +436,7 @@ Numeric <- function(data, colnum, numresamples,
   bayesrnn_test_RMSE <- 0
   bayesrnn_validation_RMSE <- 0
   bayesrnn_sd <- 0
-  bayesrnn_holdout_vs_train <- 0
+  bayesrnn_overfitting <- 0
   bayesrnn_duration <- 0
   bayesrnn_duration_mean <- 0
   bayesrnn_holdout_mean <- 0
@@ -455,7 +455,7 @@ Numeric <- function(data, colnum, numresamples,
   cubist_test_RMSE <- 0
   cubist_validation_RMSE <- 0
   cubist_sd <- 0
-  cubist_holdout_vs_train <- 0
+  cubist_overfitting <- 0
   cubist_duration <- 0
   cubist_duration_mean <- 0
   cubist_holdout_mean <- 0
@@ -474,7 +474,7 @@ Numeric <- function(data, colnum, numresamples,
   earth_test_RMSE <- 0
   earth_validation_RMSE <- 0
   earth_sd <- 0
-  earth_holdout_vs_train <- 0
+  earth_overfitting <- 0
   earth_duration <- 0
   earth_duration_mean <- 0
   earth_holdout_mean <- 0
@@ -510,8 +510,8 @@ Numeric <- function(data, colnum, numresamples,
   elastic_holdout_RMSE_sd <- 0
   elastic_holdout_RMSE_sd_mean <- 0
   elastic_holdout_RMSE_sd_df <- data.frame(elastic_holdout_RMSE_sd)
-  elastic_holdout_vs_train <- 0
-  elastic_holdout_vs_train_df <- data.frame(elastic_holdout_vs_train)
+  elastic_overfitting <- 0
+  elastic_overfitting_df <- data.frame(elastic_overfitting)
   elastic_sd <- 0
   elastic_sd_mean <- 0
   y_hat_elastic <- 0
@@ -528,7 +528,7 @@ Numeric <- function(data, colnum, numresamples,
   gam_test_RMSE <- 0
   gam_validation_RMSE <- 0
   gam_sd <- 0
-  gam_holdout_vs_train <- 0
+  gam_overfitting <- 0
   gam_duration <- 0
   gam_duration_mean <- 0
   gam_holdout_mean <- 0
@@ -547,7 +547,7 @@ Numeric <- function(data, colnum, numresamples,
   gb_test_RMSE <- 0
   gb_validation_RMSE <- 0
   gb_sd <- 0
-  gb_holdout_vs_train <- 0
+  gb_overfitting <- 0
   gb_duration <- 0
   gb_duration_mean <- 0
   gb_holdout_mean <- 0
@@ -583,8 +583,8 @@ Numeric <- function(data, colnum, numresamples,
   lasso_holdout_RMSE_sd <- 0
   lasso_holdout_RMSE_sd_mean <- 0
   lasso_holdout_RMSE_sd_df <- data.frame(lasso_holdout_RMSE_sd)
-  lasso_holdout_vs_train <- 0
-  lasso_holdout_vs_train_df <- data.frame(lasso_holdout_vs_train)
+  lasso_overfitting <- 0
+  lasso_overfitting_df <- data.frame(lasso_overfitting)
   lasso_sd <- 0
   lasso_sd_mean <- 0
   y_hat_lasso <- 0
@@ -601,7 +601,7 @@ Numeric <- function(data, colnum, numresamples,
   linear_test_RMSE <- 0
   linear_validation_RMSE <- 0
   linear_sd <- 0
-  linear_holdout_vs_train <- 0
+  linear_overfitting <- 0
   linear_duration <- 0
   linear_holdout_RMSE <- 0
   linear_holdout_RMSE_mean <- 0
@@ -618,7 +618,7 @@ Numeric <- function(data, colnum, numresamples,
   neuralnet_test_RMSE <- 0
   neuralnet_validation_RMSE <- 0
   neuralnet_sd <- 0
-  neuralnet_holdout_vs_train <- 0
+  neuralnet_overfitting <- 0
   neuralnet_duration <- 0
   neuralnet_holdout_RMSE <- 0
   neuralnet_holdout_RMSE_mean <- 0
@@ -636,7 +636,7 @@ Numeric <- function(data, colnum, numresamples,
   pls_test_RMSE <- 0
   pls_validation_RMSE <- 0
   pls_sd <- 0
-  pls_holdout_vs_train <- 0
+  pls_overfitting <- 0
   pls_duration <- 0
   pls_duration_mean <- 0
   pls_holdout_mean <- 0
@@ -655,7 +655,7 @@ Numeric <- function(data, colnum, numresamples,
   pcr_test_RMSE <- 0
   pcr_validation_RMSE <- 0
   pcr_sd <- 0
-  pcr_holdout_vs_train <- 0
+  pcr_overfitting <- 0
   pcr_duration <- 0
   pcr_duration_mean <- 0
   pcr_holdout_mean <- 0
@@ -691,8 +691,8 @@ Numeric <- function(data, colnum, numresamples,
   ridge_holdout_RMSE_sd <- 0
   ridge_holdout_RMSE_sd_df <- data.frame(ridge_holdout_RMSE_sd)
   ridge_holdout_RMSE_sd_mean <- 0
-  ridge_holdout_vs_train <- 0
-  ridge_holdout_vs_train_df <- data.frame(ridge_holdout_vs_train)
+  ridge_overfitting <- 0
+  ridge_overfitting_df <- data.frame(ridge_overfitting)
   ridge_sd <- 0
   ridge_sd_mean <- 0
   ridge_bias <- 0
@@ -709,7 +709,7 @@ Numeric <- function(data, colnum, numresamples,
   rpart_test_RMSE <- 0
   rpart_validation_RMSE <- 0
   rpart_sd <- 0
-  rpart_holdout_vs_train <- 0
+  rpart_overfitting <- 0
   rpart_duration <- 0
   rpart_duration_mean <- 0
   rpart_holdout_mean <- 0
@@ -728,7 +728,7 @@ Numeric <- function(data, colnum, numresamples,
   svm_test_RMSE <- 0
   svm_validation_RMSE <- 0
   svm_sd <- 0
-  svm_holdout_vs_train <- 0
+  svm_overfitting <- 0
   svm_duration <- 0
   svm_duration_mean <- 0
   svm_holdout_mean <- 0
@@ -747,7 +747,7 @@ Numeric <- function(data, colnum, numresamples,
   tree_test_RMSE <- 0
   tree_validation_RMSE <- 0
   tree_sd <- 0
-  tree_holdout_vs_train <- 0
+  tree_overfitting <- 0
   tree_duration <- 0
   tree_duration_mean <- 0
   tree_holdout_mean <- 0
@@ -766,7 +766,7 @@ Numeric <- function(data, colnum, numresamples,
   xgb_test_RMSE <- 0
   xgb_validation_RMSE <- 0
   xgb_sd <- 0
-  xgb_holdout_vs_train <- 0
+  xgb_overfitting <- 0
   xgb_duration <- 0
   xgb_duration_mean <- 0
   xgb_holdout_mean <- 0
@@ -785,7 +785,7 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_bagging_test_RMSE <- 0
   ensemble_bagging_validation_RMSE <- 0
   ensemble_bagging_sd <- 0
-  ensemble_bagging_holdout_vs_train <- 0
+  ensemble_bagging_overfitting <- 0
   ensemble_bagging_duration <- 0
   ensemble_bagging_holdout_RMSE <- 0
   ensemble_bagging_holdout_RMSE_mean <- 0
@@ -803,7 +803,7 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_bayesglm_test_RMSE <- 0
   ensemble_bayesglm_validation_RMSE <- 0
   ensemble_bayesglm_sd <- 0
-  ensemble_bayesglm_holdout_vs_train <- 0
+  ensemble_bayesglm_overfitting <- 0
   ensemble_bayesglm_duration <- 0
   ensemble_bayesglm_holdout_RMSE <- 0
   ensemble_bayesglm_holdout_RMSE_mean <- 0
@@ -821,7 +821,7 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_bayesrnn_test_RMSE <- 0
   ensemble_bayesrnn_validation_RMSE <- 0
   ensemble_bayesrnn_sd <- 0
-  ensemble_bayesrnn_holdout_vs_train <- 0
+  ensemble_bayesrnn_overfitting <- 0
   ensemble_bayesrnn_duration <- 0
   ensemble_bayesrnn_holdout_RMSE <- 0
   ensemble_bayesrnn_holdout_RMSE_mean <- 0
@@ -839,7 +839,7 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_cubist_test_RMSE <- 0
   ensemble_cubist_validation_RMSE <- 0
   ensemble_cubist_sd <- 0
-  ensemble_cubist_holdout_vs_train <- 0
+  ensemble_cubist_overfitting <- 0
   ensemble_cubist_duration <- 0
   ensemble_cubist_holdout_RMSE <- 0
   ensemble_cubist_holdout_RMSE_mean <- 0
@@ -857,7 +857,7 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_earth_test_RMSE <- 0
   ensemble_earth_validation_RMSE <- 0
   ensemble_earth_sd <- 0
-  ensemble_earth_holdout_vs_train <- 0
+  ensemble_earth_overfitting <- 0
   ensemble_earth_duration <- 0
   ensemble_earth_holdout_RMSE <- 0
   ensemble_earth_holdout_RMSE_mean <- 0
@@ -904,9 +904,9 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_elastic_holdout_RMSE <- 0
   ensemble_elastic_holdout_RMSE_mean <- 0
   ensemble_elastic_holdout_RMSE_sd_mean <- 0
-  ensemble_elastic_holdout_vs_train <- 0
-  ensemble_elastic_holdout_vs_train_df <- data.frame(ensemble_elastic_holdout_vs_train)
-  ensemble_elastic_holdout_vs_train_mean <- 0
+  ensemble_elastic_overfitting <- 0
+  ensemble_elastic_overfitting_df <- data.frame(ensemble_elastic_overfitting)
+  ensemble_elastic_overfitting_mean <- 0
   ensemble_elastic_predict_value_mean <- 0
   ensemble_elastic_duration <- 0
   ensemble_elastic_duration_mean <- 0
@@ -923,7 +923,7 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_gb_test_RMSE <- 0
   ensemble_gb_validation_RMSE <- 0
   ensemble_gb_sd <- 0
-  ensemble_gb_holdout_vs_train <- 0
+  ensemble_gb_overfitting <- 0
   ensemble_gb_duration <- 0
   ensemble_gb_holdout_RMSE <- 0
   ensemble_gb_holdout_RMSE_mean <- 0
@@ -969,9 +969,9 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_lasso_holdout_RMSE <- 0
   ensemble_lasso_holdout_RMSE_mean <- 0
   ensemble_lasso_holdout_RMSE_sd_mean <- 0
-  ensemble_lasso_holdout_vs_train <- 0
-  ensemble_lasso_holdout_vs_train_df <- data.frame(ensemble_lasso_holdout_vs_train)
-  ensemble_lasso_holdout_vs_train_mean <- 0
+  ensemble_lasso_overfitting <- 0
+  ensemble_lasso_overfitting_df <- data.frame(ensemble_lasso_overfitting)
+  ensemble_lasso_overfitting_mean <- 0
   ensemble_lasso_predict_value_mean <- 0
   ensemble_lasso_duration <- 0
   ensemble_lasso_duration_mean <- 0
@@ -988,7 +988,7 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_linear_test_RMSE <- 0
   ensemble_linear_validation_RMSE <- 0
   ensemble_linear_sd <- 0
-  ensemble_linear_holdout_vs_train <- 0
+  ensemble_linear_overfitting <- 0
   ensemble_linear_duration <- 0
   ensemble_linear_holdout_RMSE <- 0
   ensemble_linear_holdout_RMSE_mean <- 0
@@ -1035,9 +1035,9 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_ridge_holdout_RMSE <- 0
   ensemble_ridge_holdout_RMSE_mean <- 0
   ensemble_ridge_holdout_RMSE_sd_mean <- 0
-  ensemble_ridge_holdout_vs_train <- 0
-  ensemble_ridge_holdout_vs_train_df <- data.frame(ensemble_ridge_holdout_vs_train)
-  ensemble_ridge_holdout_vs_train_mean <- 0
+  ensemble_ridge_overfitting <- 0
+  ensemble_ridge_overfitting_df <- data.frame(ensemble_ridge_overfitting)
+  ensemble_ridge_overfitting_mean <- 0
   ensemble_ridge_predict_value_mean <- 0
   ensemble_ridge_duration <- 0
   ensemble_ridge_duration_mean <- 0
@@ -1054,7 +1054,7 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_rpart_test_RMSE <- 0
   ensemble_rpart_validation_RMSE <- 0
   ensemble_rpart_sd <- 0
-  ensemble_rpart_holdout_vs_train <- 0
+  ensemble_rpart_overfitting <- 0
   ensemble_rpart_duration <- 0
   ensemble_rpart_holdout_RMSE <- 0
   ensemble_rpart_holdout_RMSE_mean <- 0
@@ -1063,7 +1063,7 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_rpart_test_RMSE <- 0
   ensemble_rpart_validation_RMSE <- 0
   ensemble_rpart_sd <- 0
-  ensemble_rpart_holdout_vs_train <- 0
+  ensemble_rpart_overfitting <- 0
   ensemble_rpart_duration <- 0
   ensemble_rpart_holdout_RMSE <- 0
   ensemble_rpart_holdout_RMSE_mean <- 0
@@ -1081,7 +1081,7 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_svm_test_RMSE <- 0
   ensemble_svm_validation_RMSE <- 0
   ensemble_svm_sd <- 0
-  ensemble_svm_holdout_vs_train <- 0
+  ensemble_svm_overfitting <- 0
   ensemble_svm_duration <- 0
   ensemble_svm_holdout_RMSE <- 0
   ensemble_svm_holdout_RMSE_mean <- 0
@@ -1100,7 +1100,7 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_tree_test_RMSE <- 0
   ensemble_tree_validation_RMSE <- 0
   ensemble_tree_sd <- 0
-  ensemble_tree_holdout_vs_train <- 0
+  ensemble_tree_overfitting <- 0
   ensemble_tree_duration <- 0
   ensemble_tree_holdout_RMSE <- 0
   ensemble_tree_holdout_RMSE_mean <- 0
@@ -1129,9 +1129,9 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_xgb_train_RMSE <- 0
   ensemble_xgb_train_RMSE_df <- data.frame(ensemble_xgb_train_RMSE)
   ensemble_xgb_train_RMSE_mean <- 0
-  ensemble_xgb_holdout_vs_train <- 0
-  ensemble_xgb_holdout_vs_train_df <- data.frame(ensemble_xgb_holdout_vs_train)
-  ensemble_xgb_holdout_vs_train_mean <- 0
+  ensemble_xgb_overfitting <- 0
+  ensemble_xgb_overfitting_df <- data.frame(ensemble_xgb_overfitting)
+  ensemble_xgb_overfitting_mean <- 0
   ensemble_xgb_duration <- 0
   ensemble_xgb_duration_mean <- 0
   ensemble_xgb_holdout_RMSE <- 0
@@ -1160,16 +1160,16 @@ Numeric <- function(data, colnum, numresamples,
   count <- 0
   model <- 0
   mallows_cp <- 0
-  holdout_vs_train <- 0
+  overfitting <- 0
   Duration <- 0
   Model <- 0
-  holdout_vs_train_mean <- 0
-  holdout_vs_train_sd <- 0
+  overfitting_mean <- 0
+  overfitting_sd <- 0
   Mean_Bias <- 0
 
   outliers_df <- data.frame()
   Std_Deviation_of_holdout_RMSE <- 0
-  holdout_vs_train_sd <- 0
+  overfitting_sd <- 0
   Bias <- 0
 
   Duration_sd <- 0
@@ -1223,10 +1223,10 @@ Numeric <- function(data, colnum, numresamples,
     bagging_predict_value_mean <- mean(c(bagging_test_predict_value, bagging_validation_predict_value))
     bagging_sd[i] <- sd(c(bagging_test_predict_value, bagging_validation_predict_value))
     bagging_sd_mean <- mean(bagging_sd)
-    bagging_holdout_vs_train[i] <- bagging_holdout_RMSE_mean / bagging_train_RMSE_mean
-    bagging_holdout_vs_train_mean <- mean(bagging_holdout_vs_train)
-    bagging_holdout_vs_train_range <- range(bagging_holdout_vs_train)
-    bagging_holdout_vs_train_sd <- sd(bagging_holdout_vs_train)
+    bagging_overfitting[i] <- bagging_holdout_RMSE_mean / bagging_train_RMSE_mean
+    bagging_overfitting_mean <- mean(bagging_overfitting)
+    bagging_overfitting_range <- range(bagging_overfitting)
+    bagging_overfitting_sd <- sd(bagging_overfitting)
     y_hat_bagging <- c(bagging_test_predict_value, bagging_validation_predict_value)
     y_hat_bagging_total <- c(y_hat_bagging, y_hat_bagging_total)
     bagging_actual <- c(test$y, validation$y)
@@ -1274,10 +1274,10 @@ Numeric <- function(data, colnum, numresamples,
     bayesglm_predict_value_mean <- mean(c(bayesglm_test_predict_value, bayesglm_validation_predict_value))
     bayesglm_sd[i] <- sd(c(bayesglm_test_predict_value, bayesglm_validation_predict_value))
     bayesglm_sd_mean <- mean(bayesglm_sd)
-    bayesglm_holdout_vs_train[i] <- bayesglm_holdout_RMSE_mean / bayesglm_train_RMSE_mean
-    bayesglm_holdout_vs_train_mean <- mean(bayesglm_holdout_vs_train)
-    bayesglm_holdout_vs_train_range <- range(bayesglm_holdout_vs_train)
-    bayesglm_holdout_vs_train_sd <- sd(bayesglm_holdout_vs_train)
+    bayesglm_overfitting[i] <- bayesglm_holdout_RMSE_mean / bayesglm_train_RMSE_mean
+    bayesglm_overfitting_mean <- mean(bayesglm_overfitting)
+    bayesglm_overfitting_range <- range(bayesglm_overfitting)
+    bayesglm_overfitting_sd <- sd(bayesglm_overfitting)
     y_hat_bayesglm <- c(bayesglm_test_predict_value, bayesglm_validation_predict_value)
     y_hat_bayesglm_total <- c(y_hat_bayesglm, y_hat_bayesglm_total)
     bayesglm_actual <- c(test$y, validation$y)
@@ -1325,10 +1325,10 @@ Numeric <- function(data, colnum, numresamples,
     bayesrnn_validation_predict_value <- as.numeric(predict(object = bayesrnn_train_fit, newdata = validation))
     bayesrnn_predict_value_mean <- mean(c(bayesrnn_test_predict_value, bayesrnn_validation_predict_value))
     bayesrnn_sd_mean <- sd(c(bayesrnn_test_predict_value, bayesrnn_validation_predict_value))
-    bayesrnn_holdout_vs_train[i] <- bayesrnn_holdout_RMSE_mean / bayesrnn_train_RMSE_mean
-    bayesrnn_holdout_vs_train_mean <- mean(bayesrnn_holdout_vs_train)
-    bayesrnn_holdout_vs_train_range <- range(bayesrnn_holdout_vs_train)
-    bayesrnn_holdout_vs_train_sd <- sd(bayesrnn_holdout_vs_train)
+    bayesrnn_overfitting[i] <- bayesrnn_holdout_RMSE_mean / bayesrnn_train_RMSE_mean
+    bayesrnn_overfitting_mean <- mean(bayesrnn_overfitting)
+    bayesrnn_overfitting_range <- range(bayesrnn_overfitting)
+    bayesrnn_overfitting_sd <- sd(bayesrnn_overfitting)
     y_hat_bayesrnn <- c(bayesrnn_test_predict_value, bayesrnn_validation_predict_value)
     y_hat_bayesrnn_total <- c(y_hat_bayesrnn, y_hat_bayesrnn_total)
     bayesrnn_actual <- c(test$y, validation$y)
@@ -1377,10 +1377,10 @@ Numeric <- function(data, colnum, numresamples,
     cubist_predict_value_mean <- mean(c(cubist_test_predict_value, cubist_validation_predict_value))
     cubist_sd[i] <- sd(c(cubist_test_predict_value, cubist_validation_predict_value))
     cubist_sd_mean <- mean(cubist_sd)
-    cubist_holdout_vs_train[i] <- cubist_holdout_RMSE_mean / cubist_train_RMSE_mean
-    cubist_holdout_vs_train_mean <- mean(cubist_holdout_vs_train)
-    cubist_holdout_vs_train_range <- range(cubist_holdout_vs_train)
-    cubist_holdout_vs_train_sd <- sd(cubist_holdout_vs_train)
+    cubist_overfitting[i] <- cubist_holdout_RMSE_mean / cubist_train_RMSE_mean
+    cubist_overfitting_mean <- mean(cubist_overfitting)
+    cubist_overfitting_range <- range(cubist_overfitting)
+    cubist_overfitting_sd <- sd(cubist_overfitting)
     y_hat_cubist <- c(cubist_test_predict_value, cubist_validation_predict_value)
     y_hat_cubist_total <- c(y_hat_cubist, y_hat_cubist_total)
     cubist_actual <- c(test$y, validation$y)
@@ -1429,10 +1429,10 @@ Numeric <- function(data, colnum, numresamples,
     earth_predict_value_mean <- mean(c(earth_test_predict_value, earth_validation_predict_value))
     earth_sd[i] <- sd(c(earth_test_predict_value, earth_validation_predict_value))
     earth_sd_mean <- mean(earth_sd)
-    earth_holdout_vs_train[i] <- earth_holdout_RMSE_mean / earth_train_RMSE_mean
-    earth_holdout_vs_train_mean <- mean(earth_holdout_vs_train)
-    earth_holdout_vs_train_range <- range(earth_holdout_vs_train)
-    earth_holdout_vs_train_sd <- sd(earth_holdout_vs_train)
+    earth_overfitting[i] <- earth_holdout_RMSE_mean / earth_train_RMSE_mean
+    earth_overfitting_mean <- mean(earth_overfitting)
+    earth_overfitting_range <- range(earth_overfitting)
+    earth_overfitting_sd <- sd(earth_overfitting)
     y_hat_earth <- c(earth_test_predict_value, earth_validation_predict_value)
     y_hat_earth_total <- c(y_hat_earth, y_hat_earth_total)
     earth_actual <- c(test$y, validation$y)
@@ -1516,10 +1516,10 @@ Numeric <- function(data, colnum, numresamples,
     elastic_holdout_RMSE_sd_df <- rbind(elastic_holdout_RMSE_sd, elastic_holdout_RMSE_sd_df)
     elastic_holdout_RMSE_sd_mean <- mean(elastic_holdout_RMSE_sd_df$elastic_holdout_RMSE_sd[2:nrow(elastic_holdout_RMSE_sd_df)])
 
-    elastic_holdout_vs_train <- c(elastic_holdout_RMSE / elastic_train_RMSE)
-    elastic_holdout_vs_train_df <- rbind(elastic_holdout_vs_train_df, elastic_holdout_vs_train)
-    elastic_holdout_vs_train_mean <- mean(elastic_holdout_vs_train_df$elastic_holdout_vs_train[2:nrow(elastic_holdout_vs_train_df)])
-    elastic_holdout_vs_train_sd <- sd(elastic_holdout_vs_train_df$elastic_holdout_vs_train)
+    elastic_overfitting <- c(elastic_holdout_RMSE / elastic_train_RMSE)
+    elastic_overfitting_df <- rbind(elastic_overfitting_df, elastic_overfitting)
+    elastic_overfitting_mean <- mean(elastic_overfitting_df$elastic_overfitting[2:nrow(elastic_overfitting_df)])
+    elastic_overfitting_sd <- sd(elastic_overfitting_df$elastic_overfitting)
 
     elastic_test_predict_value_mean <- mean(c(elastic_test_predict_value_mean, elastic_validation_predict_value_mean))
 
@@ -1596,10 +1596,10 @@ Numeric <- function(data, colnum, numresamples,
     gam_predict_value_mean <- mean(c(gam_test_predict_value, gam_validation_predict_value))
     gam_sd[i] <- sd(c(gam_test_predict_value, gam_validation_predict_value))
     gam_sd_mean <- mean(gam_sd)
-    gam_holdout_vs_train[i] <- gam_holdout_RMSE_mean / gam_train_RMSE_mean
-    gam_holdout_vs_train_mean <- mean(gam_holdout_vs_train)
-    gam_holdout_vs_train_range <- range(gam_holdout_vs_train)
-    gam_holdout_vs_train_sd <- sd(gam_holdout_vs_train)
+    gam_overfitting[i] <- gam_holdout_RMSE_mean / gam_train_RMSE_mean
+    gam_overfitting_mean <- mean(gam_overfitting)
+    gam_overfitting_range <- range(gam_overfitting)
+    gam_overfitting_sd <- sd(gam_overfitting)
     gam_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(gam_test_predict_value, gam_validation_predict_value))
     gam_bias_mean <- mean(gam_bias)
     gam_bias_sd <- sd(gam_bias)
@@ -1648,10 +1648,10 @@ Numeric <- function(data, colnum, numresamples,
     gb_predict_value_mean <- mean(c(gb_test_predict_value, gb_validation_predict_value))
     gb_sd[i] <- sd(c(gb_test_predict_value, gb_validation_predict_value))
     gb_sd_mean <- mean(gb_sd)
-    gb_holdout_vs_train[i] <- gb_holdout_RMSE_mean / gb_train_RMSE_mean
-    gb_holdout_vs_train_mean <- mean(gb_holdout_vs_train)
-    gb_holdout_vs_train_range <- range(gb_holdout_vs_train)
-    gb_holdout_vs_train_sd <- sd(gb_holdout_vs_train)
+    gb_overfitting[i] <- gb_holdout_RMSE_mean / gb_train_RMSE_mean
+    gb_overfitting_mean <- mean(gb_overfitting)
+    gb_overfitting_range <- range(gb_overfitting)
+    gb_overfitting_sd <- sd(gb_overfitting)
     y_hat_gb <- c(gb_test_predict_value, gb_validation_predict_value)
     y_hat_gb_total <- c(y_hat_gb, y_hat_gb_total)
     gb_actual <- c(test$y, validation$y)
@@ -1734,10 +1734,10 @@ Numeric <- function(data, colnum, numresamples,
     lasso_holdout_RMSE_sd_df <- rbind(lasso_holdout_RMSE_sd_df, lasso_holdout_RMSE_sd)
     lasso_holdout_RMSE_sd_mean <- mean(lasso_holdout_RMSE_sd_df$lasso_holdout_RMSE_sd[2:nrow(lasso_holdout_RMSE_sd_df)])
 
-    lasso_holdout_vs_train <- c(lasso_holdout_RMSE / lasso_train_RMSE)
-    lasso_holdout_vs_train_df <- rbind(lasso_holdout_vs_train_df, lasso_holdout_vs_train)
-    lasso_holdout_vs_train_mean <- mean(lasso_holdout_vs_train_df$lasso_holdout_vs_train[2:nrow(lasso_holdout_vs_train_df)])
-    lasso_holdout_vs_train_sd <- sd(lasso_holdout_vs_train_df$lasso_holdout_vs_train)
+    lasso_overfitting <- c(lasso_holdout_RMSE / lasso_train_RMSE)
+    lasso_overfitting_df <- rbind(lasso_overfitting_df, lasso_overfitting)
+    lasso_overfitting_mean <- mean(lasso_overfitting_df$lasso_overfitting[2:nrow(lasso_overfitting_df)])
+    lasso_overfitting_sd <- sd(lasso_overfitting_df$lasso_overfitting)
 
     lasso_predict_value_mean <- mean(c(lasso_test_predict_value_mean, lasso_validation_predict_value_mean))
 
@@ -1795,10 +1795,10 @@ Numeric <- function(data, colnum, numresamples,
     linear_predict_value_mean <- mean(c(linear_test_predict_value, linear_validation_predict_value))
     linear_sd[i] <- sd(c(linear_test_predict_value, linear_validation_predict_value))
     linear_sd_mean <- mean(linear_sd)
-    linear_holdout_vs_train[i] <- linear_holdout_RMSE_mean / linear_train_RMSE_mean
-    linear_holdout_vs_train_mean <- mean(linear_holdout_vs_train)
-    linear_holdout_vs_train_range <- range(linear_holdout_vs_train)
-    linear_holdout_vs_train_sd <- sd(linear_holdout_vs_train)
+    linear_overfitting[i] <- linear_holdout_RMSE_mean / linear_train_RMSE_mean
+    linear_overfitting_mean <- mean(linear_overfitting)
+    linear_overfitting_range <- range(linear_overfitting)
+    linear_overfitting_sd <- sd(linear_overfitting)
     linear_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(linear_test_predict_value, linear_validation_predict_value))
     linear_bias_mean <- mean(linear_bias)
     linear_bias_sd <- sd(linear_bias)
@@ -1847,10 +1847,10 @@ Numeric <- function(data, colnum, numresamples,
     neuralnet_predict_value_mean <- mean(c(neuralnet_test_predict_value, neuralnet_validation_predict_value))
     neuralnet_sd[i] <- sd(c(neuralnet_test_predict_value, neuralnet_validation_predict_value))
     neuralnet_sd_mean <- mean(neuralnet_sd)
-    neuralnet_holdout_vs_train[i] <- neuralnet_holdout_RMSE_mean / neuralnet_train_RMSE_mean
-    neuralnet_holdout_vs_train_mean <- mean(neuralnet_holdout_vs_train)
-    neuralnet_holdout_vs_train_range <- range(neuralnet_holdout_vs_train)
-    neuralnet_holdout_vs_train_sd <- sd(neuralnet_holdout_vs_train)
+    neuralnet_overfitting[i] <- neuralnet_holdout_RMSE_mean / neuralnet_train_RMSE_mean
+    neuralnet_overfitting_mean <- mean(neuralnet_overfitting)
+    neuralnet_overfitting_range <- range(neuralnet_overfitting)
+    neuralnet_overfitting_sd <- sd(neuralnet_overfitting)
     y_hat_neuralnet <- c(neuralnet_test_predict_value, neuralnet_validation_predict_value)
     y_hat_neuralnet_total <- c(y_hat_neuralnet, y_hat_neuralnet_total)
     neuralnet_actual <- c(test$y, validation$y)
@@ -1899,10 +1899,10 @@ Numeric <- function(data, colnum, numresamples,
     pls_predict_value_mean <- mean(c(pls_test_predict_value, pls_validation_predict_value))
     pls_sd[i] <- sd(c(pls_test_predict_value, pls_validation_predict_value))
     pls_sd_mean <- mean(pls_sd)
-    pls_holdout_vs_train[i] <- pls_holdout_RMSE_mean / pls_train_RMSE_mean
-    pls_holdout_vs_train_mean <- mean(pls_holdout_vs_train)
-    pls_holdout_vs_train_range <- range(pls_holdout_vs_train)
-    pls_holdout_vs_train_sd <- sd(pls_holdout_vs_train)
+    pls_overfitting[i] <- pls_holdout_RMSE_mean / pls_train_RMSE_mean
+    pls_overfitting_mean <- mean(pls_overfitting)
+    pls_overfitting_range <- range(pls_overfitting)
+    pls_overfitting_sd <- sd(pls_overfitting)
     y_hat_pls <- c(pls_test_predict_value[, , 1], pls_validation_predict_value[, , 1])
     y_hat_pls_total <- c(y_hat_pls, y_hat_pls_total)
     pls_actual <- c(test$y, validation$y)
@@ -1951,10 +1951,10 @@ Numeric <- function(data, colnum, numresamples,
     pcr_predict_value_mean <- mean(c(pcr_test_predict_value, pcr_validation_predict_value))
     pcr_sd[i] <- sd(c(pcr_test_predict_value, pcr_validation_predict_value))
     pcr_sd_mean <- mean(pcr_sd)
-    pcr_holdout_vs_train[i] <- pcr_holdout_RMSE_mean / pcr_train_RMSE_mean
-    pcr_holdout_vs_train_mean <- mean(pcr_holdout_vs_train)
-    pcr_holdout_vs_train_range <- range(pcr_holdout_vs_train)
-    pcr_holdout_vs_train_sd <- sd(pcr_holdout_vs_train)
+    pcr_overfitting[i] <- pcr_holdout_RMSE_mean / pcr_train_RMSE_mean
+    pcr_overfitting_mean <- mean(pcr_overfitting)
+    pcr_overfitting_range <- range(pcr_overfitting)
+    pcr_overfitting_sd <- sd(pcr_overfitting)
     y_hat_pcr <- c(pcr_test_predict_value[, , 1], pcr_validation_predict_value[, , 1])
     y_hat_pcr_total <- c(y_hat_pcr, y_hat_pcr_total)
     pcr_actual <- c(test$y, validation$y)
@@ -2038,10 +2038,10 @@ Numeric <- function(data, colnum, numresamples,
     ridge_holdout_RMSE_sd_df <- rbind(ridge_holdout_RMSE_sd, ridge_holdout_RMSE_sd_df)
     ridge_holdout_RMSE_sd_mean <- mean(ridge_holdout_RMSE_sd_df$ridge_holdout_RMSE_sd[2:nrow(ridge_holdout_RMSE_sd_df)])
 
-    ridge_holdout_vs_train <- c(ridge_holdout_RMSE / ridge_train_RMSE)
-    ridge_holdout_vs_train_df <- rbind(ridge_holdout_vs_train_df, ridge_holdout_vs_train)
-    ridge_holdout_vs_train_mean <- mean(ridge_holdout_vs_train_df$ridge_holdout_vs_train[2:nrow(ridge_holdout_vs_train_df)])
-    ridge_holdout_vs_train_sd <- sd(ridge_holdout_vs_train_df$ridge_holdout_vs_train)
+    ridge_overfitting <- c(ridge_holdout_RMSE / ridge_train_RMSE)
+    ridge_overfitting_df <- rbind(ridge_overfitting_df, ridge_overfitting)
+    ridge_overfitting_mean <- mean(ridge_overfitting_df$ridge_overfitting[2:nrow(ridge_overfitting_df)])
+    ridge_overfitting_sd <- sd(ridge_overfitting_df$ridge_overfitting)
 
     ridge_test_predict_value_mean <- mean(c(ridge_test_predict_value_mean, ridge_validation_predict_value_mean))
 
@@ -2097,10 +2097,10 @@ Numeric <- function(data, colnum, numresamples,
     rpart_predict_value_mean <- mean(c(rpart_test_predict_value, rpart_validation_predict_value))
     rpart_sd[i] <- sd(rpart_test_predict_value)
     rpart_sd_mean <- mean(rpart_sd)
-    rpart_holdout_vs_train[i] <- rpart_holdout_RMSE_mean / rpart_train_RMSE_mean
-    rpart_holdout_vs_train_mean <- mean(rpart_holdout_vs_train)
-    rpart_holdout_vs_train_range <- range(rpart_holdout_vs_train)
-    rpart_holdout_vs_train_sd <- sd(rpart_holdout_vs_train)
+    rpart_overfitting[i] <- rpart_holdout_RMSE_mean / rpart_train_RMSE_mean
+    rpart_overfitting_mean <- mean(rpart_overfitting)
+    rpart_overfitting_range <- range(rpart_overfitting)
+    rpart_overfitting_sd <- sd(rpart_overfitting)
     y_hat_rpart <- c(rpart_test_predict_value, rpart_validation_predict_value)
     y_hat_rpart_total <- c(y_hat_rpart, y_hat_rpart_total)
     rpart_actual <- c(test$y, validation$y)
@@ -2150,10 +2150,10 @@ Numeric <- function(data, colnum, numresamples,
     svm_predict_value_mean <- mean(c(svm_test_predict_value, svm_validation_predict_value))
     svm_sd[i] <- sd(c(svm_test_predict_value, svm_validation_predict_value))
     svm_sd_mean <- mean(svm_sd)
-    svm_holdout_vs_train[i] <- svm_holdout_RMSE_mean / svm_train_RMSE_mean
-    svm_holdout_vs_train_mean <- mean(svm_holdout_vs_train)
-    svm_holdout_vs_train_range <- range(svm_holdout_vs_train)
-    svm_holdout_vs_train_sd <- sd(svm_holdout_vs_train)
+    svm_overfitting[i] <- svm_holdout_RMSE_mean / svm_train_RMSE_mean
+    svm_overfitting_mean <- mean(svm_overfitting)
+    svm_overfitting_range <- range(svm_overfitting)
+    svm_overfitting_sd <- sd(svm_overfitting)
     y_hat_svm <- c(svm_test_predict_value, svm_validation_predict_value)
     y_hat_svm_total <- c(y_hat_svm, y_hat_svm_total)
     svm_actual <- c(test$y, validation$y)
@@ -2203,10 +2203,10 @@ Numeric <- function(data, colnum, numresamples,
     tree_predict_value_mean <- mean(c(tree_test_predict_value, tree_validation_predict_value))
     tree_sd[i] <- sd(tree_test_predict_value)
     tree_sd_mean <- mean(tree_sd)
-    tree_holdout_vs_train[i] <- tree_holdout_RMSE_mean / tree_train_RMSE_mean
-    tree_holdout_vs_train_mean <- mean(tree_holdout_vs_train)
-    tree_holdout_vs_train_range <- range(tree_holdout_vs_train)
-    tree_holdout_vs_train_sd <- sd(tree_holdout_vs_train)
+    tree_overfitting[i] <- tree_holdout_RMSE_mean / tree_train_RMSE_mean
+    tree_overfitting_mean <- mean(tree_overfitting)
+    tree_overfitting_range <- range(tree_overfitting)
+    tree_overfitting_sd <- sd(tree_overfitting)
     y_hat_tree <- c(tree_test_predict_value, tree_validation_predict_value)
     y_hat_tree_total <- c(y_hat_tree, y_hat_tree_total)
     tree_actual <- c(test$y, validation$y)
@@ -2290,10 +2290,10 @@ Numeric <- function(data, colnum, numresamples,
     xgb_t_test_p_value_sd <- sd(as.numeric(xgb_t_test_p_value))
     xgb_predict_value_mean <- mean(y_hat_xgb)
     xgb_sd_mean <- sd(y_hat_xgb)
-    xgb_holdout_vs_train[i] <- xgb_holdout_RMSE_mean / xgb_train_RMSE_mean
-    xgb_holdout_vs_train_mean <- mean(xgb_holdout_vs_train)
-    xgb_holdout_vs_train_range <- range(xgb_holdout_vs_train)
-    xgb_holdout_vs_train_sd <- sd(xgb_holdout_vs_train)
+    xgb_overfitting[i] <- xgb_holdout_RMSE_mean / xgb_train_RMSE_mean
+    xgb_overfitting_mean <- mean(xgb_overfitting)
+    xgb_overfitting_range <- range(xgb_overfitting)
+    xgb_overfitting_sd <- sd(xgb_overfitting)
 
     xgb_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = y_hat_xgb)
     xgb_bias_mean <- mean(xgb_bias)
@@ -2522,10 +2522,10 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_bagging_predict_value_mean <- mean(c(ensemble_bagging_test_predict_value, ensemble_bagging_validation_predict_value))
     ensemble_bagging_sd[i] <- sd(c(ensemble_bagging_test_predict_value, ensemble_bagging_validation_predict_value))
     ensemble_bagging_sd_mean <- mean(ensemble_bagging_sd)
-    ensemble_bagging_holdout_vs_train[i] <- ensemble_bagging_holdout_RMSE_mean / ensemble_bagging_train_RMSE_mean
-    ensemble_bagging_holdout_vs_train_mean <- mean(ensemble_bagging_holdout_vs_train)
-    ensemble_bagging_holdout_vs_train_range <- range(ensemble_bagging_holdout_vs_train)
-    ensemble_bagging_holdout_vs_train_sd <- sd(ensemble_bagging_holdout_vs_train)
+    ensemble_bagging_overfitting[i] <- ensemble_bagging_holdout_RMSE_mean / ensemble_bagging_train_RMSE_mean
+    ensemble_bagging_overfitting_mean <- mean(ensemble_bagging_overfitting)
+    ensemble_bagging_overfitting_range <- range(ensemble_bagging_overfitting)
+    ensemble_bagging_overfitting_sd <- sd(ensemble_bagging_overfitting)
     ensemble_y_hat_bagging <- c(ensemble_bagging_test_predict_value, ensemble_bagging_validation_predict_value)
     ensemble_y_hat_bagging_total <- c(ensemble_y_hat_bagging, ensemble_y_hat_bagging_total)
     ensemble_bagging_actual <- c(ensemble_test$y, ensemble_validation$y)
@@ -2583,10 +2583,10 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_bayesglm_predict_value_mean <- mean(c(ensemble_bayesglm_test_predict_value, ensemble_bayesglm_validation_predict_value))
     ensemble_bayesglm_sd[i] <- sd(c(ensemble_bayesglm_test_predict_value, ensemble_bayesglm_validation_predict_value))
     ensemble_bayesglm_sd_mean <- mean(ensemble_bayesglm_sd)
-    ensemble_bayesglm_holdout_vs_train[i] <- ensemble_bayesglm_holdout_RMSE_mean / ensemble_bayesglm_train_RMSE_mean
-    ensemble_bayesglm_holdout_vs_train_mean <- mean(ensemble_bayesglm_holdout_vs_train)
-    ensemble_bayesglm_holdout_vs_train_range <- range(ensemble_bayesglm_holdout_vs_train)
-    ensemble_bayesglm_holdout_vs_train_sd <- sd(ensemble_bayesglm_holdout_vs_train)
+    ensemble_bayesglm_overfitting[i] <- ensemble_bayesglm_holdout_RMSE_mean / ensemble_bayesglm_train_RMSE_mean
+    ensemble_bayesglm_overfitting_mean <- mean(ensemble_bayesglm_overfitting)
+    ensemble_bayesglm_overfitting_range <- range(ensemble_bayesglm_overfitting)
+    ensemble_bayesglm_overfitting_sd <- sd(ensemble_bayesglm_overfitting)
     ensemble_y_hat_bayesglm <- c(ensemble_bayesglm_test_predict_value, ensemble_bayesglm_validation_predict_value)
     ensemble_y_hat_bayesglm_total <- c(ensemble_y_hat_bayesglm, ensemble_y_hat_bayesglm_total)
     ensemble_bayesglm_actual <- c(ensemble_test$y, ensemble_validation$y)
@@ -2644,10 +2644,10 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_bayesrnn_predict_value_mean <- mean(c(ensemble_bayesrnn_test_predict_value, ensemble_bayesrnn_validation_predict_value))
     ensemble_bayesrnn_sd[i] <- sd(c(ensemble_bayesrnn_test_predict_value, ensemble_bayesrnn_validation_predict_value))
     ensemble_bayesrnn_sd_mean <- mean(ensemble_bayesrnn_sd)
-    ensemble_bayesrnn_holdout_vs_train[i] <- ensemble_bayesrnn_holdout_RMSE_mean / ensemble_bayesrnn_train_RMSE_mean
-    ensemble_bayesrnn_holdout_vs_train_mean <- mean(ensemble_bayesrnn_holdout_vs_train)
-    ensemble_bayesrnn_holdout_vs_train_range <- range(ensemble_bayesrnn_holdout_vs_train)
-    ensemble_bayesrnn_holdout_vs_train_sd <- sd(ensemble_bayesrnn_holdout_vs_train)
+    ensemble_bayesrnn_overfitting[i] <- ensemble_bayesrnn_holdout_RMSE_mean / ensemble_bayesrnn_train_RMSE_mean
+    ensemble_bayesrnn_overfitting_mean <- mean(ensemble_bayesrnn_overfitting)
+    ensemble_bayesrnn_overfitting_range <- range(ensemble_bayesrnn_overfitting)
+    ensemble_bayesrnn_overfitting_sd <- sd(ensemble_bayesrnn_overfitting)
     ensemble_y_hat_bayesrnn <- c(ensemble_bayesrnn_test_predict_value, ensemble_bayesrnn_validation_predict_value)
     ensemble_y_hat_bayesrnn_total <- c(ensemble_y_hat_bayesrnn, ensemble_y_hat_bayesrnn_total)
     ensemble_bayesrnn_actual <- c(ensemble_test$y, ensemble_validation$y)
@@ -2705,10 +2705,10 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_cubist_predict_value_mean <- mean(c(ensemble_cubist_test_predict_value, ensemble_cubist_validation_predict_value))
     ensemble_cubist_sd[i] <- sd(c(ensemble_cubist_test_predict_value, ensemble_cubist_validation_predict_value))
     ensemble_cubist_sd_mean <- mean(ensemble_cubist_sd)
-    ensemble_cubist_holdout_vs_train[i] <- ensemble_cubist_holdout_RMSE_mean / ensemble_cubist_train_RMSE_mean
-    ensemble_cubist_holdout_vs_train_mean <- mean(ensemble_cubist_holdout_vs_train)
-    ensemble_cubist_holdout_vs_train_range <- range(ensemble_cubist_holdout_vs_train)
-    ensemble_cubist_holdout_vs_train_sd <- sd(ensemble_cubist_holdout_vs_train)
+    ensemble_cubist_overfitting[i] <- ensemble_cubist_holdout_RMSE_mean / ensemble_cubist_train_RMSE_mean
+    ensemble_cubist_overfitting_mean <- mean(ensemble_cubist_overfitting)
+    ensemble_cubist_overfitting_range <- range(ensemble_cubist_overfitting)
+    ensemble_cubist_overfitting_sd <- sd(ensemble_cubist_overfitting)
     ensemble_y_hat_cubist <- c(ensemble_cubist_test_predict_value, ensemble_cubist_validation_predict_value)
     ensemble_y_hat_cubist_total <- c(ensemble_y_hat_cubist, ensemble_y_hat_cubist_total)
     ensemble_cubist_actual <- c(ensemble_test$y, ensemble_validation$y)
@@ -2766,10 +2766,10 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_earth_predict_value_mean <- mean(c(ensemble_earth_test_predict_value, ensemble_earth_validation_predict_value))
     ensemble_earth_sd[i] <- sd(c(ensemble_earth_test_predict_value, ensemble_earth_validation_predict_value))
     ensemble_earth_sd_mean <- mean(ensemble_earth_sd)
-    ensemble_earth_holdout_vs_train[i] <- ensemble_earth_holdout_RMSE_mean / ensemble_earth_train_RMSE_mean
-    ensemble_earth_holdout_vs_train_mean <- mean(ensemble_earth_holdout_vs_train)
-    ensemble_earth_holdout_vs_train_range <- range(ensemble_earth_holdout_vs_train)
-    ensemble_earth_holdout_vs_train_sd <- sd(ensemble_earth_holdout_vs_train)
+    ensemble_earth_overfitting[i] <- ensemble_earth_holdout_RMSE_mean / ensemble_earth_train_RMSE_mean
+    ensemble_earth_overfitting_mean <- mean(ensemble_earth_overfitting)
+    ensemble_earth_overfitting_range <- range(ensemble_earth_overfitting)
+    ensemble_earth_overfitting_sd <- sd(ensemble_earth_overfitting)
     ensemble_y_hat_earth <- c(ensemble_earth_test_predict_value, ensemble_earth_validation_predict_value)
     ensemble_y_hat_earth_total <- c(ensemble_y_hat_earth, ensemble_y_hat_earth_total)
     ensemble_earth_actual <- c(ensemble_test$y, ensemble_validation$y)
@@ -2844,11 +2844,11 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_elastic_validation_sd <- sd(ensemble_elastic_validation_predict_value, na.rm = TRUE)
     ensemble_elastic_validation_sd_df <- rbind(ensemble_elastic_validation_sd_df, ensemble_elastic_validation_sd)
     ensemble_elastic_validation_sd_mean <- mean(ensemble_elastic_validation_sd_df$ensemble_elastic_validation_sd[2:nrow(ensemble_elastic_validation_sd_df)])
-    ensemble_elastic_holdout_vs_train <- ensemble_elastic_holdout_RMSE_mean / ensemble_elastic_train_RMSE_mean
-    ensemble_elastic_holdout_vs_train_df <- rbind(ensemble_elastic_holdout_vs_train_df, ensemble_elastic_holdout_vs_train)
-    ensemble_elastic_holdout_vs_train_mean <- mean(ensemble_elastic_holdout_vs_train_df$ensemble_elastic_holdout_vs_train[2:nrow(ensemble_elastic_holdout_vs_train_df)])
-    ensemble_elastic_holdout_vs_train_range <- range(ensemble_elastic_holdout_vs_train_df$ensemble_elastic_holdout_vs_train[2:nrow(ensemble_elastic_holdout_vs_train_df)])
-    ensemble_elastic_holdout_vs_train_sd <- sd(ensemble_elastic_holdout_vs_train_df$ensemble_elastic_holdout_vs_train)
+    ensemble_elastic_overfitting <- ensemble_elastic_holdout_RMSE_mean / ensemble_elastic_train_RMSE_mean
+    ensemble_elastic_overfitting_df <- rbind(ensemble_elastic_overfitting_df, ensemble_elastic_overfitting)
+    ensemble_elastic_overfitting_mean <- mean(ensemble_elastic_overfitting_df$ensemble_elastic_overfitting[2:nrow(ensemble_elastic_overfitting_df)])
+    ensemble_elastic_overfitting_range <- range(ensemble_elastic_overfitting_df$ensemble_elastic_overfitting[2:nrow(ensemble_elastic_overfitting_df)])
+    ensemble_elastic_overfitting_sd <- sd(ensemble_elastic_overfitting_df$ensemble_elastic_overfitting)
     ensemble_elastic_predict_value_mean <- mean(c(ensemble_elastic_test_predict_value_mean, ensemble_elastic_validation_predict_value_mean))
     ensemble_elastic_sd_mean <- mean(c(ensemble_elastic_test_sd_mean, ensemble_elastic_validation_sd_mean))
     ensemble_y_hat_elastic <- predict(object = ensemble_best_elastic_model, newx = data.matrix(ensemble_test %>% dplyr::select(-y_ensemble)))
@@ -2917,10 +2917,10 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_gb_predict_value_mean <- mean(c(ensemble_gb_test_predict_value, ensemble_gb_validation_predict_value))
     ensemble_gb_sd[i] <- sd(c(ensemble_gb_test_predict_value, ensemble_gb_validation_predict_value))
     ensemble_gb_sd_mean <- mean(ensemble_gb_sd)
-    ensemble_gb_holdout_vs_train[i] <- ensemble_gb_holdout_RMSE_mean / ensemble_gb_train_RMSE_mean
-    ensemble_gb_holdout_vs_train_mean <- mean(ensemble_gb_holdout_vs_train)
-    ensemble_gb_holdout_vs_train_range <- range(ensemble_gb_holdout_vs_train)
-    ensemble_gb_holdout_vs_train_sd <- sd(ensemble_gb_holdout_vs_train)
+    ensemble_gb_overfitting[i] <- ensemble_gb_holdout_RMSE_mean / ensemble_gb_train_RMSE_mean
+    ensemble_gb_overfitting_mean <- mean(ensemble_gb_overfitting)
+    ensemble_gb_overfitting_range <- range(ensemble_gb_overfitting)
+    ensemble_gb_overfitting_sd <- sd(ensemble_gb_overfitting)
     ensemble_y_hat_gb <- c(ensemble_gb_test_predict_value, ensemble_gb_validation_predict_value)
     ensemble_y_hat_gb_total <- c(ensemble_y_hat_gb, ensemble_y_hat_gb_total)
     ensemble_gb_actual <- c(ensemble_test$y, ensemble_validation$y)
@@ -2995,11 +2995,11 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_lasso_validation_sd <- sd(ensemble_lasso_validation_predict_value, na.rm = TRUE)
     ensemble_lasso_validation_sd_df <- rbind(ensemble_lasso_validation_sd_df, ensemble_lasso_validation_sd)
     ensemble_lasso_validation_sd_mean <- mean(ensemble_lasso_validation_sd_df$ensemble_lasso_validation_sd[2:nrow(ensemble_lasso_validation_sd_df)])
-    ensemble_lasso_holdout_vs_train <- ensemble_lasso_holdout_RMSE_mean / ensemble_lasso_train_RMSE_mean
-    ensemble_lasso_holdout_vs_train_df <- rbind(ensemble_lasso_holdout_vs_train_df, ensemble_lasso_holdout_vs_train)
-    ensemble_lasso_holdout_vs_train_mean <- mean(ensemble_lasso_holdout_vs_train_df$ensemble_lasso_holdout_vs_train[2:nrow(ensemble_lasso_holdout_vs_train_df)])
-    ensemble_lasso_holdout_vs_train_range <- range(ensemble_lasso_holdout_vs_train_df$ensemble_lasso_holdout_vs_train[2:nrow(ensemble_lasso_holdout_vs_train_df)])
-    ensemble_lasso_holdout_vs_train_sd <- sd(ensemble_lasso_holdout_vs_train_df$ensemble_lasso_holdout_vs_train)
+    ensemble_lasso_overfitting <- ensemble_lasso_holdout_RMSE_mean / ensemble_lasso_train_RMSE_mean
+    ensemble_lasso_overfitting_df <- rbind(ensemble_lasso_overfitting_df, ensemble_lasso_overfitting)
+    ensemble_lasso_overfitting_mean <- mean(ensemble_lasso_overfitting_df$ensemble_lasso_overfitting[2:nrow(ensemble_lasso_overfitting_df)])
+    ensemble_lasso_overfitting_range <- range(ensemble_lasso_overfitting_df$ensemble_lasso_overfitting[2:nrow(ensemble_lasso_overfitting_df)])
+    ensemble_lasso_overfitting_sd <- sd(ensemble_lasso_overfitting_df$ensemble_lasso_overfitting)
     ensemble_lasso_predict_value_mean <- mean(c(ensemble_lasso_test_predict_value_mean, ensemble_lasso_validation_predict_value_mean))
     ensemble_lasso_sd[i] <- sd(c(ensemble_lasso_test_predict_value_mean, ensemble_lasso_validation_predict_value_mean))
     ensemble_lasso_sd_mean <- mean(c(ensemble_lasso_test_sd, ensemble_lasso_validation_sd))
@@ -3071,10 +3071,10 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_linear_predict_value_mean <- mean(c(ensemble_linear_test_predict_value, ensemble_linear_validation_predict_value))
     ensemble_linear_sd[i] <- sd(c(ensemble_linear_test_predict_value, ensemble_linear_validation_predict_value))
     ensemble_linear_sd_mean <- mean(ensemble_linear_sd)
-    ensemble_linear_holdout_vs_train[i] <- ensemble_linear_holdout_RMSE_mean / ensemble_linear_train_RMSE_mean
-    ensemble_linear_holdout_vs_train_mean <- mean(ensemble_linear_holdout_vs_train)
-    ensemble_linear_holdout_vs_train_range <- range(ensemble_linear_holdout_vs_train)
-    ensemble_linear_holdout_vs_train_sd <- sd(ensemble_linear_holdout_vs_train)
+    ensemble_linear_overfitting[i] <- ensemble_linear_holdout_RMSE_mean / ensemble_linear_train_RMSE_mean
+    ensemble_linear_overfitting_mean <- mean(ensemble_linear_overfitting)
+    ensemble_linear_overfitting_range <- range(ensemble_linear_overfitting)
+    ensemble_linear_overfitting_sd <- sd(ensemble_linear_overfitting)
     ensemble_y_hat_linear <- c(ensemble_linear_test_predict_value, ensemble_linear_validation_predict_value)
     ensemble_y_hat_linear_total <- c(ensemble_y_hat_linear, ensemble_y_hat_linear_total)
     ensemble_linear_actual <- c(ensemble_test$y, ensemble_validation$y)
@@ -3149,11 +3149,11 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_ridge_validation_sd <- sd(ensemble_ridge_validation_predict_value, na.rm = TRUE)
     ensemble_ridge_validation_sd_df <- rbind(ensemble_ridge_validation_sd_df, ensemble_ridge_validation_sd)
     ensemble_ridge_validation_sd_mean <- mean(ensemble_ridge_validation_sd_df$ensemble_ridge_validation_sd[2:nrow(ensemble_ridge_validation_sd_df)])
-    ensemble_ridge_holdout_vs_train <- ensemble_ridge_holdout_RMSE_mean / ensemble_ridge_train_RMSE_mean
-    ensemble_ridge_holdout_vs_train_df <- rbind(ensemble_ridge_holdout_vs_train_df, ensemble_ridge_holdout_vs_train)
-    ensemble_ridge_holdout_vs_train_mean <- mean(ensemble_ridge_holdout_vs_train_df$ensemble_ridge_holdout_vs_train[2:nrow(ensemble_ridge_holdout_vs_train_df)])
-    ensemble_ridge_holdout_vs_train_range <- range(ensemble_ridge_holdout_vs_train_df$ensemble_ridge_holdout_vs_train[2:nrow(ensemble_ridge_holdout_vs_train_df)])
-    ensemble_ridge_holdout_vs_train_sd <- sd(ensemble_ridge_holdout_vs_train_df$ensemble_ridge_holdout_vs_train)
+    ensemble_ridge_overfitting <- ensemble_ridge_holdout_RMSE_mean / ensemble_ridge_train_RMSE_mean
+    ensemble_ridge_overfitting_df <- rbind(ensemble_ridge_overfitting_df, ensemble_ridge_overfitting)
+    ensemble_ridge_overfitting_mean <- mean(ensemble_ridge_overfitting_df$ensemble_ridge_overfitting[2:nrow(ensemble_ridge_overfitting_df)])
+    ensemble_ridge_overfitting_range <- range(ensemble_ridge_overfitting_df$ensemble_ridge_overfitting[2:nrow(ensemble_ridge_overfitting_df)])
+    ensemble_ridge_overfitting_sd <- sd(ensemble_ridge_overfitting_df$ensemble_ridge_overfitting)
     ensemble_ridge_predict_value_mean <- mean(c(ensemble_ridge_test_predict_value_mean, ensemble_ridge_validation_predict_value_mean))
     ensemble_ridge_sd[i] <- mean(ensemble_ridge_test_sd_mean, ensemble_ridge_validation_sd_mean)
     ensemble_ridge_sd_mean <- mean(ensemble_ridge_sd)
@@ -3225,10 +3225,10 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_rpart_predict_value_mean <- mean(c(ensemble_rpart_test_predict_value, ensemble_rpart_validation_predict_value))
     ensemble_rpart_sd[i] <- sd(c(ensemble_rpart_test_predict_value, ensemble_rpart_validation_predict_value))
     ensemble_rpart_sd_mean <- mean(ensemble_rpart_sd)
-    ensemble_rpart_holdout_vs_train[i] <- ensemble_rpart_holdout_RMSE_mean / ensemble_rpart_train_RMSE_mean
-    ensemble_rpart_holdout_vs_train_mean <- mean(ensemble_rpart_holdout_vs_train)
-    ensemble_rpart_holdout_vs_train_range <- range(ensemble_rpart_holdout_vs_train)
-    ensemble_rpart_holdout_vs_train_sd <- sd(ensemble_rpart_holdout_vs_train)
+    ensemble_rpart_overfitting[i] <- ensemble_rpart_holdout_RMSE_mean / ensemble_rpart_train_RMSE_mean
+    ensemble_rpart_overfitting_mean <- mean(ensemble_rpart_overfitting)
+    ensemble_rpart_overfitting_range <- range(ensemble_rpart_overfitting)
+    ensemble_rpart_overfitting_sd <- sd(ensemble_rpart_overfitting)
     ensemble_y_hat_rpart <- c(ensemble_rpart_test_predict_value, ensemble_rpart_validation_predict_value)
     ensemble_y_hat_rpart_total <- c(ensemble_y_hat_rpart, ensemble_y_hat_rpart_total)
     ensemble_rpart_actual <- c(ensemble_test$y, ensemble_validation$y)
@@ -3277,10 +3277,10 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_svm_predict_value_mean <- mean(c(ensemble_svm_test_predict_value, ensemble_svm_validation_predict_value))
     ensemble_svm_sd[i] <- sd(c(ensemble_svm_test_predict_value, ensemble_svm_validation_predict_value))
     ensemble_svm_sd_mean <- mean(ensemble_svm_sd)
-    ensemble_svm_holdout_vs_train[i] <- ensemble_svm_holdout_RMSE_mean / ensemble_svm_train_RMSE_mean
-    ensemble_svm_holdout_vs_train_mean <- mean(ensemble_svm_holdout_vs_train)
-    ensemble_svm_holdout_vs_train_range <- range(ensemble_svm_holdout_vs_train)
-    ensemble_svm_holdout_vs_train_sd <- sd(ensemble_svm_holdout_vs_train)
+    ensemble_svm_overfitting[i] <- ensemble_svm_holdout_RMSE_mean / ensemble_svm_train_RMSE_mean
+    ensemble_svm_overfitting_mean <- mean(ensemble_svm_overfitting)
+    ensemble_svm_overfitting_range <- range(ensemble_svm_overfitting)
+    ensemble_svm_overfitting_sd <- sd(ensemble_svm_overfitting)
 
     ensemble_y_hat_svm <- c(ensemble_svm_test_predict_value, ensemble_svm_validation_predict_value)
     ensemble_y_hat_svm_total <- c(ensemble_y_hat_svm, ensemble_y_hat_svm_total)
@@ -3338,10 +3338,10 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_tree_validation_predict_value <- predict(object = ensemble_tree_train_fit, newdata = ensemble_validation)
     ensemble_tree_predict_value_mean <- mean(c(ensemble_tree_test_predict_value, ensemble_tree_validation_predict_value))
     ensemble_tree_sd_mean <- sd(ensemble_tree_test_predict_value)
-    ensemble_tree_holdout_vs_train[i] <- ensemble_tree_holdout_RMSE_mean / ensemble_tree_train_RMSE_mean
-    ensemble_tree_holdout_vs_train_mean <- mean(ensemble_tree_holdout_vs_train)
-    ensemble_tree_holdout_vs_train_range <- range(ensemble_tree_holdout_vs_train)
-    ensemble_tree_holdout_vs_train_sd <- sd(ensemble_tree_holdout_vs_train)
+    ensemble_tree_overfitting[i] <- ensemble_tree_holdout_RMSE_mean / ensemble_tree_train_RMSE_mean
+    ensemble_tree_overfitting_mean <- mean(ensemble_tree_overfitting)
+    ensemble_tree_overfitting_range <- range(ensemble_tree_overfitting)
+    ensemble_tree_overfitting_sd <- sd(ensemble_tree_overfitting)
     ensemble_y_hat_tree <- c(ensemble_tree_test_predict_value, ensemble_tree_validation_predict_value)
     ensemble_y_hat_tree_total <- c(ensemble_y_hat_tree, ensemble_y_hat_tree_total)
     ensemble_tree_actual <- c(ensemble_test$y, ensemble_validation$y)
@@ -3429,11 +3429,11 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_xgb_predict_value_mean <- round(mean(ensemble_y_hat_xgb), 4)
     ensemble_xgb_sd_mean <- round(sd(ensemble_y_hat_xgb), 4)
 
-    ensemble_xgb_holdout_vs_train <- ensemble_xgb_holdout_RMSE_mean / ensemble_xgb_train_RMSE_mean
-    ensemble_xgb_holdout_vs_train_df <- rbind(ensemble_xgb_holdout_vs_train_df, ensemble_xgb_holdout_vs_train)
-    ensemble_xgb_holdout_vs_train_mean <- mean(ensemble_xgb_holdout_vs_train_df$ensemble_xgb_holdout_vs_train[2:nrow(ensemble_xgb_holdout_vs_train_df)])
-    ensemble_xgb_holdout_vs_train_range <- range(ensemble_xgb_holdout_vs_train_df$ensemble_xgb_holdout_vs_train[2:nrow(ensemble_xgb_holdout_vs_train_df)])
-    ensemble_xgb_holdout_vs_train_sd <- sd(ensemble_xgb_holdout_vs_train_df$ensemble_xgb_holdout_vs_train)
+    ensemble_xgb_overfitting <- ensemble_xgb_holdout_RMSE_mean / ensemble_xgb_train_RMSE_mean
+    ensemble_xgb_overfitting_df <- rbind(ensemble_xgb_overfitting_df, ensemble_xgb_overfitting)
+    ensemble_xgb_overfitting_mean <- mean(ensemble_xgb_overfitting_df$ensemble_xgb_overfitting[2:nrow(ensemble_xgb_overfitting_df)])
+    ensemble_xgb_overfitting_range <- range(ensemble_xgb_overfitting_df$ensemble_xgb_overfitting[2:nrow(ensemble_xgb_overfitting_df)])
+    ensemble_xgb_overfitting_sd <- sd(ensemble_xgb_overfitting_df$ensemble_xgb_overfitting)
 
     ensemble_xgb_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = ensemble_y_hat_xgb)
     ensemble_xgb_bias_mean <- mean(ensemble_xgb_bias)
@@ -3658,29 +3658,29 @@ Numeric <- function(data, colnum, numresamples,
       ensemble_lasso_validation_RMSE_mean, ensemble_linear_validation_RMSE_mean, ensemble_ridge_validation_RMSE_mean,
       ensemble_rpart_validation_RMSE_mean, ensemble_svm_validation_RMSE_mean, ensemble_tree_validation_RMSE_mean, ensemble_xgb_validation_RMSE_mean
     ), 4),
-    "Holdout_vs_train_mean" = round(c(
-      0, bagging_holdout_vs_train_mean, bayesglm_holdout_vs_train_mean, bayesrnn_holdout_vs_train_mean,
-      cubist_holdout_vs_train_mean, earth_holdout_vs_train_mean, elastic_holdout_vs_train_mean, gam_holdout_vs_train_mean, gb_holdout_vs_train_mean,
-      lasso_holdout_vs_train_mean, linear_holdout_vs_train_mean, neuralnet_holdout_vs_train_mean,
-      pls_holdout_vs_train_mean, pcr_holdout_vs_train_mean, ridge_holdout_vs_train_mean,
-      rpart_holdout_vs_train_mean, svm_holdout_vs_train_mean, tree_holdout_vs_train_mean, xgb_holdout_vs_train_mean,
-      ensemble_bagging_holdout_vs_train_mean,  ensemble_bayesglm_holdout_vs_train_mean,
-      ensemble_bayesrnn_holdout_vs_train_mean, ensemble_cubist_holdout_vs_train_mean, ensemble_earth_holdout_vs_train_mean,
-      ensemble_elastic_holdout_vs_train_mean, ensemble_gb_holdout_vs_train_mean,
-      ensemble_lasso_holdout_vs_train_mean, ensemble_linear_holdout_vs_train_mean, ensemble_ridge_holdout_vs_train_mean,
-      ensemble_rpart_holdout_vs_train_mean, ensemble_svm_holdout_vs_train_mean, ensemble_tree_holdout_vs_train_mean, ensemble_xgb_holdout_vs_train_mean
+    "overfitting_mean" = round(c(
+      0, bagging_overfitting_mean, bayesglm_overfitting_mean, bayesrnn_overfitting_mean,
+      cubist_overfitting_mean, earth_overfitting_mean, elastic_overfitting_mean, gam_overfitting_mean, gb_overfitting_mean,
+      lasso_overfitting_mean, linear_overfitting_mean, neuralnet_overfitting_mean,
+      pls_overfitting_mean, pcr_overfitting_mean, ridge_overfitting_mean,
+      rpart_overfitting_mean, svm_overfitting_mean, tree_overfitting_mean, xgb_overfitting_mean,
+      ensemble_bagging_overfitting_mean,  ensemble_bayesglm_overfitting_mean,
+      ensemble_bayesrnn_overfitting_mean, ensemble_cubist_overfitting_mean, ensemble_earth_overfitting_mean,
+      ensemble_elastic_overfitting_mean, ensemble_gb_overfitting_mean,
+      ensemble_lasso_overfitting_mean, ensemble_linear_overfitting_mean, ensemble_ridge_overfitting_mean,
+      ensemble_rpart_overfitting_mean, ensemble_svm_overfitting_mean, ensemble_tree_overfitting_mean, ensemble_xgb_overfitting_mean
     ), 4),
-    "Holdout_vs_train_sd" = round(c(
-      0, bagging_holdout_vs_train_sd, bayesglm_holdout_vs_train_sd, bayesrnn_holdout_vs_train_sd,
-      cubist_holdout_vs_train_sd, earth_holdout_vs_train_sd, elastic_holdout_vs_train_sd, gam_holdout_vs_train_sd, gb_holdout_vs_train_sd,
-      lasso_holdout_vs_train_sd, linear_holdout_vs_train_sd, neuralnet_holdout_vs_train_sd,
-      pls_holdout_vs_train_sd, pcr_holdout_vs_train_sd, ridge_holdout_vs_train_sd,
-      rpart_holdout_vs_train_sd, svm_holdout_vs_train_sd, tree_holdout_vs_train_sd, xgb_holdout_vs_train_sd,
-      ensemble_bagging_holdout_vs_train_sd,  ensemble_bayesglm_holdout_vs_train_sd,
-      ensemble_bayesrnn_holdout_vs_train_sd, ensemble_cubist_holdout_vs_train_sd, ensemble_earth_holdout_vs_train_sd,
-      ensemble_elastic_holdout_vs_train_sd, ensemble_gb_holdout_vs_train_sd,
-      ensemble_lasso_holdout_vs_train_sd, ensemble_linear_holdout_vs_train_sd, ensemble_ridge_holdout_vs_train_sd,
-      ensemble_rpart_holdout_vs_train_sd, ensemble_svm_holdout_vs_train_sd, ensemble_tree_holdout_vs_train_sd, ensemble_xgb_holdout_vs_train_sd
+    "overfitting_sd" = round(c(
+      0, bagging_overfitting_sd, bayesglm_overfitting_sd, bayesrnn_overfitting_sd,
+      cubist_overfitting_sd, earth_overfitting_sd, elastic_overfitting_sd, gam_overfitting_sd, gb_overfitting_sd,
+      lasso_overfitting_sd, linear_overfitting_sd, neuralnet_overfitting_sd,
+      pls_overfitting_sd, pcr_overfitting_sd, ridge_overfitting_sd,
+      rpart_overfitting_sd, svm_overfitting_sd, tree_overfitting_sd, xgb_overfitting_sd,
+      ensemble_bagging_overfitting_sd,  ensemble_bayesglm_overfitting_sd,
+      ensemble_bayesrnn_overfitting_sd, ensemble_cubist_overfitting_sd, ensemble_earth_overfitting_sd,
+      ensemble_elastic_overfitting_sd, ensemble_gb_overfitting_sd,
+      ensemble_lasso_overfitting_sd, ensemble_linear_overfitting_sd, ensemble_ridge_overfitting_sd,
+      ensemble_rpart_overfitting_sd, ensemble_svm_overfitting_sd, ensemble_tree_overfitting_sd, ensemble_xgb_overfitting_sd
     ), 4),
     "Duration" = round(c(
       0, bagging_duration_mean, bayesglm_duration_mean, bayesrnn_duration_mean,
@@ -3708,7 +3708,7 @@ Numeric <- function(data, colnum, numresamples,
     ), 4)
   )
 
-  holdout_vs_train_data <-
+  overfitting_data <-
     data.frame(
       "count" = 1:numresamples,
       "model" = c(
@@ -3728,95 +3728,95 @@ Numeric <- function(data, colnum, numresamples,
         c(rep("Ensemble Trees", numresamples)), c(rep("Ensemble XGBoost", numresamples))
       ),
       "data" = c(
-        bagging_holdout_vs_train, bayesglm_holdout_vs_train,
-        bayesrnn_holdout_vs_train,
-        cubist_holdout_vs_train, earth_holdout_vs_train, elastic_holdout_vs_train_df$elastic_holdout_vs_train[2:nrow(elastic_holdout_vs_train_df)], gam_holdout_vs_train,
-        gb_holdout_vs_train, lasso_holdout_vs_train_df$lasso_holdout_vs_train[2:nrow(lasso_holdout_vs_train_df)], linear_holdout_vs_train,
-        neuralnet_holdout_vs_train, pcr_holdout_vs_train, pls_holdout_vs_train,
-        ridge_holdout_vs_train_df$ridge_holdout_vs_train[2:nrow(ridge_holdout_vs_train_df)], rpart_holdout_vs_train,
-        svm_holdout_vs_train, tree_holdout_vs_train, xgb_holdout_vs_train,
-        ensemble_bagging_holdout_vs_train,
-        ensemble_bayesglm_holdout_vs_train, ensemble_bayesrnn_holdout_vs_train,
-        ensemble_cubist_holdout_vs_train, ensemble_earth_holdout_vs_train,
-        ensemble_elastic_holdout_vs_train_df$ensemble_elastic_holdout_vs_train[2:nrow(ensemble_elastic_holdout_vs_train_df)],
-        ensemble_gb_holdout_vs_train, ensemble_lasso_holdout_vs_train_df$ensemble_lasso_holdout_vs_train[2:nrow(ensemble_lasso_holdout_vs_train_df)],
-        ensemble_linear_holdout_vs_train, ensemble_ridge_holdout_vs_train_df$ensemble_ridge_holdout_vs_train[2:nrow(ensemble_ridge_holdout_vs_train_df)],
-        ensemble_rpart_holdout_vs_train, ensemble_svm_holdout_vs_train,
-        ensemble_tree_holdout_vs_train, ensemble_xgb_holdout_vs_train_df$ensemble_xgb_holdout_vs_train[2:nrow(ensemble_xgb_holdout_vs_train_df)]
+        bagging_overfitting, bayesglm_overfitting,
+        bayesrnn_overfitting,
+        cubist_overfitting, earth_overfitting, elastic_overfitting_df$elastic_overfitting[2:nrow(elastic_overfitting_df)], gam_overfitting,
+        gb_overfitting, lasso_overfitting_df$lasso_overfitting[2:nrow(lasso_overfitting_df)], linear_overfitting,
+        neuralnet_overfitting, pcr_overfitting, pls_overfitting,
+        ridge_overfitting_df$ridge_overfitting[2:nrow(ridge_overfitting_df)], rpart_overfitting,
+        svm_overfitting, tree_overfitting, xgb_overfitting,
+        ensemble_bagging_overfitting,
+        ensemble_bayesglm_overfitting, ensemble_bayesrnn_overfitting,
+        ensemble_cubist_overfitting, ensemble_earth_overfitting,
+        ensemble_elastic_overfitting_df$ensemble_elastic_overfitting[2:nrow(ensemble_elastic_overfitting_df)],
+        ensemble_gb_overfitting, ensemble_lasso_overfitting_df$ensemble_lasso_overfitting[2:nrow(ensemble_lasso_overfitting_df)],
+        ensemble_linear_overfitting, ensemble_ridge_overfitting_df$ensemble_ridge_overfitting[2:nrow(ensemble_ridge_overfitting_df)],
+        ensemble_rpart_overfitting, ensemble_svm_overfitting,
+        ensemble_tree_overfitting, ensemble_xgb_overfitting_df$ensemble_xgb_overfitting[2:nrow(ensemble_xgb_overfitting_df)]
       ),
       "mean" = rep(c(
-        bagging_holdout_vs_train_mean, bayesglm_holdout_vs_train_mean,
-        bayesrnn_holdout_vs_train_mean,
-        cubist_holdout_vs_train_mean, earth_holdout_vs_train_mean, elastic_holdout_vs_train_mean, gam_holdout_vs_train_mean,
-        gb_holdout_vs_train_mean, lasso_holdout_vs_train_mean, linear_holdout_vs_train_mean,
-        neuralnet_holdout_vs_train_mean, pcr_holdout_vs_train_mean, pls_holdout_vs_train_mean,
-        ridge_holdout_vs_train_mean, rpart_holdout_vs_train_mean,
-        svm_holdout_vs_train_mean, tree_holdout_vs_train_mean, xgb_holdout_vs_train_mean,
-        ensemble_bagging_holdout_vs_train_mean,
-        ensemble_bayesglm_holdout_vs_train_mean, ensemble_bayesrnn_holdout_vs_train_mean,
-        ensemble_cubist_holdout_vs_train_mean, ensemble_earth_holdout_vs_train_mean,
-        ensemble_elastic_holdout_vs_train_mean,
-        ensemble_gb_holdout_vs_train_mean, ensemble_lasso_holdout_vs_train_mean, ensemble_linear_holdout_vs_train_mean,
-        ensemble_ridge_holdout_vs_train_mean,
-        ensemble_rpart_holdout_vs_train_mean, ensemble_svm_holdout_vs_train_mean,
-        ensemble_tree_holdout_vs_train_mean, ensemble_xgb_holdout_vs_train_mean
+        bagging_overfitting_mean, bayesglm_overfitting_mean,
+        bayesrnn_overfitting_mean,
+        cubist_overfitting_mean, earth_overfitting_mean, elastic_overfitting_mean, gam_overfitting_mean,
+        gb_overfitting_mean, lasso_overfitting_mean, linear_overfitting_mean,
+        neuralnet_overfitting_mean, pcr_overfitting_mean, pls_overfitting_mean,
+        ridge_overfitting_mean, rpart_overfitting_mean,
+        svm_overfitting_mean, tree_overfitting_mean, xgb_overfitting_mean,
+        ensemble_bagging_overfitting_mean,
+        ensemble_bayesglm_overfitting_mean, ensemble_bayesrnn_overfitting_mean,
+        ensemble_cubist_overfitting_mean, ensemble_earth_overfitting_mean,
+        ensemble_elastic_overfitting_mean,
+        ensemble_gb_overfitting_mean, ensemble_lasso_overfitting_mean, ensemble_linear_overfitting_mean,
+        ensemble_ridge_overfitting_mean,
+        ensemble_rpart_overfitting_mean, ensemble_svm_overfitting_mean,
+        ensemble_tree_overfitting_mean, ensemble_xgb_overfitting_mean
       ), each = numresamples)
     )
 
-  holdout_vs_train_plot <- ggplot2::ggplot(data = holdout_vs_train_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+  overfitting_plot <- ggplot2::ggplot(data = overfitting_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
     ggplot2::geom_line(mapping = aes(x = count, y = data)) +
     ggplot2::geom_point(mapping = aes(x = count, y = data)) +
     ggplot2::geom_hline(aes(yintercept = mean)) +
     ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
     ggplot2::facet_wrap(~model, ncol = 4, scales = "fixed") +
-    ggplot2::ggtitle("Holdout RMSE / train RMSE, fixed scales\nHoldout RMSE / train RMSE by model, fixed scales, closer to one is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 1.") +
-    ggplot2::labs(y = "Holdout RMSE / train RMSE, fixed scales closer to one is better \n The black horizontal line is the mean of the results, the red line is 1.") +
+    ggplot2::ggtitle("Overfitting fixed scales by model \n fixed scales, closer to one is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 1.") +
+    ggplot2::labs(y = "Overfitting fixed scales closer to one is better \n The black horizontal line is the mean of the results, the red line is 1.") +
     ggplot2::theme(legend.position = "none")
   if(save_all_plots == "Y" && device == "eps"){
-    ggplot2::ggsave("holdout_vs_train_plot.eps", plot = holdout_vs_train_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("overfitting_plot.eps", plot = overfitting_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
   if(save_all_plots == "Y" && device == "jpeg"){
-    ggplot2::ggsave("holdout_vs_train_plot.jpeg", plot = holdout_vs_train_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("overfitting_plot.jpeg", plot = overfitting_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
   if(save_all_plots == "Y" && device == "pdf"){
-    ggplot2::ggsave("holdout_vs_train_plot.pdf", plot = holdout_vs_train_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("overfitting_plot.pdf", plot = overfitting_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
   if(save_all_plots == "Y" && device == "png"){
-    ggplot2::ggsave("holdout_vs_train_plot.png", plot = holdout_vs_train_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("overfitting_plot.png", plot = overfitting_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
   if(save_all_plots == "Y" && device == "svg"){
-    ggplot2::ggsave("holdout_vs_train_plot.svg", plot = holdout_vs_train_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("overfitting_plot.svg", plot = overfitting_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
   if(save_all_plots == "Y" && device == "tiff"){
-    ggplot2::ggsave("holdout_vs_train_plot.tiff", plot = holdout_vs_train_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("overfitting_plot.tiff", plot = overfitting_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 
-  holdout_vs_train_plot2 <- ggplot2::ggplot(data = holdout_vs_train_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+  overfitting_plot2 <- ggplot2::ggplot(data = overfitting_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
     ggplot2::geom_line(mapping = aes(x = count, y = data)) +
     ggplot2::geom_point(mapping = aes(x = count, y = data)) +
     ggplot2::geom_hline(aes(yintercept = mean)) +
     ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
     ggplot2::facet_wrap(~model, ncol = 4, scales = "free") +
-    ggplot2::ggtitle("Holdout RMSE / train RMSE, free scales\nHoldout RMSE / train RMSE by model, closer to one is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 1.") +
-    ggplot2::labs(y = "Holdout RMSE / train RMSE, free scales closer to one is better \n The black horizontal line is the mean of the results, the red line is 1.") +
+    ggplot2::ggtitle("Overfitting, free scales\n by model, closer to one is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 1.") +
+    ggplot2::labs(y = "Overfitting, free scales closer to one is better \n The black horizontal line is the mean of the results, the red line is 1.") +
     ggplot2::theme(legend.position = "none")
   if(save_all_plots == "Y" && device == "eps"){
-    ggplot2::ggsave("Holdout_vs_train_plot2.eps", plot = holdout_vs_train_plot2,  width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("overfitting_plot2.eps", plot = overfitting_plot2,  width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
   if(save_all_plots == "Y" && device == "jpeg"){
-    ggplot2::ggsave("Holdout_vs_train_plot2.jpeg", plot = holdout_vs_train_plot2, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("overfitting_plot2.jpeg", plot = overfitting_plot2, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
   if(save_all_plots == "Y" && device == "pdf"){
-    ggplot2::ggsave("Holdout_vs_train_plot2.pdf", plot = holdout_vs_train_plot2, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("overfitting_plot2.pdf", plot = overfitting_plot2, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
   if(save_all_plots == "Y" && device == "png"){
-    ggplot2::ggsave("Holdout_vs_train_plot2.png", plot = holdout_vs_train_plot2, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("overfitting_plot2.png", plot = overfitting_plot2, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
   if(save_all_plots == "Y" && device == "svg"){
-    ggplot2::ggsave("Holdout_vs_train_plot2.svg", plot = holdout_vs_train_plot2, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("overfitting_plot2.svg", plot = overfitting_plot2, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
   if(save_all_plots == "Y" && device == "tiff"){
-    ggplot2::ggsave("Holdout_vs_train_plot2.tiff", plot = holdout_vs_train_plot2, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("overfitting_plot2.tiff", plot = overfitting_plot2, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 
   bias_data <-
@@ -4738,7 +4738,7 @@ Numeric <- function(data, colnum, numresamples,
   accuracy_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_holdout_RMSE), y = Mean_holdout_RMSE)) +
     ggplot2::geom_col(width = 0.5)+
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1, hjust=1)) +
-    ggplot2::labs(x = "Model", y = "Holdout RMSE Mean", title = "Model accuracy by RMSE, lower is better, 1 std deviation error bars") +
+    ggplot2::labs(x = "Model", y = "Overfitting RMSE Mean", title = "Model accuracy by RMSE, lower is better, 1 std deviation error bars") +
     ggplot2::geom_text(aes(label = Mean_holdout_RMSE), vjust = -0.5, hjust = -0.5, angle = 90) +
     ggplot2::ylim(0, 1.5*max(summary_results$Mean_holdout_RMSE)) +
     ggplot2::geom_errorbar(aes(x=Model, ymin=Mean_holdout_RMSE-Std_Deviation_of_holdout_RMSE, ymax = Mean_holdout_RMSE+Std_Deviation_of_holdout_RMSE))
@@ -4815,30 +4815,30 @@ Numeric <- function(data, colnum, numresamples,
     ggplot2::ggsave("t_test_p_value_barchart.tiff", plot = p_value_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 
-  holdout_vs_train_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_holdout_RMSE), y = Mean_holdout_RMSE)) +
+  overfitting_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_holdout_RMSE), y = Mean_holdout_RMSE)) +
     ggplot2::geom_col(width = 0.5)+
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1, hjust=1)) +
-    ggplot2::labs(x = "Model", y = "Holdout RMSE / train RMSE mean", title = "Holdout RMSE / train RMSE, closer to 1 is better, 1 std deviation error bars") +
+    ggplot2::labs(x = "Model", y = "Overfitting mean", title = "Overfitting, closer to 1 is better, 1 std deviation error bars") +
     ggplot2::geom_text(aes(label = Mean_holdout_RMSE), vjust = 0,hjust = -0.5, angle = 90) +
     ggplot2::ylim(0, max(max(summary_results$Mean_holdout_RMSE[!is.infinite(summary_results$Mean_holdout_RMSE)])) +2) +
     ggplot2::geom_errorbar(aes(x=Model, ymin=Mean_holdout_RMSE-Std_Deviation_of_holdout_RMSE, ymax = Mean_holdout_RMSE+Std_Deviation_of_holdout_RMSE))
   if(save_all_plots == "Y" && device == "eps"){
-    ggplot2::ggsave("Holdout_vs_train_barchart.eps", plot = holdout_vs_train_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("overfitting_barchart.eps", plot = overfitting_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
   if(save_all_plots == "Y" && device == "jpeg"){
-    ggplot2::ggsave("Holdout_vs_train_barchart.jpeg", plot = holdout_vs_train_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("overfitting_barchart.jpeg", plot = overfitting_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
   if(save_all_plots == "Y" && device == "pdf"){
-    ggplot2::ggsave("Holdout_vs_train_barchart.pdf", plot = holdout_vs_train_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("overfitting_barchart.pdf", plot = overfitting_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
   if(save_all_plots == "Y" && device == "png"){
-    ggplot2::ggsave("Holdout_vs_train_barchart.png", plot = holdout_vs_train_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("overfitting_barchart.png", plot = overfitting_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
   if(save_all_plots == "Y" && device == "svg"){
-    ggplot2::ggsave("Holdout_vs_train_barchart.svg", plot = holdout_vs_train_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("overfitting_barchart.svg", plot = overfitting_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
   if(save_all_plots == "Y" && device == "tiff"){
-    ggplot2::ggsave("Holdout_vs_train_barchart.tiff", plot = holdout_vs_train_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("overfitting_barchart.tiff", plot = overfitting_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 
   duration_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Duration), y = Duration)) +
@@ -6800,10 +6800,10 @@ Numeric <- function(data, colnum, numresamples,
 
 
     return(list(
-      "head_of_data" = head_df, "accuracy_plot" = accuracy_plot, "accuracy_plot_free_scales" = accuracy_plot2, "holdout_vs_train_plot" = holdout_vs_train_plot, "holdout_vs_train_plot_2" = holdout_vs_train_plot2,
+      "head_of_data" = head_df, "accuracy_plot" = accuracy_plot, "accuracy_plot_free_scales" = accuracy_plot2, "overfitting_plot" = overfitting_plot, "overfitting_plot_2" = overfitting_plot2,
       "Cooks_distance" = cooks_distance_plot, "histograms" = histograms, "boxplots" = boxplots, "predictor_vs_target" = predictor_vs_target,
       "final_results_table" = final_results, "data_correlation" = data_correlation, "data_summary" = data_summary, "head_of_ensemble" = head_ensemble, "ensemble_correlation" = ensemble_correlation,
-      "accuracy_barchart" = accuracy_barchart, "train_vs_holdout" = total_plot, "duration_barchart" = duration_barchart, "holdout_vs_train_barchart" = holdout_vs_train_barchart,
+      "accuracy_barchart" = accuracy_barchart, "train_vs_holdout" = total_plot, "duration_barchart" = duration_barchart, "overfitting_barchart" = overfitting_barchart,
       "bias_barchart" = bias_barchart,
       "bias_plot" = bias_plot, "Kolmogorov-Smirnov test p-score" = k_s_test_barchart,
       "colnum" = colnum, "numresamples" = numresamples, "predict_on_new_data" = predictions_of_new_data, "save_all_trained_models" = save_all_trained_models,
@@ -6943,8 +6943,8 @@ Numeric <- function(data, colnum, numresamples,
   return(list(
     "head_of_data" = head_df, "boxplots" = boxplots, "Cooks_distance" = cooks_distance_plot, "histograms" = histograms, "predictor_vs_target" = predictor_vs_target, "data_correlation" = data_correlation,
     "accuracy_barchart" = accuracy_barchart, "accuracy_plot" = accuracy_plot, "accuracy_free_scales" = accuracy_plot2, "bias_barchart" = bias_barchart, "bias_plot" = bias_plot, "duration_barchart" = duration_barchart,
-    "head_of_ensemble" = head_ensemble, "holdout_vs_train_barchart" = holdout_vs_train_barchart,
-    "holdout_vs_train_plot" = holdout_vs_train_plot, "holdout_vs_train_plot2" = holdout_vs_train_plot2,
+    "head_of_ensemble" = head_ensemble, "overfitting_barchart" = overfitting_barchart,
+    "overfitting_plot" = overfitting_plot, "overfitting_plot2" = overfitting_plot2,
     "Kolmogorov-Smirnov test p-score" = k_s_test_barchart, "p-value_barchart" = p_value_barchart, "train_vs_holdout" = total_plot, "train_vs_holdout_free_scales" = total_plot2,
     "final_results_table" = final_results,  "ensemble_correlation" = ensemble_correlation,
     "data_summary" = data_summary, 'VIF' = VIF,
