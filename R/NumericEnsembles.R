@@ -9,10 +9,11 @@
 #' @param set_seed "Y" or "N" to set the seed to make the results fully reproducible
 #' @param save_all_plots Saves all plots to the working directory
 #' @param scale_all_predictors_in_data "Y" or "N" to scale numeric data
+#' @param remove_data_correlations_greater_than maximum value for correlations of the original data (such as the Boston Housing data set)
+#' @param remove_ensemble_correlations_greater_than maximum value for correlations of the ensemble
 #' @param remove_VIF_above remove columns with Variable Inflation Factor above value chosen by the user
 #' @param data_reduction_method 0(none), BIC (1, 2, 3, 4) or Mallow's_cp (5, 6, 7, 8) for Forward, Backward, Exhaustive and SeqRep
 #' @param ensemble_reduction_method 0(none), BIC (1, 2, 3, 4) or Mallow's_cp (5, 6, 7, 8) for Forward, Backward, Exhaustive and SeqRep
-#' @param remove_ensemble_correlations_greater_than maximum value for correlations of the ensemble
 #' @param use_parallel "Y" or "N" for parallel processing
 #' @param train_amount set the amount for the training data
 #' @param test_amount set the amount for the testing data
@@ -59,7 +60,7 @@
 #' @importFrom xgboost xgb.DMatrix xgb.train
 
 Numeric <- function(data, colnum, numresamples,
-                    remove_VIF_above = 5.00, remove_ensemble_correlations_greater_than = 0.98, scale_all_predictors_in_data = c("Y", "N"),
+                    remove_VIF_above = 5.00, remove_data_correlations_greater_than = 0.99, remove_ensemble_correlations_greater_than = 0.98, scale_all_predictors_in_data = c("Y", "N"),
                     data_reduction_method = c(0("none"), 1("BIC exhaustive"), 2("BIC forward"), 3("BIC backward"), 4("BIC seqrep"),
                                               5("Mallows_cp exhaustive"), 6("Mallows_cp forward"), 7("Mallows_cp backward"), 8("Mallows_cp, seqrep")),
                     ensemble_reduction_method = c(0("none"), 1("BIC exhaustive"), 2("BIC forward"), 3("BIC backward"), 4("BIC seqrep"),
@@ -85,21 +86,6 @@ Numeric <- function(data, colnum, numresamples,
   colnames(data)[colnum] <- "y"
 
   df <- data %>% dplyr::relocate(y, .after = last_col()) # Moves the target column to the last column on the right
-
-  vif <- car::vif(lm(y ~ ., data = df[, 1:ncol(df)]))
-  for (i in 1:ncol(df)) {
-    if(max(vif) > remove_VIF_above){
-      df <- df %>% dplyr::select(-which.max(vif))
-      vif <- car::vif(lm(y ~ ., data = df[, 1:ncol(df)]))
-    }
-  }
-
-  VIF <- reactable::reactable(as.data.frame(vif),
-                              searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
-                              striped = TRUE, highlight = TRUE, resizable = TRUE
-  )%>%
-    reactablefmtr::add_title("Variance Inflation Factor")
-
 
   if(data_reduction_method == 1){
     data_regsubsets <- leaps::regsubsets(y ~ ., data = df, method = "exhaustive")
@@ -253,6 +239,27 @@ Numeric <- function(data, colnum, numresamples,
     newdata <- data.frame(predict(dummy, newdata=newdata))
     newdata <- data.frame(lapply(newdata, jitter))
   }
+
+  tmp <- stats::cor(df) # This section removes strongly correlated (>0.995) rows and columns from the data
+  tmp[upper.tri(tmp)] <- 0
+  diag(tmp) <- 0
+  data_new <- df[, !apply(tmp, 2, function(x) any(abs(x) > remove_data_correlations_greater_than, na.rm = TRUE))]
+  df <- data_new # new data without strongly correlated predictors
+
+  vif <- car::vif(lm(y ~ ., data = df[, 1:ncol(df)]))
+  for (i in 1:ncol(df)) {
+    if(max(vif) > remove_VIF_above){
+      df <- df %>% dplyr::select(-which.max(vif))
+      vif <- car::vif(lm(y ~ ., data = df[, 1:ncol(df)]))
+    }
+  }
+
+  VIF <- reactable::reactable(as.data.frame(vif),
+                              searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
+                              striped = TRUE, highlight = TRUE, resizable = TRUE
+  )%>%
+    reactablefmtr::add_title("Variance Inflation Factor")
+
 
   if(save_all_plots == "Y"){
     width = as.numeric(readline("Width of the graphics: "))
@@ -3658,7 +3665,7 @@ Numeric <- function(data, colnum, numresamples,
       ensemble_lasso_validation_RMSE_mean, ensemble_linear_validation_RMSE_mean, ensemble_ridge_validation_RMSE_mean,
       ensemble_rpart_validation_RMSE_mean, ensemble_svm_validation_RMSE_mean, ensemble_tree_validation_RMSE_mean, ensemble_xgb_validation_RMSE_mean
     ), 4),
-    "overfitting_mean" = round(c(
+    "Overfitting_mean" = round(c(
       0, bagging_overfitting_mean, bayesglm_overfitting_mean, bayesrnn_overfitting_mean,
       cubist_overfitting_mean, earth_overfitting_mean, elastic_overfitting_mean, gam_overfitting_mean, gb_overfitting_mean,
       lasso_overfitting_mean, linear_overfitting_mean, neuralnet_overfitting_mean,
@@ -3670,7 +3677,7 @@ Numeric <- function(data, colnum, numresamples,
       ensemble_lasso_overfitting_mean, ensemble_linear_overfitting_mean, ensemble_ridge_overfitting_mean,
       ensemble_rpart_overfitting_mean, ensemble_svm_overfitting_mean, ensemble_tree_overfitting_mean, ensemble_xgb_overfitting_mean
     ), 4),
-    "overfitting_sd" = round(c(
+    "Overfitting_sd" = round(c(
       0, bagging_overfitting_sd, bayesglm_overfitting_sd, bayesrnn_overfitting_sd,
       cubist_overfitting_sd, earth_overfitting_sd, elastic_overfitting_sd, gam_overfitting_sd, gb_overfitting_sd,
       lasso_overfitting_sd, linear_overfitting_sd, neuralnet_overfitting_sd,
