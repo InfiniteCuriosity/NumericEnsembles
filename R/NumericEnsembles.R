@@ -38,7 +38,7 @@
 #' @importFrom glmnet glmnet
 #' @importFrom ggplot2 aes geom_boxplot facet_wrap labs geom_histogram
 #' @importFrom graphics mtext par hist rect panel.smooth
-#' @importFrom grDevices dev.off
+#' @importFrom grDevices dev.off recordPlot
 #' @importFrom gridExtra arrangeGrob
 #' @importFrom ipred bagging
 #' @importFrom leaps regsubsets
@@ -300,9 +300,10 @@ Numeric <- function(data, colnum, numresamples,
 
   title <- "Correlation plot of the numerical data"
   corrplot_number <- corrplot::corrplot(stats::cor(df1), method = "number", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
+  corrplot_number <- recordPlot(attach = corrplot_number)
 
   corrplot_circle <- corrplot::corrplot(stats::cor(df1), method = "circle", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
-
+  corrplot_circle <- recordPlot(corrplot_circle)
 
   tempdir1 <- tempdir()
 
