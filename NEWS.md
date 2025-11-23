@@ -1,3 +1,6 @@
+# 0.10.5
+## Fix name: Change holdout / RMSE to overfitting (both more accurate and easier to understand)
+
 # 0.10.4
 ## Remove all references to MAE, MSE, SSE
 
