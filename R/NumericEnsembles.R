@@ -405,9 +405,6 @@ Numeric <- function(data, colnum, numresamples,
   bagging_holdout_RMSE <- 0
   bagging_holdout_RMSE_mean <- 0
   bagging_bias <- 0
-  bagging_MAE <- 0
-  bagging_MSE <- 0
-  bagging_SSE <- 0
   bagging_ks_stat <- 0
   bagging_ks_p_value <- 0
   bagging_t_test_t <- 0
@@ -427,9 +424,6 @@ Numeric <- function(data, colnum, numresamples,
   bayesglm_holdout_RMSE <- 0
   bayesglm_holdout_RMSE_mean <- 0
   bayesglm_bias <- 0
-  bayesglm_MAE <- 0
-  bayesglm_MSE <- 0
-  bayesglm_SSE <- 0
   bayesglm_ks_stat <- 0
   bayesglm_ks_p_value <- 0
   bayesglm_t_test_t <- 0
@@ -449,9 +443,6 @@ Numeric <- function(data, colnum, numresamples,
   bayesrnn_holdout_RMSE <- 0
   bayesrnn_holdout_RMSE_mean <- 0
   bayesrnn_bias <- 0
-  bayesrnn_MAE <- 0
-  bayesrnn_MSE <- 0
-  bayesrnn_SSE <- 0
   bayesrnn_ks_stat <- 0
   bayesrnn_ks_p_value <- 0
   bayesrnn_t_test_t <- 0
@@ -471,9 +462,6 @@ Numeric <- function(data, colnum, numresamples,
   cubist_holdout_RMSE <- 0
   cubist_holdout_RMSE_mean <- 0
   cubist_bias <- 0
-  cubist_MAE <- 0
-  cubist_MSE <- 0
-  cubist_SSE <- 0
   cubist_ks_stat <- 0
   cubist_ks_p_value <- 0
   cubist_t_test_t <- 0
@@ -493,9 +481,6 @@ Numeric <- function(data, colnum, numresamples,
   earth_holdout_RMSE <- 0
   earth_holdout_RMSE_mean <- 0
   earth_bias <- 0
-  earth_MAE <- 0
-  earth_MSE <- 0
-  earth_SSE <- 0
   earth_ks_stat <- 0
   earth_ks_p_value <- 0
   earth_t_test_t <- 0
@@ -531,9 +516,6 @@ Numeric <- function(data, colnum, numresamples,
   elastic_sd_mean <- 0
   y_hat_elastic <- 0
   elastic_bias <- 0
-  elastic_MAE <- 0
-  elastic_MSE <- 0
-  elastic_SSE <- 0
   elastic_ks_stat <- 0
   elastic_ks_p_value <- 0
   elastic_t_test_t <- 0
@@ -553,9 +535,6 @@ Numeric <- function(data, colnum, numresamples,
   gam_holdout_RMSE <- 0
   gam_holdout_RMSE_mean <- 0
   gam_bias <- 0
-  gam_MAE <- 0
-  gam_MSE <- 0
-  gam_SSE <- 0
   gam_ks_stat <- 0
   gam_ks_p_value <- 0
   gam_t_test_t <- 0
@@ -575,9 +554,6 @@ Numeric <- function(data, colnum, numresamples,
   gb_holdout_RMSE <- 0
   gb_holdout_RMSE_mean <- 0
   gb_bias <- 0
-  gb_MAE <- 0
-  gb_MSE <- 0
-  gb_SSE <- 0
   gb_ks_stat <- 0
   gb_ks_p_value <- 0
   gb_t_test_t <- 0
@@ -613,9 +589,6 @@ Numeric <- function(data, colnum, numresamples,
   lasso_sd_mean <- 0
   y_hat_lasso <- 0
   lasso_bias <- 0
-  lasso_MAE <- 0
-  lasso_MSE <- 0
-  lasso_SSE <- 0
   lasso_ks_stat <- 0
   lasso_ks_p_value <- 0
   lasso_t_test_t <- 0
@@ -633,9 +606,6 @@ Numeric <- function(data, colnum, numresamples,
   linear_holdout_RMSE <- 0
   linear_holdout_RMSE_mean <- 0
   linear_bias <- 0
-  linear_MAE <- 0
-  linear_MSE <- 0
-  linear_SSE <- 0
   linear_ks_stat <- 0
   linear_ks_p_value <- 0
   linear_t_test_t <- 0
@@ -653,9 +623,6 @@ Numeric <- function(data, colnum, numresamples,
   neuralnet_holdout_RMSE <- 0
   neuralnet_holdout_RMSE_mean <- 0
   neuralnet_bias <- 0
-  neuralnet_MAE <- 0
-  neuralnet_MSE <- 0
-  neuralnet_SSE <- 0
   neuralnet_ks_stat <- 0
   neuralnet_ks_p_value <- 0
   neuralnet_test_predict_value_mean <- 0
@@ -676,9 +643,6 @@ Numeric <- function(data, colnum, numresamples,
   pls_holdout_RMSE <- 0
   pls_holdout_RMSE_mean <- 0
   pls_bias <- 0
-  pls_MAE <- 0
-  pls_MSE <- 0
-  pls_SSE <- 0
   pls_ks_stat <- 0
   pls_ks_p_value <- 0
   pls_t_test_t <- 0
@@ -698,9 +662,6 @@ Numeric <- function(data, colnum, numresamples,
   pcr_holdout_RMSE <- 0
   pcr_holdout_RMSE_mean <- 0
   pcr_bias <- 0
-  pcr_MAE <- 0
-  pcr_MSE <- 0
-  pcr_SSE <- 0
   pcr_ks_stat <- 0
   pcr_ks_p_value <- 0
   pcr_t_test_t <- 0
@@ -735,9 +696,6 @@ Numeric <- function(data, colnum, numresamples,
   ridge_sd <- 0
   ridge_sd_mean <- 0
   ridge_bias <- 0
-  ridge_MAE <- 0
-  ridge_MSE <- 0
-  ridge_SSE <- 0
   y_hat_ridge <- 0
   ridge_ks_stat <- 0
   ridge_ks_p_value <- 0
@@ -758,9 +716,6 @@ Numeric <- function(data, colnum, numresamples,
   rpart_holdout_RMSE <- 0
   rpart_holdout_RMSE_mean <- 0
   rpart_bias <- 0
-  rpart_MAE <- 0
-  rpart_MSE <- 0
-  rpart_SSE <- 0
   rpart_ks_stat <- 0
   rpart_ks_p_value <- 0
   rpart_t_test_t <- 0
@@ -780,9 +735,6 @@ Numeric <- function(data, colnum, numresamples,
   svm_holdout_RMSE <- 0
   svm_holdout_RMSE_mean <- 0
   svm_bias <- 0
-  svm_MAE <- 0
-  svm_MSE <- 0
-  svm_SSE <- 0
   svm_ks_stat <- 0
   svm_ks_p_value <- 0
   svm_t_test_t <- 0
@@ -802,9 +754,6 @@ Numeric <- function(data, colnum, numresamples,
   tree_holdout_RMSE <- 0
   tree_holdout_RMSE_mean <- 0
   tree_bias <- 0
-  tree_MAE <- 0
-  tree_MSE <- 0
-  tree_SSE <- 0
   tree_ks_stat <- 0
   tree_ks_p_value <- 0
   tree_t_test_t <- 0
@@ -824,9 +773,6 @@ Numeric <- function(data, colnum, numresamples,
   xgb_holdout_RMSE <- 0
   xgb_holdout_RMSE_mean <- 0
   xgb_bias <- 0
-  xgb_MAE <- 0
-  xgb_MSE <- 0
-  xgb_SSE <- 0
   xgb_ks_stat <- 0
   xgb_ks_p_value <- 0
   xgb_t_test_t <- 0
@@ -845,9 +791,6 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_bagging_holdout_RMSE_mean <- 0
   ensemble_bagging_predict_value_mean <- 0
   ensemble_bagging_bias <- 0
-  ensemble_bagging_MAE <- 0
-  ensemble_bagging_MSE <- 0
-  ensemble_bagging_SSE <- 0
   ensemble_bagging_ks_stat <- 0
   ensemble_bagging_ks_p_value <- 0
   ensemble_bagging_t_test_t <- 0
@@ -866,9 +809,6 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_bayesglm_holdout_RMSE_mean <- 0
   ensemble_bayesglm_predict_value_mean <- 0
   ensemble_bayesglm_bias <- 0
-  ensemble_bayesglm_MAE <- 0
-  ensemble_bayesglm_MSE <- 0
-  ensemble_bayesglm_SSE <- 0
   ensemble_bayesglm_ks_stat <- 0
   ensemble_bayesglm_ks_p_value <- 0
   ensemble_bayesglm_t_test_t <- 0
@@ -887,9 +827,6 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_bayesrnn_holdout_RMSE_mean <- 0
   ensemble_bayesrnn_predict_value_mean <- 0
   ensemble_bayesrnn_bias <- 0
-  ensemble_bayesrnn_MAE <- 0
-  ensemble_bayesrnn_MSE <- 0
-  ensemble_bayesrnn_SSE <- 0
   ensemble_bayesrnn_ks_stat <- 0
   ensemble_bayesrnn_ks_p_value <- 0
   ensemble_bayesrnn_t_test_t <- 0
@@ -908,9 +845,6 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_cubist_holdout_RMSE_mean <- 0
   ensemble_cubist_predict_value_mean <- 0
   ensemble_cubist_bias <- 0
-  ensemble_cubist_MAE <- 0
-  ensemble_cubist_MSE <- 0
-  ensemble_cubist_SSE <- 0
   ensemble_cubist_ks_stat <- 0
   ensemble_cubist_ks_p_value <- 0
   ensemble_cubist_t_test_t <- 0
@@ -929,9 +863,6 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_earth_holdout_RMSE_mean <- 0
   ensemble_earth_predict_value_mean <- 0
   ensemble_earth_bias <- 0
-  ensemble_earth_MAE <- 0
-  ensemble_earth_MSE <- 0
-  ensemble_earth_SSE <- 0
   ensemble_earth_ks_stat <- 0
   ensemble_earth_ks_p_value <- 0
   ensemble_earth_t_test_t <- 0
@@ -980,9 +911,6 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_elastic_duration <- 0
   ensemble_elastic_duration_mean <- 0
   ensemble_elastic_bias <- 0
-  ensemble_elastic_MAE <- 0
-  ensemble_elastic_MSE <- 0
-  ensemble_elastic_SSE <- 0
   ensemble_elastic_ks_stat <- 0
   ensemble_elastic_ks_p_value <- 0
   ensemble_elastic_t_test_t <- 0
@@ -1001,9 +929,6 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_gb_holdout_RMSE_mean <- 0
   ensemble_gb_predict_value_mean <- 0
   ensemble_gb_bias <- 0
-  ensemble_gb_MAE <- 0
-  ensemble_gb_MSE <- 0
-  ensemble_gb_SSE <- 0
   ensemble_gb_ks_stat <- 0
   ensemble_gb_ks_p_value <- 0
   ensemble_gb_t_test_t <- 0
@@ -1051,9 +976,6 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_lasso_duration <- 0
   ensemble_lasso_duration_mean <- 0
   ensemble_lasso_bias <- 0
-  ensemble_lasso_MAE <- 0
-  ensemble_lasso_MSE <- 0
-  ensemble_lasso_SSE <- 0
   ensemble_lasso_ks_stat <- 0
   ensemble_lasso_ks_p_value <- 0
   ensemble_lasso_t_test_t <- 0
@@ -1072,9 +994,6 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_linear_holdout_RMSE_mean <- 0
   ensemble_linear_predict_value_mean <- 0
   ensemble_linear_bias <- 0
-  ensemble_linear_MAE <- 0
-  ensemble_linear_MSE <- 0
-  ensemble_linear_SSE <- 0
   ensemble_linear_ks_stat <- 0
   ensemble_linear_ks_p_value <- 0
   ensemble_linear_t_test_t <- 0
@@ -1123,9 +1042,6 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_ridge_duration <- 0
   ensemble_ridge_duration_mean <- 0
   ensemble_ridge_bias <- 0
-  ensemble_ridge_MAE <- 0
-  ensemble_ridge_MSE <- 0
-  ensemble_ridge_SSE <- 0
   ensemble_ridge_ks_stat <- 0
   ensemble_ridge_ks_p_value <- 0
   ensemble_ridge_t_test_t <- 0
@@ -1153,9 +1069,6 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_rpart_holdout_RMSE_mean <- 0
   ensemble_rpart_predict_value_mean <- 0
   ensemble_rpart_bias <- 0
-  ensemble_rpart_MAE <- 0
-  ensemble_rpart_MSE <- 0
-  ensemble_rpart_SSE <- 0
   ensemble_rpart_ks_stat <- 0
   ensemble_rpart_ks_p_value <- 0
   ensemble_rpart_t_test_t <- 0
@@ -1174,13 +1087,7 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_svm_holdout_RMSE_mean <- 0
   ensemble_svm_predict_value_mean <- 0
   ensemble_svm_bias <- 0
-  ensemble_svm_MAE <- 0
-  ensemble_svm_MSE <- 0
-  ensemble_svm_SSE <- 0
   ensemble_svm_bias <- 0
-  ensemble_svm_MAE <- 0
-  ensemble_svm_MSE <- 0
-  ensemble_svm_SSE <- 0
   ensemble_svm_ks_stat <- 0
   ensemble_svm_ks_p_value <- 0
   ensemble_svm_t_test_t <- 0
@@ -1199,9 +1106,6 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_tree_holdout_RMSE_mean <- 0
   ensemble_tree_predict_value_mean <- 0
   ensemble_tree_bias <- 0
-  ensemble_tree_MAE <- 0
-  ensemble_tree_MSE <- 0
-  ensemble_tree_SSE <- 0
   ensemble_tree_ks_stat <- 0
   ensemble_tree_ks_p_value <- 0
   ensemble_tree_t_test_t <- 0
@@ -1236,9 +1140,6 @@ Numeric <- function(data, colnum, numresamples,
   ensemble_xgb_predict_value_mean <- 0
   ensemble_xgb_sd_mean <- 0
   ensemble_xgb_bias <- 0
-  ensemble_xgb_MAE <- 0
-  ensemble_xgb_MSE <- 0
-  ensemble_xgb_SSE <- 0
   ensemble_xgb_ks_stat <- 0
   ensemble_xgb_ks_p_value <- 0
   ensemble_xgb_t_test_t <- 0
@@ -1265,21 +1166,12 @@ Numeric <- function(data, colnum, numresamples,
   holdout_vs_train_mean <- 0
   holdout_vs_train_sd <- 0
   Mean_Bias <- 0
-  Mean_MAE <- 0
-  Mean_MAE_sd <- 0
-  Mean_MSE <- 0
-  Mean_MSE_sd <- 0
-  Mean_SSE <- 0
-  Mean_SSE_sd <- 0
 
   outliers_df <- data.frame()
   Std_Deviation_of_holdout_RMSE <- 0
   holdout_vs_train_sd <- 0
   Bias <- 0
 
-  Mean_MAE_sd <- 0
-  Mean_MSE_sd <- 0
-  Mean_SSE_sd <- 0
   Duration_sd <- 0
   KS_Test_P_Value_mean <- 0
   KS_Test_P_Value_std_dev <- 0
@@ -1347,15 +1239,6 @@ Numeric <- function(data, colnum, numresamples,
     bagging_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(bagging_test_predict_value, bagging_validation_predict_value))
     bagging_bias_mean <- mean(bagging_bias)
     bagging_bias_sd <- sd(bagging_bias)
-    bagging_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(bagging_test_predict_value, bagging_validation_predict_value))
-    bagging_MAE_mean <- mean(bagging_MAE)
-    bagging_MAE_sd <- sd(bagging_MAE)
-    bagging_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(bagging_test_predict_value, bagging_validation_predict_value))
-    bagging_MSE_mean <- mean(bagging_MSE)
-    bagging_MSE_sd <- sd(bagging_MSE)
-    bagging_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(bagging_test_predict_value, bagging_validation_predict_value))
-    bagging_SSE_mean <- mean(bagging_SSE)
-    bagging_SSE_sd <- sd(bagging_SSE)
     bagging_ks_p_value[i] <- stats::ks.test(x = y_hat_bagging, y = c(test$y, validation$y), exact = TRUE)$p.value
     bagging_ks_p_value_mean <- mean(bagging_ks_p_value)
     bagging_ks_p_value_sd <- sd(bagging_ks_p_value)
@@ -1407,15 +1290,6 @@ Numeric <- function(data, colnum, numresamples,
     bayesglm_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(bayesglm_test_predict_value, bayesglm_validation_predict_value))
     bayesglm_bias_mean <- mean(bayesglm_bias)
     bayesglm_bias_sd <- sd(bayesglm_bias)
-    bayesglm_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(bayesglm_test_predict_value, bayesglm_validation_predict_value))
-    bayesglm_MAE_mean <- mean(bayesglm_MAE)
-    bayesglm_MAE_sd <- sd(bayesglm_MAE)
-    bayesglm_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(bayesglm_test_predict_value, bayesglm_validation_predict_value))
-    bayesglm_MSE_mean <- mean(bayesglm_MSE)
-    bayesglm_MSE_sd <- sd(bayesglm_MSE)
-    bayesglm_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(bayesglm_test_predict_value, bayesglm_validation_predict_value))
-    bayesglm_SSE_mean <- mean(bayesglm_SSE)
-    bayesglm_SSE_sd <- sd(bayesglm_SSE)
     bayesglm_ks_p_value[i] <- stats::ks.test(x = y_hat_bayesglm, y = c(test$y, validation$y), exact = TRUE)$p.value
     bayesglm_ks_p_value_mean <- mean(bayesglm_ks_p_value)
     bayesglm_ks_p_value_sd <- sd(bayesglm_ks_p_value)
@@ -1467,15 +1341,6 @@ Numeric <- function(data, colnum, numresamples,
     bayesrnn_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(bayesrnn_test_predict_value, bayesrnn_validation_predict_value))
     bayesrnn_bias_mean <- mean(bayesrnn_bias)
     bayesrnn_bias_sd <- sd(bayesrnn_bias)
-    bayesrnn_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(bayesrnn_test_predict_value, bayesrnn_validation_predict_value))
-    bayesrnn_MAE_mean <- mean(bayesrnn_MAE)
-    bayesrnn_MAE_sd <- sd(bayesrnn_MAE)
-    bayesrnn_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(bayesrnn_test_predict_value, bayesrnn_validation_predict_value))
-    bayesrnn_MSE_mean <- mean(bayesrnn_MSE)
-    bayesrnn_MSE_sd <- sd(bayesrnn_MSE)
-    bayesrnn_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(bayesrnn_test_predict_value, bayesrnn_validation_predict_value))
-    bayesrnn_SSE_mean <- mean(bayesrnn_SSE)
-    bayesrnn_SSE_sd <- sd(bayesrnn_SSE)
     bayesrnn_ks_p_value[i] <- stats::ks.test(x = y_hat_bayesrnn, y = c(test$y, validation$y), exact = TRUE)$p.value
     bayesrnn_ks_p_value_mean <- mean(bayesrnn_ks_p_value)
     bayesrnn_ks_p_value_sd <- sd(bayesrnn_ks_p_value)
@@ -1528,15 +1393,6 @@ Numeric <- function(data, colnum, numresamples,
     cubist_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(cubist_test_predict_value, cubist_validation_predict_value))
     cubist_bias_mean <- mean(cubist_bias)
     cubist_bias_sd <- sd(cubist_bias)
-    cubist_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(cubist_test_predict_value, cubist_validation_predict_value))
-    cubist_MAE_mean <- mean(cubist_MAE)
-    cubist_MAE_sd <- sd(cubist_MAE)
-    cubist_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(cubist_test_predict_value, cubist_validation_predict_value))
-    cubist_MSE_mean <- mean(cubist_MSE)
-    cubist_MSE_sd <- sd(cubist_MSE)
-    cubist_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(cubist_test_predict_value, cubist_validation_predict_value))
-    cubist_SSE_mean <- mean(cubist_SSE)
-    cubist_SSE_sd <- sd(cubist_SSE)
     cubist_ks_p_value[i] <- stats::ks.test(x = y_hat_cubist, y = c(test$y, validation$y), exact = TRUE)$p.value
     cubist_ks_p_value_mean <- mean(cubist_ks_p_value)
     cubist_ks_p_value_sd <- sd(cubist_ks_p_value)
@@ -1589,15 +1445,6 @@ Numeric <- function(data, colnum, numresamples,
     earth_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(earth_test_predict_value, earth_validation_predict_value))
     earth_bias_mean <- mean(earth_bias)
     earth_bias_sd <- sd(earth_bias)
-    earth_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(earth_test_predict_value, earth_validation_predict_value))
-    earth_MAE_mean <- mean(earth_MAE)
-    earth_MAE_sd <- sd(earth_MAE)
-    earth_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(earth_test_predict_value, earth_validation_predict_value))
-    earth_MSE_mean <- mean(earth_MSE)
-    earth_MSE_sd <- sd(earth_MSE)
-    earth_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(earth_test_predict_value, earth_validation_predict_value))
-    earth_SSE_mean <- mean(earth_SSE)
-    earth_SSE_sd <- sd(earth_SSE)
     earth_ks_p_value[i] <- stats::ks.test(x = y_hat_earth, y = c(test$y, validation$y), exact = TRUE)$p.value
     earth_ks_p_value_mean <- mean(earth_ks_p_value)
     earth_ks_p_value_sd <- sd(earth_ks_p_value)
@@ -1692,15 +1539,6 @@ Numeric <- function(data, colnum, numresamples,
     elastic_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = as.numeric(c(elastic_test_pred, elastic_validation_pred)))
     elastic_bias_mean <- mean(elastic_bias)
     elastic_bias_sd <- sd(elastic_bias)
-    elastic_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = as.numeric(c(elastic_test_pred, elastic_validation_pred)))
-    elastic_MAE_mean <- mean(elastic_MAE)
-    elastic_MAE_sd <- sd(elastic_MAE)
-    elastic_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = as.numeric(c(elastic_test_pred, elastic_validation_pred)))
-    elastic_MSE_mean <- mean(elastic_MSE)
-    elastic_MSE_sd <- sd(elastic_MSE)
-    elastic_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = as.numeric(c(elastic_test_pred, elastic_validation_pred)))
-    elastic_SSE_mean <- mean(elastic_SSE)
-    elastic_SSE_sd <- sd(elastic_SSE)
     elastic_ks_p_value[i] <- stats::ks.test(x = y_hat_elastic, y = c(test$y, validation$y), exact = TRUE)$p.value
     elastic_ks_p_value_mean <- mean(elastic_ks_p_value)
     elastic_ks_p_value_sd <- sd(elastic_ks_p_value)
@@ -1765,15 +1603,6 @@ Numeric <- function(data, colnum, numresamples,
     gam_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(gam_test_predict_value, gam_validation_predict_value))
     gam_bias_mean <- mean(gam_bias)
     gam_bias_sd <- sd(gam_bias)
-    gam_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(gam_test_predict_value, gam_validation_predict_value))
-    gam_MAE_mean <- mean(gam_MAE)
-    gam_MAE_sd <- sd(gam_MAE)
-    gam_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(gam_test_predict_value, gam_validation_predict_value))
-    gam_MSE_mean <- mean(gam_MSE)
-    gam_MSE_sd <- sd(gam_MSE)
-    gam_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(gam_test_predict_value, gam_validation_predict_value))
-    gam_SSE_mean <- mean(gam_SSE)
-    gam_SSE_sd <- sd(gam_SSE)
     y_hat_gam <- c(gam_test_predict_value, gam_validation_predict_value)
     y_hat_gam_total <- c(y_hat_gam, y_hat_gam_total)
     gam_actual <- c(test$y, validation$y)
@@ -1835,15 +1664,6 @@ Numeric <- function(data, colnum, numresamples,
     gb_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(gb_test_predict_value, gb_validation_predict_value))
     gb_bias_mean <- mean(gb_bias)
     gb_bias_sd <- sd(gb_bias)
-    gb_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(gb_test_predict_value, gb_validation_predict_value))
-    gb_MAE_mean <- mean(gb_MAE)
-    gb_MAE_sd <- sd(gb_MAE)
-    gb_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(gb_test_predict_value, gb_validation_predict_value))
-    gb_MSE_mean <- mean(gb_MSE)
-    gb_MSE_sd <- sd(gb_MSE)
-    gb_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(gb_test_predict_value, gb_validation_predict_value))
-    gb_SSE_mean <- mean(gb_SSE)
-    gb_SSE_sd <- sd(gb_SSE)
     gb_ks_p_value[i] <- stats::ks.test(x = y_hat_gb, y = c(test$y, validation$y), exact = TRUE)$p.value
     gb_ks_p_value_mean <- mean(gb_ks_p_value)
     gb_ks_p_value_sd <- sd(gb_ks_p_value)
@@ -1927,15 +1747,6 @@ Numeric <- function(data, colnum, numresamples,
     lasso_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = as.numeric(c(lasso_test_pred, lasso_validation_pred)))
     lasso_bias_mean <- mean(lasso_bias)
     lasso_bias_sd <- sd(lasso_bias)
-    lasso_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = as.numeric(c(lasso_test_pred, lasso_validation_pred)))
-    lasso_MAE_mean <- mean(lasso_MAE)
-    lasso_MAE_sd <- sd(lasso_MAE)
-    lasso_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = as.numeric(c(lasso_test_pred, lasso_validation_pred)))
-    lasso_MSE_mean <- mean(lasso_MSE)
-    lasso_MSE_sd <- sd(lasso_MSE)
-    lasso_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = as.numeric(c(lasso_test_pred, lasso_validation_pred)))
-    lasso_SSE_mean <- mean(lasso_SSE)
-    lasso_SSE_sd <- sd(lasso_SSE)
 
     lasso_ks_p_value[i] <- stats::ks.test(x = y_hat_lasso, y = c(test$y, validation$y), exact = TRUE)$p.value
     lasso_ks_p_value_mean <- mean(lasso_ks_p_value)
@@ -1991,15 +1802,6 @@ Numeric <- function(data, colnum, numresamples,
     linear_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(linear_test_predict_value, linear_validation_predict_value))
     linear_bias_mean <- mean(linear_bias)
     linear_bias_sd <- sd(linear_bias)
-    linear_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(linear_test_predict_value, linear_validation_predict_value))
-    linear_MAE_mean <- mean(linear_MAE)
-    linear_MAE_sd <- sd(linear_MAE)
-    linear_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(linear_test_predict_value, linear_validation_predict_value))
-    linear_MSE_mean <- mean(linear_MSE)
-    linear_MSE_sd <- sd(linear_MSE)
-    linear_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(linear_test_predict_value, linear_validation_predict_value))
-    linear_SSE_mean <- mean(linear_SSE)
-    linear_SSE_sd <- sd(linear_SSE)
     y_hat_linear <- c(linear_test_predict_value, linear_validation_predict_value)
     y_hat_linear_total <- c(y_hat_linear, y_hat_linear_total)
     linear_actual <- c(test$y, validation$y)
@@ -2061,15 +1863,6 @@ Numeric <- function(data, colnum, numresamples,
     neuralnet_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(neuralnet_test_predict_value, neuralnet_validation_predict_value))
     neuralnet_bias_mean <- mean(neuralnet_bias)
     neuralnet_bias_sd <- sd(neuralnet_bias)
-    neuralnet_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(neuralnet_test_predict_value, neuralnet_validation_predict_value))
-    neuralnet_MAE_mean <- mean(neuralnet_MAE)
-    neuralnet_MAE_sd <- sd(neuralnet_MAE)
-    neuralnet_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(neuralnet_test_predict_value, neuralnet_validation_predict_value))
-    neuralnet_MSE_mean <- mean(neuralnet_MSE)
-    neuralnet_MSE_sd <- sd(neuralnet_MSE)
-    neuralnet_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(neuralnet_test_predict_value, neuralnet_validation_predict_value))
-    neuralnet_SSE_mean <- mean(neuralnet_SSE)
-    neuralnet_SSE_sd <- sd(neuralnet_SSE)
     neuralnet_ks_p_value[i] <- stats::ks.test(x = y_hat_neuralnet, y = c(test$y, validation$y), exact = TRUE)$p.value
     neuralnet_ks_p_value_mean <- mean(neuralnet_ks_p_value)
     neuralnet_ks_p_value_sd <- sd(neuralnet_ks_p_value)
@@ -2122,15 +1915,6 @@ Numeric <- function(data, colnum, numresamples,
     pls_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(pls_test_predict_value, pls_validation_predict_value))
     pls_bias_mean <- mean(pls_bias)
     pls_bias_sd <- sd(pls_bias)
-    pls_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(pls_test_predict_value, pls_validation_predict_value))
-    pls_MAE_mean <- mean(pls_MAE)
-    pls_MAE_sd <- sd(pls_MAE)
-    pls_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(pls_test_predict_value, pls_validation_predict_value))
-    pls_MSE_mean <- mean(pls_MSE)
-    pls_MSE_sd <- sd(pls_MSE)
-    pls_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(pls_test_predict_value, pls_validation_predict_value))
-    pls_SSE_mean <- mean(pls_SSE)
-    pls_SSE_sd <- sd(pls_SSE)
     pls_ks_p_value[i] <- stats::ks.test(x = y_hat_pls, y = c(test$y, validation$y), exact = TRUE)$p.value
     pls_ks_p_value_mean <- mean(pls_ks_p_value)
     pls_ks_p_value_sd <- sd(pls_ks_p_value)
@@ -2183,15 +1967,6 @@ Numeric <- function(data, colnum, numresamples,
     pcr_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(pcr_test_predict_value, pcr_validation_predict_value))
     pcr_bias_mean <- mean(pcr_bias)
     pcr_bias_sd <- sd(pcr_bias)
-    pcr_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(pcr_test_predict_value, pcr_validation_predict_value))
-    pcr_MAE_mean <- mean(pcr_MAE)
-    pcr_MAE_sd <- sd(pcr_MAE)
-    pcr_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(pcr_test_predict_value, pcr_validation_predict_value))
-    pcr_MSE_mean <- mean(pcr_MSE)
-    pcr_MSE_sd <- sd(pcr_MSE)
-    pcr_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(pcr_test_predict_value, pcr_validation_predict_value))
-    pcr_SSE_mean <- mean(pcr_SSE)
-    pcr_SSE_sd <- sd(pcr_SSE)
     pcr_ks_p_value[i] <- stats::ks.test(x = y_hat_pcr, y = c(test$y, validation$y), exact = TRUE)$p.value
     pcr_ks_p_value_mean <- mean(pcr_ks_p_value)
     pcr_ks_p_value_sd <- sd(pcr_ks_p_value)
@@ -2286,15 +2061,6 @@ Numeric <- function(data, colnum, numresamples,
     ridge_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = as.numeric(c(ridge_test_pred, ridge_validation_pred)))
     ridge_bias_mean <- mean(ridge_bias)
     ridge_bias_sd <- sd(ridge_bias)
-    ridge_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = as.numeric(c(ridge_test_pred, ridge_validation_pred)))
-    ridge_MAE_mean <- mean(ridge_MAE)
-    ridge_MAE_sd <- sd(ridge_MAE)
-    ridge_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = as.numeric(c(ridge_test_pred, ridge_validation_pred)))
-    ridge_MSE_mean <- mean(ridge_MSE)
-    ridge_MSE_sd <- sd(ridge_MSE)
-    ridge_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = as.numeric(c(ridge_test_pred, ridge_validation_pred)))
-    ridge_SSE_mean <- mean(ridge_SSE)
-    ridge_SSE_sd <- sd(ridge_SSE)
     ridge_ks_p_value[i] <- stats::ks.test(x = y_hat_ridge, y = c(test$y, validation$y), exact = TRUE)$p.value
     ridge_ks_p_value_mean <- mean(ridge_ks_p_value)
     ridge_ks_p_value_sd <- sd(ridge_ks_p_value)
@@ -2347,15 +2113,6 @@ Numeric <- function(data, colnum, numresamples,
     rpart_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(rpart_test_predict_value, rpart_validation_predict_value))
     rpart_bias_mean <- mean(rpart_bias)
     rpart_bias_sd <- sd(rpart_bias)
-    rpart_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(rpart_test_predict_value, rpart_validation_predict_value))
-    rpart_MAE_mean <- mean(rpart_MAE)
-    rpart_MAE_sd <- sd(rpart_MAE)
-    rpart_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(rpart_test_predict_value, rpart_validation_predict_value))
-    rpart_MSE_mean <- mean(rpart_MSE)
-    rpart_MSE_sd <- sd(rpart_MSE)
-    rpart_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(rpart_test_predict_value, rpart_validation_predict_value))
-    rpart_SSE_mean <- mean(rpart_SSE)
-    rpart_SSE_sd <- sd(rpart_SSE)
     rpart_ks_p_value[i] <- stats::ks.test(x = y_hat_rpart, y = c(test$y, validation$y), exact = TRUE)$p.value
     rpart_ks_p_value_mean <- mean(rpart_ks_p_value)
     rpart_ks_p_value_sd <- sd(rpart_ks_p_value)
@@ -2409,15 +2166,6 @@ Numeric <- function(data, colnum, numresamples,
     svm_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(svm_test_predict_value, svm_validation_predict_value))
     svm_bias_mean <- mean(svm_bias)
     svm_bias_sd <- sd(svm_bias)
-    svm_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(svm_test_predict_value, svm_validation_predict_value))
-    svm_MAE_mean <- mean(svm_MAE)
-    svm_MAE_sd <- sd(svm_MAE)
-    svm_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(svm_test_predict_value, svm_validation_predict_value))
-    svm_MSE_mean <- mean(svm_MSE)
-    svm_MSE_sd <- sd(svm_MSE)
-    svm_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(svm_test_predict_value, svm_validation_predict_value))
-    svm_SSE_mean <- mean(svm_SSE)
-    svm_SSE_sd <- sd(svm_SSE)
     svm_ks_p_value[i] <- stats::ks.test(x = y_hat_svm, y = c(test$y, validation$y), exact = TRUE)$p.value
     svm_ks_p_value_mean <- mean(svm_ks_p_value)
     svm_ks_p_value_sd <- sd(svm_ks_p_value)
@@ -2471,15 +2219,6 @@ Numeric <- function(data, colnum, numresamples,
     tree_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = c(tree_test_predict_value, tree_validation_predict_value))
     tree_bias_mean <- mean(tree_bias)
     tree_bias_sd <- sd(tree_bias)
-    tree_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = c(tree_test_predict_value, tree_validation_predict_value))
-    tree_MAE_mean <- mean(tree_MAE)
-    tree_MAE_sd <- sd(tree_MAE)
-    tree_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = c(tree_test_predict_value, tree_validation_predict_value))
-    tree_MSE_mean <- mean(tree_MSE)
-    tree_MSE_sd <- sd(tree_MSE)
-    tree_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = c(tree_test_predict_value, tree_validation_predict_value))
-    tree_SSE_mean <- mean(tree_SSE)
-    tree_SSE_sd <- sd(tree_SSE)
     tree_ks_p_value[i] <- stats::ks.test(x = y_hat_tree, y = c(test$y, validation$y), exact = TRUE)$p.value
     tree_ks_p_value_mean <- mean(tree_ks_p_value)
     tree_ks_p_value_sd <- sd(tree_ks_p_value)
@@ -2559,15 +2298,6 @@ Numeric <- function(data, colnum, numresamples,
     xgb_bias[i] <- Metrics::bias(actual = c(test$y, validation$y), predicted = y_hat_xgb)
     xgb_bias_mean <- mean(xgb_bias)
     xgb_bias_sd <- sd(xgb_bias)
-    xgb_MAE[i] <- Metrics::mae(actual = c(test$y, validation$y), predicted = y_hat_xgb)
-    xgb_MAE_mean <- mean(xgb_MAE)
-    xgb_MAE_sd <- sd(xgb_MAE)
-    xgb_MSE[i] <- Metrics::mse(actual = c(test$y, validation$y), predicted = y_hat_xgb)
-    xgb_MSE_mean <- mean(xgb_MSE)
-    xgb_MSE_sd <- sd(xgb_MSE)
-    xgb_SSE[i] <- Metrics::sse(actual = c(test$y, validation$y), predicted = y_hat_xgb)
-    xgb_SSE_mean <- mean(xgb_SSE)
-    xgb_SSE_sd <- sd(xgb_SSE)
     xgb_ks_p_value[i] <- stats::ks.test(x = y_hat_xgb, y = c(test$y, validation$y), exact = TRUE)$p.value
     xgb_ks_p_value_mean <- mean(xgb_ks_p_value)
     xgb_ks_p_value_sd <- sd(xgb_ks_p_value)
@@ -2808,15 +2538,6 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_bagging_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bagging_test_predict_value, ensemble_bagging_validation_predict_value))
     ensemble_bagging_bias_mean <- mean(ensemble_bagging_bias)
     ensemble_bagging_bias_sd <- sd(ensemble_bagging_bias)
-    ensemble_bagging_MAE[i] <- Metrics::mae(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bagging_test_predict_value, ensemble_bagging_validation_predict_value))
-    ensemble_bagging_MAE_mean <- mean(ensemble_bagging_MAE)
-    ensemble_bagging_MAE_sd <- sd(ensemble_bagging_MAE)
-    ensemble_bagging_MSE[i] <- Metrics::mse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bagging_test_predict_value, ensemble_bagging_validation_predict_value))
-    ensemble_bagging_MSE_mean <- mean(ensemble_bagging_MSE)
-    ensemble_bagging_MSE_sd <- sd(ensemble_bagging_MSE)
-    ensemble_bagging_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bagging_test_predict_value, ensemble_bagging_validation_predict_value))
-    ensemble_bagging_SSE_mean <- mean(ensemble_bagging_SSE)
-    ensemble_bagging_SSE_sd <- sd(ensemble_bagging_SSE)
     ensemble_bagging_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_bagging, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_bagging_ks_p_value_mean <- mean(ensemble_bagging_ks_p_value)
     ensemble_bagging_ks_p_value_sd <- sd(ensemble_bagging_ks_p_value)
@@ -2878,15 +2599,6 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_bayesglm_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bayesglm_test_predict_value, ensemble_bayesglm_validation_predict_value))
     ensemble_bayesglm_bias_mean <- mean(ensemble_bayesglm_bias)
     ensemble_bayesglm_bias_sd <- sd(ensemble_bayesglm_bias)
-    ensemble_bayesglm_MAE[i] <- Metrics::mae(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bayesglm_test_predict_value, ensemble_bayesglm_validation_predict_value))
-    ensemble_bayesglm_MAE_mean <- mean(ensemble_bayesglm_MAE)
-    ensemble_bayesglm_MAE_sd <- sd(ensemble_bayesglm_MAE)
-    ensemble_bayesglm_MSE[i] <- Metrics::mse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bayesglm_test_predict_value, ensemble_bayesglm_validation_predict_value))
-    ensemble_bayesglm_MSE_mean <- mean(ensemble_bayesglm_MSE)
-    ensemble_bayesglm_MSE_sd <- sd(ensemble_bayesglm_MSE)
-    ensemble_bayesglm_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bayesglm_test_predict_value, ensemble_bayesglm_validation_predict_value))
-    ensemble_bayesglm_SSE_mean <- mean(ensemble_bayesglm_SSE)
-    ensemble_bayesglm_SSE_sd <- sd(ensemble_bayesglm_SSE)
     ensemble_bayesglm_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_bayesglm , y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_bayesglm_ks_p_value_mean <- mean(ensemble_bayesglm_ks_p_value)
     ensemble_bayesglm_ks_p_value_sd <- sd(ensemble_bayesglm_ks_p_value)
@@ -2948,15 +2660,6 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_bayesrnn_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bayesrnn_test_predict_value, ensemble_bayesrnn_validation_predict_value))
     ensemble_bayesrnn_bias_mean <- mean(ensemble_bayesrnn_bias)
     ensemble_bayesrnn_bias_sd <- sd(ensemble_bayesrnn_bias)
-    ensemble_bayesrnn_MAE[i] <- Metrics::mae(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bayesrnn_test_predict_value, ensemble_bayesrnn_validation_predict_value))
-    ensemble_bayesrnn_MAE_mean <- mean(ensemble_bayesrnn_MAE)
-    ensemble_bayesrnn_MAE_sd <- sd(ensemble_bayesrnn_MAE)
-    ensemble_bayesrnn_MSE[i] <- Metrics::mse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bayesrnn_test_predict_value, ensemble_bayesrnn_validation_predict_value))
-    ensemble_bayesrnn_MSE_mean <- mean(ensemble_bayesrnn_MSE)
-    ensemble_bayesrnn_MSE_sd <- sd(ensemble_bayesrnn_MSE)
-    ensemble_bayesrnn_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_bayesrnn_test_predict_value, ensemble_bayesrnn_validation_predict_value))
-    ensemble_bayesrnn_SSE_mean <- mean(ensemble_bayesrnn_SSE)
-    ensemble_bayesrnn_SSE_sd <- sd(ensemble_bayesrnn_SSE)
     ensemble_bayesrnn_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_bayesrnn, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_bayesrnn_ks_p_value_mean <- mean(ensemble_bayesrnn_ks_p_value)
     ensemble_bayesrnn_ks_p_value_sd <- sd(ensemble_bayesrnn_ks_p_value)
@@ -3018,15 +2721,6 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_cubist_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_cubist_test_predict_value, ensemble_cubist_validation_predict_value))
     ensemble_cubist_bias_mean <- mean(ensemble_cubist_bias)
     ensemble_cubist_bias_sd <- sd(ensemble_cubist_bias)
-    ensemble_cubist_MAE[i] <- Metrics::mae(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_cubist_test_predict_value, ensemble_cubist_validation_predict_value))
-    ensemble_cubist_MAE_mean <- mean(ensemble_cubist_MAE)
-    ensemble_cubist_MAE_sd <- sd(ensemble_cubist_MAE)
-    ensemble_cubist_MSE[i] <- Metrics::mse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_cubist_test_predict_value, ensemble_cubist_validation_predict_value))
-    ensemble_cubist_MSE_mean <- mean(ensemble_cubist_MSE)
-    ensemble_cubist_MSE_sd <- sd(ensemble_cubist_MSE)
-    ensemble_cubist_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_cubist_test_predict_value, ensemble_cubist_validation_predict_value))
-    ensemble_cubist_SSE_mean <- mean(ensemble_cubist_SSE)
-    ensemble_cubist_SSE_sd <- sd(ensemble_cubist_SSE)
     ensemble_cubist_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_cubist, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_cubist_ks_p_value_mean <- mean(ensemble_cubist_ks_p_value)
     ensemble_cubist_ks_p_value_sd <- sd(ensemble_cubist_ks_p_value)
@@ -3088,15 +2782,6 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_earth_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_earth_test_predict_value, ensemble_earth_validation_predict_value))
     ensemble_earth_bias_mean <- mean(ensemble_earth_bias)
     ensemble_earth_bias_sd <- sd(ensemble_earth_bias)
-    ensemble_earth_MAE[i] <- Metrics::mae(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_earth_test_predict_value, ensemble_earth_validation_predict_value))
-    ensemble_earth_MAE_mean <- mean(ensemble_earth_MAE)
-    ensemble_earth_MAE_sd <- sd(ensemble_earth_MAE)
-    ensemble_earth_MSE[i] <- Metrics::mse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_earth_test_predict_value, ensemble_earth_validation_predict_value))
-    ensemble_earth_MSE_mean <- mean(ensemble_earth_MSE)
-    ensemble_earth_MSE_sd <- sd(ensemble_earth_MSE)
-    ensemble_earth_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_earth_test_predict_value, ensemble_earth_validation_predict_value))
-    ensemble_earth_SSE_mean <- mean(ensemble_earth_SSE)
-    ensemble_earth_SSE_sd <- sd(ensemble_earth_SSE)
     ensemble_earth_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_earth, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_earth_ks_p_value_mean <- mean(ensemble_earth_ks_p_value)
     ensemble_earth_ks_p_value_sd <- sd(ensemble_earth_ks_p_value)
@@ -3179,15 +2864,6 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_elastic_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_elastic_test_predict_value, ensemble_elastic_validation_predict_value))
     ensemble_elastic_bias_mean <- mean(ensemble_elastic_bias)
     ensemble_elastic_bias_sd <- sd(ensemble_elastic_bias)
-    ensemble_elastic_MAE[i] <- Metrics::mae(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_elastic_test_predict_value, ensemble_elastic_validation_predict_value))
-    ensemble_elastic_MAE_mean <- mean(ensemble_elastic_MAE)
-    ensemble_elastic_MAE_sd <- sd(ensemble_elastic_MAE)
-    ensemble_elastic_MSE[i] <- Metrics::mse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_elastic_test_predict_value, ensemble_elastic_validation_predict_value))
-    ensemble_elastic_MSE_mean <- mean(ensemble_elastic_MSE)
-    ensemble_elastic_MSE_sd <- sd(ensemble_elastic_MSE)
-    ensemble_elastic_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_elastic_test_predict_value, ensemble_elastic_validation_predict_value))
-    ensemble_elastic_SSE_mean <- mean(ensemble_elastic_SSE)
-    ensemble_elastic_SSE_sd <- sd(ensemble_elastic_SSE)
     ensemble_elastic_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_elastic, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_elastic_ks_p_value_mean <- mean(ensemble_elastic_ks_p_value)
     ensemble_elastic_ks_p_value_sd <- sd(ensemble_elastic_ks_p_value)
@@ -3257,15 +2933,6 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_gb_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_gb_test_predict_value, ensemble_gb_validation_predict_value))
     ensemble_gb_bias_mean <- mean(ensemble_gb_bias)
     ensemble_gb_bias_sd <- sd(ensemble_gb_bias)
-    ensemble_gb_MAE[i] <- Metrics::mae(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_gb_test_predict_value, ensemble_gb_validation_predict_value))
-    ensemble_gb_MAE_mean <- mean(ensemble_gb_MAE)
-    ensemble_gb_MAE_sd <- sd(ensemble_gb_MAE)
-    ensemble_gb_MSE[i] <- Metrics::mse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_gb_test_predict_value, ensemble_gb_validation_predict_value))
-    ensemble_gb_MSE_mean <- mean(ensemble_gb_MSE)
-    ensemble_gb_MSE_sd <- sd(ensemble_gb_MSE)
-    ensemble_gb_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_gb_test_predict_value, ensemble_gb_validation_predict_value))
-    ensemble_gb_SSE_mean <- mean(ensemble_gb_SSE)
-    ensemble_gb_SSE_sd <- sd(ensemble_gb_SSE)
     ensemble_gb_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_gb, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_gb_ks_p_value_mean <- mean(ensemble_gb_ks_p_value)
     ensemble_gb_ks_p_value_sd <- sd(ensemble_gb_ks_p_value)
@@ -3349,15 +3016,6 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_lasso_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_lasso_test_predict_value, ensemble_lasso_validation_predict_value))
     ensemble_lasso_bias_mean <- mean(ensemble_lasso_bias)
     ensemble_lasso_bias_sd <- sd(ensemble_lasso_bias)
-    ensemble_lasso_MAE[i] <- Metrics::mae(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_lasso_test_predict_value, ensemble_lasso_validation_predict_value))
-    ensemble_lasso_MAE_mean <- mean(ensemble_lasso_MAE)
-    ensemble_lasso_MAE_sd <- sd(ensemble_lasso_MAE)
-    ensemble_lasso_MSE[i] <- Metrics::mse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_lasso_test_predict_value, ensemble_lasso_validation_predict_value))
-    ensemble_lasso_MSE_mean <- mean(ensemble_lasso_MSE)
-    ensemble_lasso_MSE_sd <- sd(ensemble_lasso_MSE)
-    ensemble_lasso_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_lasso_test_predict_value, ensemble_lasso_validation_predict_value))
-    ensemble_lasso_SSE_mean <- mean(ensemble_lasso_SSE)
-    ensemble_lasso_SSE_sd <- sd(ensemble_lasso_SSE)
     ensemble_lasso_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_lasso, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_lasso_ks_p_value_mean <- mean(ensemble_lasso_ks_p_value)
     ensemble_lasso_ks_p_value_sd <- sd(ensemble_lasso_ks_p_value)
@@ -3429,15 +3087,6 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_linear_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_linear_test_predict_value, ensemble_linear_validation_predict_value))
     ensemble_linear_bias_mean <- mean(ensemble_linear_bias)
     ensemble_linear_bias_sd <- sd(ensemble_linear_bias)
-    ensemble_linear_MAE[i] <- Metrics::mae(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_linear_test_predict_value, ensemble_linear_validation_predict_value))
-    ensemble_linear_MAE_mean <- mean(ensemble_linear_MAE)
-    ensemble_linear_MAE_sd <- sd(ensemble_linear_MAE)
-    ensemble_linear_MSE[i] <- Metrics::mse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_linear_test_predict_value, ensemble_linear_validation_predict_value))
-    ensemble_linear_MSE_mean <- mean(ensemble_linear_MSE)
-    ensemble_linear_MSE_sd <- sd(ensemble_linear_MSE)
-    ensemble_linear_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_linear_test_predict_value, ensemble_linear_validation_predict_value))
-    ensemble_linear_SSE_mean <- mean(ensemble_linear_SSE)
-    ensemble_linear_SSE_sd <- sd(ensemble_linear_SSE)
     ensemble_linear_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_linear, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_linear_ks_p_value_mean <- mean(ensemble_linear_ks_p_value)
     ensemble_linear_ks_p_value_sd <- sd(ensemble_linear_ks_p_value)
@@ -3521,15 +3170,6 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_ridge_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_ridge_test_predict_value, ensemble_ridge_validation_predict_value))
     ensemble_ridge_bias_mean <- mean(ensemble_ridge_bias)
     ensemble_ridge_bias_sd <- sd(ensemble_ridge_bias)
-    ensemble_ridge_MAE[i] <- Metrics::mae(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_ridge_test_predict_value, ensemble_ridge_validation_predict_value))
-    ensemble_ridge_MAE_mean <- mean(ensemble_ridge_MAE)
-    ensemble_ridge_MAE_sd <- sd(ensemble_ridge_MAE)
-    ensemble_ridge_MSE[i] <- Metrics::mse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_ridge_test_predict_value, ensemble_ridge_validation_predict_value))
-    ensemble_ridge_MSE_mean <- mean(ensemble_ridge_MSE)
-    ensemble_ridge_MSE_sd <- sd(ensemble_ridge_MSE)
-    ensemble_ridge_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_ridge_test_predict_value, ensemble_ridge_validation_predict_value))
-    ensemble_ridge_SSE_mean <- mean(ensemble_ridge_SSE)
-    ensemble_ridge_SSE_sd <- sd(ensemble_ridge_SSE)
     ensemble_ridge_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_ridge, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_ridge_ks_p_value_mean <- mean(ensemble_ridge_ks_p_value)
     ensemble_ridge_ks_p_value_sd <- sd(ensemble_ridge_ks_p_value)
@@ -3601,15 +3241,6 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_rpart_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_rpart_test_predict_value, ensemble_rpart_validation_predict_value))
     ensemble_rpart_bias_mean <- mean(ensemble_rpart_bias)
     ensemble_rpart_bias_sd <- sd(ensemble_rpart_bias)
-    ensemble_rpart_MAE[i] <- Metrics::mae(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_rpart_test_predict_value, ensemble_rpart_validation_predict_value))
-    ensemble_rpart_MAE_mean <- mean(ensemble_rpart_MAE)
-    ensemble_rpart_MAE_sd <- sd(ensemble_rpart_MAE)
-    ensemble_rpart_MSE[i] <- Metrics::mse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_rpart_test_predict_value, ensemble_rpart_validation_predict_value))
-    ensemble_rpart_MSE_mean <- mean(ensemble_rpart_MSE)
-    ensemble_rpart_MSE_sd <- sd(ensemble_rpart_MSE)
-    ensemble_rpart_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_rpart_test_predict_value, ensemble_rpart_validation_predict_value))
-    ensemble_rpart_SSE_mean <- mean(ensemble_rpart_SSE)
-    ensemble_rpart_SSE_sd <- sd(ensemble_rpart_SSE)
     ensemble_rpart_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_rpart, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_rpart_ks_p_value_mean <- mean(ensemble_rpart_ks_p_value)
     ensemble_rpart_ks_p_value_sd <- sd(ensemble_rpart_ks_p_value)
@@ -3663,15 +3294,6 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_svm_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_svm_test_predict_value, ensemble_svm_validation_predict_value))
     ensemble_svm_bias_mean <- mean(ensemble_svm_bias)
     ensemble_svm_bias_sd <- sd(ensemble_svm_bias)
-    ensemble_svm_MAE[i] <- Metrics::mae(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_svm_test_predict_value, ensemble_svm_validation_predict_value))
-    ensemble_svm_MAE_mean <- mean(ensemble_svm_MAE)
-    ensemble_svm_MAE_sd <- sd(ensemble_svm_MAE)
-    ensemble_svm_MSE[i] <- Metrics::mse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_svm_test_predict_value, ensemble_svm_validation_predict_value))
-    ensemble_svm_MSE_mean <- mean(ensemble_svm_MSE)
-    ensemble_svm_MSE_sd <- sd(ensemble_svm_MSE)
-    ensemble_svm_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_svm_test_predict_value, ensemble_svm_validation_predict_value))
-    ensemble_svm_SSE_mean <- mean(ensemble_svm_SSE)
-    ensemble_svm_SSE_sd <- sd(ensemble_svm_SSE)
     ensemble_svm_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_svm , y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_svm_ks_p_value_mean <- mean(ensemble_svm_ks_p_value)
     ensemble_svm_ks_p_value_sd <- sd(ensemble_svm_ks_p_value)
@@ -3732,15 +3354,6 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_tree_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_tree_test_predict_value, ensemble_tree_validation_predict_value))
     ensemble_tree_bias_mean <- mean(ensemble_tree_bias)
     ensemble_tree_bias_sd <- sd(ensemble_tree_bias)
-    ensemble_tree_MAE[i] <- Metrics::mae(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_tree_test_predict_value, ensemble_tree_validation_predict_value))
-    ensemble_tree_MAE_mean <- mean(ensemble_tree_MAE)
-    ensemble_tree_MAE_sd <- sd(ensemble_tree_MAE)
-    ensemble_tree_MSE[i] <- Metrics::mse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_tree_test_predict_value, ensemble_tree_validation_predict_value))
-    ensemble_tree_MSE_mean <- mean(ensemble_tree_MSE)
-    ensemble_tree_MSE_sd <- sd(ensemble_tree_MSE)
-    ensemble_tree_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_tree_test_predict_value, ensemble_tree_validation_predict_value))
-    ensemble_tree_SSE_mean <- mean(ensemble_tree_SSE)
-    ensemble_tree_SSE_sd <- sd(ensemble_tree_SSE)
     ensemble_tree_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_tree, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_tree_ks_p_value_mean <- mean(ensemble_tree_ks_p_value)
     ensemble_tree_ks_p_value_sd <- sd(ensemble_tree_ks_p_value)
@@ -3825,15 +3438,6 @@ Numeric <- function(data, colnum, numresamples,
     ensemble_xgb_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = ensemble_y_hat_xgb)
     ensemble_xgb_bias_mean <- mean(ensemble_xgb_bias)
     ensemble_xgb_bias_sd <- sd(ensemble_xgb_bias)
-    ensemble_xgb_MAE[i] <- Metrics::mae(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = ensemble_y_hat_xgb)
-    ensemble_xgb_MAE_mean <- mean(ensemble_xgb_MAE)
-    ensemble_xgb_MAE_sd <- sd(ensemble_xgb_MAE)
-    ensemble_xgb_MSE[i] <- Metrics::mse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = ensemble_y_hat_xgb)
-    ensemble_xgb_MSE_mean <- mean(ensemble_xgb_MSE)
-    ensemble_xgb_MSE_sd <- sd(ensemble_xgb_MSE)
-    ensemble_xgb_SSE[i] <- Metrics::sse(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = ensemble_y_hat_xgb)
-    ensemble_xgb_SSE_mean <- mean(ensemble_xgb_SSE)
-    ensemble_xgb_SSE_sd <- sd(ensemble_xgb_SSE)
     ensemble_xgb_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_xgb, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
     ensemble_xgb_ks_p_value_mean <- mean(ensemble_xgb_ks_p_value)
     ensemble_xgb_ks_p_value_sd <- sd(ensemble_xgb_ks_p_value)
@@ -3993,84 +3597,6 @@ Numeric <- function(data, colnum, numresamples,
       ensemble_lasso_bias_sd, ensemble_linear_bias_sd,
       ensemble_ridge_bias_sd, ensemble_rpart_bias_sd,
       ensemble_svm_bias_sd, ensemble_tree_bias_sd, ensemble_xgb_bias_sd
-    ), 4),
-    "Mean_MAE" = round(c(
-      0, bagging_MAE_mean, bayesglm_MAE_mean,
-      bayesrnn_MAE_mean, cubist_MAE_mean, earth_MAE_mean, elastic_MAE_mean,
-      gam_MAE_mean, gb_MAE_mean, lasso_MAE_mean, linear_MAE_mean,
-      neuralnet_MAE_mean, pls_MAE_mean, pcr_MAE_mean,
-      ridge_MAE_mean, rpart_MAE_mean, svm_MAE_mean, tree_MAE_mean, xgb_MAE_mean,
-      ensemble_bagging_MAE_mean, ensemble_bayesglm_MAE_mean,
-      ensemble_bayesrnn_MAE_mean, ensemble_cubist_MAE_mean, ensemble_earth_MAE_mean,
-      ensemble_elastic_MAE_mean, ensemble_gb_MAE_mean,
-      ensemble_lasso_MAE_mean, ensemble_linear_MAE_mean,
-      ensemble_ridge_MAE_mean, ensemble_rpart_MAE_mean,
-      ensemble_svm_MAE_mean, ensemble_tree_MAE_mean, ensemble_xgb_MAE_mean
-    ), 4),
-    "Mean_MAE_sd" = round(c(
-      0, bagging_MAE_sd, bayesglm_MAE_sd,
-      bayesrnn_MAE_sd, cubist_MAE_sd, earth_MAE_sd, elastic_MAE_sd,
-      gam_MAE_sd, gb_MAE_sd, lasso_MAE_sd, linear_MAE_sd,
-      neuralnet_MAE_sd, pls_MAE_sd, pcr_MAE_sd,
-      ridge_MAE_sd, rpart_MAE_sd, svm_MAE_sd, tree_MAE_sd, xgb_MAE_sd,
-      ensemble_bagging_MAE_sd, ensemble_bayesglm_MAE_sd,
-      ensemble_bayesrnn_MAE_sd, ensemble_cubist_MAE_sd, ensemble_earth_MAE_sd,
-      ensemble_elastic_MAE_sd, ensemble_gb_MAE_sd,
-      ensemble_lasso_MAE_sd, ensemble_linear_MAE_sd,
-      ensemble_ridge_MAE_sd, ensemble_rpart_MAE_sd,
-      ensemble_svm_MAE_sd, ensemble_tree_MAE_sd, ensemble_xgb_MAE_sd
-    ), 4),
-    "Mean_MSE" = round(c(
-      0, bagging_MSE_mean, bayesglm_MSE_mean,
-      bayesrnn_MSE_mean, cubist_MSE_mean, earth_MSE_mean, elastic_MSE_mean,
-      gam_MSE_mean, gb_MSE_mean, lasso_MSE_mean, linear_MSE_mean,
-      neuralnet_MSE_mean, pls_MSE_mean, pcr_MSE_mean,
-      ridge_MSE_mean, rpart_MSE_mean, svm_MSE_mean, tree_MSE_mean, xgb_MSE_mean,
-      ensemble_bagging_MSE_mean, ensemble_bayesglm_MSE_mean,
-      ensemble_bayesrnn_MSE_mean, ensemble_cubist_MSE_mean, ensemble_earth_MSE_mean,
-      ensemble_elastic_MSE_mean, ensemble_gb_MSE_mean,
-      ensemble_lasso_MSE_mean, ensemble_linear_MSE_mean,
-      ensemble_ridge_MSE_mean, ensemble_rpart_MSE_mean,
-      ensemble_svm_MSE_mean, ensemble_tree_MSE_mean, ensemble_xgb_MSE_mean
-    ), 4),
-    "Mean_MSE_sd" = round(c(
-      0, bagging_MSE_sd, bayesglm_MSE_sd,
-      bayesrnn_MSE_sd, cubist_MSE_sd, earth_MSE_sd, elastic_MSE_sd,
-      gam_MSE_sd, gb_MSE_sd, lasso_MSE_sd, linear_MSE_sd,
-      neuralnet_MSE_sd, pls_MSE_sd, pcr_MSE_sd,
-      ridge_MSE_sd, rpart_MSE_sd, svm_MSE_sd, tree_MSE_sd, xgb_MSE_sd,
-      ensemble_bagging_MSE_sd, ensemble_bayesglm_MSE_sd,
-      ensemble_bayesrnn_MSE_sd, ensemble_cubist_MSE_sd, ensemble_earth_MSE_sd,
-      ensemble_elastic_MSE_sd, ensemble_gb_MSE_sd,
-      ensemble_lasso_MSE_sd, ensemble_linear_MSE_sd,
-      ensemble_ridge_MSE_sd, ensemble_rpart_MSE_sd,
-      ensemble_svm_MSE_sd, ensemble_tree_MSE_sd, ensemble_xgb_MSE_sd
-    ), 4),
-    "Mean_SSE" = round(c(
-      0, bagging_SSE_mean, bayesglm_SSE_mean,
-      bayesrnn_SSE_mean, cubist_SSE_mean, earth_SSE_mean, elastic_SSE_mean,
-      gam_SSE_mean, gb_SSE_mean, lasso_SSE_mean, linear_SSE_mean,
-      neuralnet_SSE_mean, pls_SSE_mean, pcr_SSE_mean,
-      ridge_SSE_mean, rpart_SSE_mean, svm_SSE_mean, tree_SSE_mean, xgb_SSE_mean,
-      ensemble_bagging_SSE_mean, ensemble_bayesglm_SSE_mean,
-      ensemble_bayesrnn_SSE_mean, ensemble_cubist_SSE_mean, ensemble_earth_SSE_mean,
-      ensemble_elastic_SSE_mean, ensemble_gb_SSE_mean,
-      ensemble_lasso_SSE_mean, ensemble_linear_SSE_mean,
-      ensemble_ridge_SSE_mean, ensemble_rpart_SSE_mean,
-      ensemble_svm_SSE_mean, ensemble_tree_SSE_mean, ensemble_xgb_SSE_mean
-    ), 4),
-    "Mean_SSE_sd" = round(c(
-      0, bagging_SSE_sd, bayesglm_SSE_sd,
-      bayesrnn_SSE_sd, cubist_SSE_sd, earth_SSE_sd, elastic_SSE_sd,
-      gam_SSE_sd, gb_SSE_sd, lasso_SSE_sd, linear_SSE_sd,
-      neuralnet_SSE_sd, pls_SSE_sd, pcr_SSE_sd,
-      ridge_SSE_sd, rpart_SSE_sd, svm_SSE_sd, tree_SSE_sd, xgb_SSE_sd,
-      ensemble_bagging_SSE_sd, ensemble_bayesglm_SSE_sd,
-      ensemble_bayesrnn_SSE_sd, ensemble_cubist_SSE_sd, ensemble_earth_SSE_sd,
-      ensemble_elastic_SSE_sd, ensemble_gb_SSE_sd,
-      ensemble_lasso_SSE_sd, ensemble_linear_SSE_sd,
-      ensemble_ridge_SSE_sd, ensemble_rpart_SSE_sd,
-      ensemble_svm_SSE_sd, ensemble_tree_SSE_sd, ensemble_xgb_SSE_sd
     ), 4),
     "Mean_data" = round(c(
       actual_mean, bagging_predict_value_mean, bayesglm_predict_value_mean,
@@ -4357,197 +3883,6 @@ Numeric <- function(data, colnum, numresamples,
     ggplot2::ggsave("bias_plot.tiff", plot = bias_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 
-  MAE_data <-
-    data.frame(
-      "count" = 1:numresamples,
-      "model" = c(
-        c(rep("Bagging", numresamples)), c(rep("BayesGLM", numresamples)),
-        c(rep("BayesRNN", numresamples)),
-        c(rep("Cubist", numresamples)), c(rep("Earth", numresamples)), c(rep("Elastic", numresamples)), c(rep("Generalized Additive Models (GAM)", numresamples)),
-        c(rep("Gradient Boosted", numresamples)), c(rep("Lasso", numresamples)), c(rep("Linear", numresamples)),
-        c(rep("Neuralnet", numresamples)), c(rep("Principal Components Regression", numresamples)), c(rep("Partial Least Squares", numresamples)),
-        c(rep("Ridge", numresamples)), c(rep("RPart", numresamples)),
-        c(rep("Support Vector Machines", numresamples)), c(rep("Trees", numresamples)), c(rep("XGBoost", numresamples)),
-        c(rep("Ensemble Bagging", numresamples)),
-        c(rep("Ensemble BayesGLM", numresamples)), c(rep("Ensemble BayesRNN", numresamples)),
-        c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)), c(rep("Ensemble Elastic", numresamples)),
-        c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble Lasso", numresamples)),
-        c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Ridge", numresamples)),
-        c(rep("Ensemble RPart", numresamples)), c(rep("Ensemble Support Vector Machines", numresamples)),
-        c(rep("Ensemble Trees", numresamples)), c(rep("Ensemble XGBoost", numresamples))
-      ),
-      "data" = c(
-        bagging_MAE_mean, bayesglm_MAE_mean,
-        bayesrnn_MAE_mean,
-        cubist_MAE_mean, earth_MAE_mean, elastic_MAE_mean, gam_MAE_mean,
-        gb_MAE_mean, lasso_MAE_mean, linear_MAE_mean,
-        neuralnet_MAE_mean, pcr_MAE_mean, pls_MAE_mean,
-        ridge_MAE_mean, rpart_MAE_mean,
-        svm_MAE_mean, tree_MAE_mean, xgb_MAE_mean,
-        ensemble_bagging_MAE_mean,
-        ensemble_bayesglm_MAE_mean, ensemble_bayesrnn_MAE_mean,
-        ensemble_cubist_MAE_mean, ensemble_earth_MAE_mean, ensemble_elastic_MAE_mean,
-        ensemble_gb_MAE_mean, ensemble_lasso_MAE_mean,
-        ensemble_linear_MAE_mean, ensemble_ridge_MAE_mean,
-        ensemble_rpart_MAE_mean, ensemble_svm_MAE_mean,
-        ensemble_tree_MAE_mean, ensemble_xgb_MAE_mean
-      )
-    )
-
-  MAE_plot <- ggplot2::ggplot(data = MAE_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
-    ggplot2::geom_line(mapping = aes(x = count, y = data)) +
-    ggplot2::geom_point(mapping = aes(x = count, y = data)) +
-    ggplot2::geom_hline(aes(yintercept = 0, color = "red")) +
-    ggplot2::facet_wrap(~model, ncol = 4) +
-    ggplot2::ggtitle("MAE (Mean Absolute Error) plot\nMAE value by model, closer to zero is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 0.") +
-    ggplot2::labs(y = "MAE (Mean Absolute Error) value, closer to zero is better \n The horizontal line is the mean of the results, the red line is 0.") +
-    ggplot2::theme(legend.position = "none")
-  if(save_all_plots == "Y" && device == "eps"){
-    ggplot2::ggsave("MAE_plot.eps", plot = MAE_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && device == "jpeg"){
-    ggplot2::ggsave("MAE_plot.jpeg", plot = MAE_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && device == "pdf"){
-    ggplot2::ggsave("MAE_plot.pdf", plot = MAE_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && device == "png"){
-    ggplot2::ggsave("MAE_plot.png", plot = MAE_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && device == "svg"){
-    ggplot2::ggsave("MAE_plot.svg", plot = MAE_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && device == "tiff"){
-    ggplot2::ggsave("MAE_plot.tiff", plot = MAE_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-
-  MSE_data <-
-    data.frame(
-      "count" = 1:numresamples,
-      "model" = c(
-        c(rep("Bagging", numresamples)), c(rep("BayesGLM", numresamples)),
-        c(rep("BayesRNN", numresamples)),
-        c(rep("Cubist", numresamples)), c(rep("Earth", numresamples)), c(rep("Elastic", numresamples)), c(rep("Generalized Additive Models (GAM)", numresamples)),
-        c(rep("Gradient Boosted", numresamples)), c(rep("Lasso", numresamples)), c(rep("Linear", numresamples)),
-        c(rep("Neuralnet", numresamples)), c(rep("Principal Components Regression", numresamples)), c(rep("Partial Least Squares", numresamples)),
-        c(rep("Ridge", numresamples)), c(rep("RPart", numresamples)),
-        c(rep("Support Vector Machines", numresamples)), c(rep("Trees", numresamples)), c(rep("XGBoost", numresamples)),
-        c(rep("Ensemble Bagging", numresamples)),
-        c(rep("Ensemble BayesGLM", numresamples)), c(rep("Ensemble BayesRNN", numresamples)),
-        c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)), c(rep("Ensemble Elastic", numresamples)),
-        c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble Lasso", numresamples)),
-        c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Ridge", numresamples)),
-        c(rep("Ensemble RPart", numresamples)), c(rep("Ensemble Support Vector Machines", numresamples)),
-        c(rep("Ensemble Trees", numresamples)), c(rep("Ensemble XGBoost", numresamples))
-      ),
-      "data" = c(
-        bagging_MSE_mean, bayesglm_MSE_mean,
-        bayesrnn_MSE_mean,
-        cubist_MSE_mean, earth_MSE_mean, elastic_MSE_mean, gam_MSE_mean,
-        gb_MSE_mean, lasso_MSE_mean, linear_MSE_mean,
-        neuralnet_MSE_mean, pcr_MSE_mean, pls_MSE_mean,
-        ridge_MSE_mean, rpart_MSE_mean,
-        svm_MSE_mean, tree_MSE_mean, xgb_MSE_mean,
-        ensemble_bagging_MSE_mean,
-        ensemble_bayesglm_MSE_mean, ensemble_bayesrnn_MSE_mean,
-        ensemble_cubist_MSE_mean, ensemble_earth_test_RMSE_mean, ensemble_elastic_MSE_mean,
-        ensemble_gb_MSE_mean, ensemble_lasso_MSE_mean,
-        ensemble_linear_MSE_mean, ensemble_ridge_MSE_mean,
-        ensemble_rpart_MSE_mean, ensemble_svm_MSE_mean,
-        ensemble_tree_MSE_mean, ensemble_xgb_MSE_mean
-      )
-    )
-
-  MSE_plot <- ggplot2::ggplot(data = MSE_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
-    ggplot2::geom_line(mapping = aes(x = count, y = data)) +
-    ggplot2::geom_point(mapping = aes(x = count, y = data)) +
-    ggplot2::geom_hline(aes(yintercept = 0, color = "red")) +
-    ggplot2::facet_wrap(~model, ncol = 4) +
-    ggplot2::ggtitle("MSE (Mean Squared Error) plot\nMSE value by model, closer to zero is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 0.") +
-    ggplot2::labs(y = "MSE (Mean Squared Error) value, closer to zero is better \n The horizontal line is the mean of the results, the red line is 0.") +
-    ggplot2::theme(legend.position = "none")
-  if(save_all_plots == "Y" && device == "eps"){
-    ggplot2::ggsave("MSE_plot.eps", plot = MSE_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && device == "jpeg"){
-    ggplot2::ggsave("MSE_plot.jpeg", plot = MSE_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && device == "pdf"){
-    ggplot2::ggsave("MSE_plot.pdf", plot = MSE_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && device == "png"){
-    ggplot2::ggsave("MSE_plot.png", plot = MSE_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && device == "svg"){
-    ggplot2::ggsave("MSE_plot.svg", plot = MSE_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && device == "tiff"){
-    ggplot2::ggsave("MSE_plot.tiff", plot = MSE_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-
-  SSE_data <-
-    data.frame(
-      "count" = 1:numresamples,
-      "model" = c(
-        c(rep("Bagging", numresamples)), c(rep("BayesGLM", numresamples)),
-        c(rep("BayesRNN", numresamples)),
-        c(rep("Cubist", numresamples)), c(rep("Earth", numresamples)), c(rep("Elastic", numresamples)), c(rep("Generalized Additive Models (GAM)", numresamples)),
-        c(rep("Gradient Boosted", numresamples)), c(rep("Lasso", numresamples)), c(rep("Linear", numresamples)),
-        c(rep("Neuralnet", numresamples)), c(rep("Principal Components Regression", numresamples)), c(rep("Partial Least Squares", numresamples)),
-        c(rep("Ridge", numresamples)), c(rep("RPart", numresamples)),
-        c(rep("Support Vector Machines", numresamples)), c(rep("Trees", numresamples)), c(rep("XGBoost", numresamples)),
-        c(rep("Ensemble Bagging", numresamples)),
-        c(rep("Ensemble BayesGLM", numresamples)), c(rep("Ensemble BayesRNN", numresamples)),
-        c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)), c(rep("Ensemble Elastic", numresamples)),
-        c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble Lasso", numresamples)),
-        c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Ridge", numresamples)),
-        c(rep("Ensemble RPart", numresamples)), c(rep("Ensemble Support Vector Machines", numresamples)),
-        c(rep("Ensemble Trees", numresamples)), c(rep("Ensemble XGBoost", numresamples))
-      ),
-      "data" = c(
-        bagging_SSE_mean, bayesglm_SSE_mean,
-        bayesrnn_SSE_mean,
-        cubist_SSE_mean, earth_SSE_mean, elastic_SSE_mean, gam_SSE_mean,
-        gb_SSE_mean, lasso_SSE_mean, linear_SSE_mean,
-        neuralnet_SSE_mean, pcr_SSE_mean, pls_SSE_mean,
-        ridge_SSE_mean, rpart_SSE_mean,
-        svm_SSE_mean, tree_SSE_mean, xgb_SSE_mean,
-        ensemble_bagging_SSE_mean,
-        ensemble_bayesglm_SSE_mean, ensemble_bayesrnn_SSE_mean,
-        ensemble_cubist_SSE_mean, ensemble_earth_SSE_mean, ensemble_ridge_SSE_mean,
-        ensemble_gb_SSE_mean, ensemble_lasso_SSE_mean,
-        ensemble_linear_SSE_mean, ensemble_ridge_SSE_mean,
-        ensemble_rpart_SSE_mean, ensemble_svm_SSE_mean,
-        ensemble_tree_SSE_mean, ensemble_xgb_SSE_mean
-      )
-    )
-
-  SSE_plot <- ggplot2::ggplot(data = SSE_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
-    ggplot2::geom_line(mapping = aes(x = count, y = data)) +
-    ggplot2::geom_point(mapping = aes(x = count, y = data)) +
-    ggplot2::geom_hline(aes(yintercept = 0, color = "red")) +
-    ggplot2::facet_wrap(~model, ncol = 4) +
-    ggplot2::ggtitle("SSE (Sum of Squares Error) plot\nSSE value by model, closer to zero is better. \nThe black horizontal line is the mean of the results, the red horizontal line is 0.") +
-    ggplot2::labs(y = "SSE (Sum of Squares Error) value, closer to zero is better \n The horizontal line is the mean of the results, the red line is 0.") +
-    ggplot2::theme(legend.position = "none")
-  if(save_all_plots == "Y" && device == "eps"){
-    ggplot2::ggsave("SSE_plot.eps", plot = SSE_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && device == "jpeg"){
-    ggplot2::ggsave("SSE_plot.jpeg", plot = SSE_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && device == "pdf"){
-    ggplot2::ggsave("SSE_plot.pdf", plot = SSE_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && device == "png"){
-    ggplot2::ggsave("SSE_plot.png", plot = SSE_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && device == "svg"){
-    ggplot2::ggsave("SSE_plot.svg", plot = SSE_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && device == "tiff"){
-    ggplot2::ggsave("SSE_plot.tiff", plot = SSE_plot, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
 
   summary_results <- summary_results %>% dplyr::arrange(Mean_holdout_RMSE)
 
@@ -5557,86 +4892,6 @@ Numeric <- function(data, colnum, numresamples,
     ggplot2::ggsave("bias_barchart.tiff", plot = bias_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
   }
 
-  MAE_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_MAE), y = Mean_MAE)) +
-    ggplot2::geom_col(width = 0.5)+
-    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1, hjust=1)) +
-    ggplot2::labs(x = "Model", y = "Holdout MAE", title = "Mean MAE (Mean Absolute Error), closer to zero is better, 1 std deviation error bars") +
-    ggplot2::geom_text(aes(label = Mean_MAE), vjust = -0.5, hjust = -0.5, angle = 90) +
-    ggplot2::ylim(min(summary_results$Mean_MAE), 1.5*max(summary_results$Mean_MAE)) +
-    ggplot2::geom_errorbar(aes(x = Model, ymin = Mean_MAE - Mean_MAE_sd, ymax = Mean_MAE + Mean_MAE_sd))
-  plot <- 5
-  if(save_all_plots == "Y" && plot == 5 && device == "eps"){
-    ggplot2::ggsave("MAE_barchart.eps", plot = MAE_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && plot == 5 && device == "jpeg"){
-    ggplot2::ggsave("MAE_barchart.jpeg", plot = MAE_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && plot == 5 && device == "pdf"){
-    ggplot2::ggsave("MAE_barchart.pdf", plot = MAE_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && plot == 5 && device == "png"){
-    ggplot2::ggsave("MAE_barchart.png", plot = MAE_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && plot == 5 && device == "svg"){
-    ggplot2::ggsave("MAE_barchart.svg", plot = MAE_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && plot == 5 && device == "tiff"){
-    ggplot2::ggsave("MAE_barchart.tiff", plot = MAE_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-
-  MSE_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_MSE), y = Mean_MSE)) +
-    ggplot2::geom_col(width = 0.5)+
-    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1, hjust=1)) +
-    ggplot2::labs(x = "Model", y = "Holdout MSE", title = "Mean MSE (Mean Squared Error), lower is better, 1 std deviation error bars") +
-    ggplot2::geom_text(aes(label = Mean_MSE), vjust = -0.5, hjust = -0.5, angle = 90)  +
-    ggplot2::ylim(min(summary_results$Mean_MSE), 1.5*max(summary_results$Mean_MSE)) +
-    ggplot2::geom_errorbar(aes(x = Model, ymin = Mean_MSE - Mean_MSE_sd, ymax = Mean_MSE + Mean_MSE_sd))
-  plot <- 6
-  if(save_all_plots == "Y" && plot == 6 && device == "eps"){
-    ggplot2::ggsave("MSE_barchart.eps", plot = MSE_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && plot == 6 && device == "jpeg"){
-    ggplot2::ggsave("MSE_barchart.jpeg", plot = MSE_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && plot == 6 && device == "pdf"){
-    ggplot2::ggsave("MSE_barchart.pdf", plot = MSE_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && plot == 6 && device == "png"){
-    ggplot2::ggsave("MSE_barchart.png", plot = MSE_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && plot == 6 && device == "svg"){
-    ggplot2::ggsave("MSE_barchart.svg", plot = MSE_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && plot == 6 && device == "tiff"){
-    ggplot2::ggsave("MSE_barchart.tiff", plot = MSE_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-
-  SSE_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Mean_SSE), y = Mean_SSE)) +
-    ggplot2::geom_col(width = 0.5)+
-    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1, hjust=1)) +
-    ggplot2::labs(x = "Model", y = "Holdout SSE", title = "Mean SSE (Sum of Squared Error), lower is better, 1 std deviation error bars") +
-    ggplot2::geom_text(aes(label = Mean_SSE), vjust = -0.5, hjust = -0.5, angle = 90) +
-    ggplot2::ylim(min(summary_results$Mean_SSE), 1.5*max(summary_results$Mean_SSE)) +
-    ggplot2::geom_errorbar(aes(x = Model, ymin = Mean_SSE - Mean_SSE_sd, ymax = Mean_SSE + Mean_SSE_sd))
-  plot <- 7
-  if(save_all_plots == "Y" && plot == 7 && device == "eps"){
-    ggplot2::ggsave("SSE_barchart.eps", plot = SSE_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && plot == 7 && device == "jpeg"){
-    ggplot2::ggsave("SSE_barchart.jpeg", plot = SSE_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && plot == 7 && device == "pdf"){
-    ggplot2::ggsave("SSE_barchart.pdf", plot = SSE_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && plot == 7 && device == "png"){
-    ggplot2::ggsave("SSE_barchart.png", plot = SSE_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && plot == 7 && device == "svg"){
-    ggplot2::ggsave("SSE_barchart.svg", plot = SSE_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && plot == 7 && device == "tiff"){
-    ggplot2::ggsave("SSE_barchart.tiff", plot = SSE_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
 
   data_visualizations <- summary_results[2, 1]
 
@@ -7549,8 +6804,8 @@ Numeric <- function(data, colnum, numresamples,
       "Cooks_distance" = cooks_distance_plot, "histograms" = histograms, "boxplots" = boxplots, "predictor_vs_target" = predictor_vs_target,
       "final_results_table" = final_results, "data_correlation" = data_correlation, "data_summary" = data_summary, "head_of_ensemble" = head_ensemble, "ensemble_correlation" = ensemble_correlation,
       "accuracy_barchart" = accuracy_barchart, "train_vs_holdout" = total_plot, "duration_barchart" = duration_barchart, "holdout_vs_train_barchart" = holdout_vs_train_barchart,
-      "bias_barchart" = bias_barchart, "MSE_barchart" = MSE_barchart, "MAE_barchart" = MAE_barchart, "SSE_barchart" = SSE_barchart,
-      "bias_plot" = bias_plot, "MSE_plot" = MSE_plot, "MAE_plot" = MAE_plot, "SSE_plot" = SSE_plot, "Kolmogorov-Smirnov test p-score" = k_s_test_barchart,
+      "bias_barchart" = bias_barchart,
+      "bias_plot" = bias_plot, "Kolmogorov-Smirnov test p-score" = k_s_test_barchart,
       "colnum" = colnum, "numresamples" = numresamples, "predict_on_new_data" = predictions_of_new_data, "save_all_trained_models" = save_all_trained_models,
       "how_to_handle_strings" = how_to_handle_strings, "data_reduction_method" = data_reduction_method, 'VIF' = VIF, "scale_data" = scale_all_predictors_in_data,
       "train_amount" = train_amount, "test_amount" = test_amount, "validation_amount" = validation_amount
@@ -7693,8 +6948,6 @@ Numeric <- function(data, colnum, numresamples,
     "Kolmogorov-Smirnov test p-score" = k_s_test_barchart, "p-value_barchart" = p_value_barchart, "train_vs_holdout" = total_plot, "train_vs_holdout_free_scales" = total_plot2,
     "final_results_table" = final_results,  "ensemble_correlation" = ensemble_correlation,
     "data_summary" = data_summary, 'VIF' = VIF,
-    "MSE_barchart" = MSE_barchart, "MAE_barchart" = MAE_barchart, "SSE_barchart" = SSE_barchart,
-    "MSE_plot" = MSE_plot, "MAE_plot" = MAE_plot, "SSE_plot" = SSE_plot,
     "colnum" = colnum, "numresamples" = numresamples, "save_all_trained_modesl" = save_all_trained_models, "how_to_handle_strings" = how_to_handle_strings,
     "data_reduction_method" = data_reduction_method,  "scale_data" = scale_all_predictors_in_data,
     "train_amount" = train_amount, "test_amount" = test_amount, "validation_amount" = validation_amount
