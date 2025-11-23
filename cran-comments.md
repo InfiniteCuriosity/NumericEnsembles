@@ -43,3 +43,9 @@ This took a very large amount of work, but is fixed. Nothing writes to the user'
 * 0.10.2, updated the ReadMe to reflect most recent changes, including adding a Quarto template for a comprehensive report on the data and analysis.
 
 * 0.10.3, update version number.
+
+* 0.10.4, remove all references to MAE, SSE, MSE (data, calculations, plots, etc.)
+
+* 0.10.5 Fix name: Change holdout / RMSE to overfitting (both more accurate and easier to understand)
+
+* 0.10.6 Add back remove_data_correlations_greater_than. This addresses issues when data has columns that are highly correlated.
