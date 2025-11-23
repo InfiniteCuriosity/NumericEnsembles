@@ -1,3 +1,6 @@
+# 0.10.4
+## Remove all references to MAE, MSE, SSE
+
 # 0.10.3
 ## Update version number to reflect all changes.
 
