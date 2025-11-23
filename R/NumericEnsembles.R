@@ -299,10 +299,13 @@ Numeric <- function(data, colnum, numresamples,
     reactablefmtr::add_title("Correlation of the data")
 
   title <- "Correlation plot of the numerical data"
-  corrplot::corrplot(stats::cor(df1), method = "number", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
+  corrplot_number <- corrplot::corrplot(stats::cor(df1), method = "number", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
 
-  corrplot::corrplot(stats::cor(df1), method = "circle", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
+  corrplot_circle <- corrplot::corrplot(stats::cor(df1), method = "circle", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
+
+
   tempdir1 <- tempdir()
+
   ## Boxplots of the numeric data ##
   boxplots <- df %>%
     tidyr::gather(key = "var", value = "value") %>%
@@ -6951,6 +6954,7 @@ Numeric <- function(data, colnum, numresamples,
     "head_of_data" = head_df, "boxplots" = boxplots, "Cooks_distance" = cooks_distance_plot, "histograms" = histograms, "predictor_vs_target" = predictor_vs_target, "data_correlation" = data_correlation,
     "accuracy_barchart" = accuracy_barchart, "accuracy_plot" = accuracy_plot, "accuracy_free_scales" = accuracy_plot2, "bias_barchart" = bias_barchart, "bias_plot" = bias_plot, "duration_barchart" = duration_barchart,
     "head_of_ensemble" = head_ensemble, "overfitting_barchart" = overfitting_barchart,
+    "Correlation_as_numbers" = corrplot_number, "Correlation_as_circles" = corrplot_circle,
     "overfitting_plot" = overfitting_plot, "overfitting_plot2" = overfitting_plot2,
     "Kolmogorov-Smirnov test p-score" = k_s_test_barchart, "p-value_barchart" = p_value_barchart, "train_vs_holdout" = total_plot, "train_vs_holdout_free_scales" = total_plot2,
     "final_results_table" = final_results,  "ensemble_correlation" = ensemble_correlation,
