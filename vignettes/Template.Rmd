@@ -20,6 +20,8 @@ editor_options:
 
 # The goal of this investigation
 
+# Original source of the data
+
 # Exploratory Data Analysis
 
 1.  Head of the data (put Head of Data report here)
@@ -422,13 +424,15 @@ ensemble_xgb_model_validation <- xgboost::xgb.train(data = ensemble_xgb_train, m
 
 6.  Head of the ensemble (report)
 
-7.  Overfitting (Holdout RMSE / Train RMSE) barchart (measures reproducibility)
+7.  Overfitting (Holdout RMSE / Train RMSE) barchart (measures
+    reproducibility)
 
-8.  Overfitting (Holdout RMSE / Train RMSE) by model and resample (choose fixed or free scales)
+8.  Overfitting (Holdout RMSE / Train RMSE) by model and resample
+    (choose fixed or free scales)
 
 9.  Kolomogorov-Smirnov test barchart
 
-10.  t-test bar chart
+10. t-test bar chart
 
 11. Train vs holdout by model and resample (choose fixed or free scales)
 
