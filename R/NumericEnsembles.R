@@ -14,6 +14,7 @@
 #' @param remove_VIF_above remove columns with Variable Inflation Factor above value chosen by the user
 #' @param data_reduction_method 0(none), BIC (1, 2, 3, 4) or Mallow's_cp (5, 6, 7, 8) for Forward, Backward, Exhaustive and SeqRep
 #' @param ensemble_reduction_method 0(none), BIC (1, 2, 3, 4) or Mallow's_cp (5, 6, 7, 8) for Forward, Backward, Exhaustive and SeqRep
+#' @param stratified_random_sampling "Y" or "N" to use stratified random sampling (percent, numeric or classificaiton)
 #' @param use_parallel "Y" or "N" for parallel processing
 #' @param train_amount set the amount for the training data
 #' @param test_amount set the amount for the testing data
@@ -67,7 +68,7 @@ Numeric <- function(data, colnum, numresamples,
                                                   5("Mallows_cp exhaustive"), 6("Mallows_cp forward"), 7("Mallows_cp backward"), 8("Mallows_cp, seqrep")),
                     how_to_handle_strings = c(0("none"), 1("factor levels"), 2("One-hot encoding"), 3("One-hot encoding with jitter")),
                     predict_on_new_data = c("Y", "N"), set_seed = c("Y", "N"), save_all_trained_models = c("Y", "N"), save_all_plots = c("Y", "N"),
-                    use_parallel = c("Y", "N"),
+                    use_parallel = c("Y", "N"), stratified_random_sampling = c("Y", "N"),
                     train_amount, test_amount, validation_amount) {
 
   use_parallel <- 0
@@ -304,6 +305,9 @@ Numeric <- function(data, colnum, numresamples,
 
   corrplot_circle <- corrplot::corrplot(stats::cor(df1), method = "circle", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
   corrplot_circle <- recordPlot(corrplot_circle)
+
+  corrplot_full <- corrplot::corrplot(stats::cor(df1), method = "circle", title = title, mar = c(0, 0, 1, 0), addCoef.col = "white", type = "upper", bg = "gray")
+  corrplot_full <- recordPlot(corrplot_full)
 
   tempdir1 <- tempdir()
 
@@ -1190,6 +1194,15 @@ Numeric <- function(data, colnum, numresamples,
   t_test_p.value_mean <- 0
   t_test_p_value_sd <- 0
   plot <- 0
+
+if(stratified_random_sampling == "Y"){
+  which_method_of_stratification <- readline("Would you like: 1. Numeric (quantity), 2. Percentage (fraction), 3. Column")
+  if(which_method_of_stratification == 1){} # split train/test/validation by numeric
+  if(which_method_of_stratification == 2){} # split train/test/validation by percentage
+  if(which_method_of_stratification == 3){} # split train/test/validation by column in the current data set
+}
+
+
 
 
   for (i in 1:numresamples) {
@@ -6485,7 +6498,7 @@ Numeric <- function(data, colnum, numresamples,
     ggplot2::geom_point(mapping = aes(x = count, y = holdout)) +
     ggplot2::geom_hline(aes(yintercept = 0, color = "optimal")) +
     ggplot2::facet_wrap(~model, ncol = 4, scales = "free") +
-    ggplot2::ggtitle("Train vs holdout data by resample and model. Free scales \nRoot Mean Squared Error by model, lower is better. \nThe black horizontal line is 0.") +
+    ggplot2::ggtitle("Overfitting (Train vs holdout) results by resample and model. Free scales \nRoot Mean Squared Error by model, lower is better. \nThe black horizontal line is 0.") +
     ggplot2::labs(y = "Root Mean Squared Error (RMSE), lower is better \nthe black line is 0.\n") +
     ggplot2::scale_color_manual(
       name = "Total Results",
@@ -6518,7 +6531,7 @@ Numeric <- function(data, colnum, numresamples,
     ggplot2::geom_point(mapping = aes(x = count, y = holdout)) +
     ggplot2::geom_hline(aes(yintercept = 0, color = "optimal")) +
     ggplot2::facet_wrap(~model, ncol = 4, scales = "fixed") +
-    ggplot2::ggtitle("Train vs holdout data by resample and model. Fixed scales \nRoot Mean Squared Error by model, lower is better. \nThe black horizontal line is 0.") +
+    ggplot2::ggtitle("Overfitting (Train vs holdout) results by resample and model. Fixed scales \nRoot Mean Squared Error by model, lower is better. \nThe black horizontal line is 0.") +
     ggplot2::labs(y = "Root Mean Squared Error (RMSE), lower is better \nthe black line is 0.\n") +
     ggplot2::scale_color_manual(
       name = "Total Results",
@@ -6953,13 +6966,14 @@ Numeric <- function(data, colnum, numresamples,
 
   return(list(
     "head_of_data" = head_df, "boxplots" = boxplots, "Cooks_distance" = cooks_distance_plot, "histograms" = histograms, "predictor_vs_target" = predictor_vs_target, "data_correlation" = data_correlation,
+    "Correlation_as_numbers" = corrplot_number, "Correlation_as_circles" = corrplot_circle, "Corrplot_full" = corrplot_full,'VIF' = VIF,
     "accuracy_barchart" = accuracy_barchart, "accuracy_plot" = accuracy_plot, "accuracy_free_scales" = accuracy_plot2, "bias_barchart" = bias_barchart, "bias_plot" = bias_plot, "duration_barchart" = duration_barchart,
     "head_of_ensemble" = head_ensemble, "overfitting_barchart" = overfitting_barchart,
-    "Correlation_as_numbers" = corrplot_number, "Correlation_as_circles" = corrplot_circle,
     "overfitting_plot" = overfitting_plot, "overfitting_plot2" = overfitting_plot2,
-    "Kolmogorov-Smirnov test p-score" = k_s_test_barchart, "p-value_barchart" = p_value_barchart, "train_vs_holdout" = total_plot, "train_vs_holdout_free_scales" = total_plot2,
+    "train_vs_holdout" = total_plot, "train_vs_holdout_free_scales" = total_plot2,
+    "Kolmogorov-Smirnov test p-score" = k_s_test_barchart, "p-value_barchart" = p_value_barchart,
     "final_results_table" = final_results,  "ensemble_correlation" = ensemble_correlation,
-    "data_summary" = data_summary, 'VIF' = VIF,
+    "data_summary" = data_summary,
     "colnum" = colnum, "numresamples" = numresamples, "save_all_trained_modesl" = save_all_trained_models, "how_to_handle_strings" = how_to_handle_strings,
     "data_reduction_method" = data_reduction_method,  "scale_data" = scale_all_predictors_in_data,
     "train_amount" = train_amount, "test_amount" = test_amount, "validation_amount" = validation_amount
