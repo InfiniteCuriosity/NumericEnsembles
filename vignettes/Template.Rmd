@@ -54,6 +54,8 @@ editor_options:
 
 16. Discussion of correlation of the data (report and charts)
 
+17. VIF report
+
 # Model building
 
 ### Function call (replace with your function call):
@@ -64,6 +66,7 @@ Numeric(data = MASS::Boston,
         colnum = 14,
         numresamples = 25,
         remove_VIF_above = 5.00,
+        remove_data_correlations_greater_thank = 0.99,
         remove_ensemble_correlations_greater_than = 1.00,
         scale_all_predictors_in_data = "N",
         data_reduction_method = 1,
@@ -415,23 +418,21 @@ ensemble_xgb_model_validation <- xgboost::xgb.train(data = ensemble_xgb_train, m
 
 4.  Bias plot
 
-4.  Duration barchart
+5.  Duration barchart
 
-5.  Head of the ensemble (report)
+6.  Head of the ensemble (report)
 
-6.  Holdout RMSE / Train RMSE barchart (measures reproducibility)
+7.  Overfitting (Holdout RMSE / Train RMSE) barchart (measures reproducibility)
 
-7.  Holdout RMSE / Train RMSE (choose fixed or free scales)
+8.  Overfitting (Holdout RMSE / Train RMSE) by model and resample (choose fixed or free scales)
 
-8.  Kolomogorov-Smirnov test barchart
+9.  Kolomogorov-Smirnov test barchart
 
-9.  t-test bar chart
+10.  t-test bar chart
 
-10. Train vs holdout by model and resample (choose fixed or free scales)
+11. Train vs holdout by model and resample (choose fixed or free scales)
 
-11. Summary report
-
-12. Variance Inflation Factor report
+12. Summary report
 
 13. Ensemble Correlation report
 
