@@ -49,3 +49,5 @@ This took a very large amount of work, but is fixed. Nothing writes to the user'
 * 0.10.5 Fix name: Change holdout / RMSE to overfitting (both more accurate and easier to understand)
 
 * 0.10.6 Add back remove_data_correlations_greater_than. This addresses issues when data has columns that are highly correlated.
+
+* 0.10.7 Added stratified random sampling for the train, test and validation data sets
