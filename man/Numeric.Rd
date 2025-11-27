@@ -25,6 +25,7 @@ Numeric(
   save_all_trained_models = c("Y", "N"),
   save_all_plots = c("Y", "N"),
   use_parallel = c("Y", "N"),
+  stratified_random_sampling = c("Y", "N"),
   train_amount,
   test_amount,
   validation_amount
@@ -60,6 +61,8 @@ Numeric(
 \item{save_all_plots}{Saves all plots to the working directory}
 
 \item{use_parallel}{"Y" or "N" for parallel processing}
+
+\item{stratified_random_sampling}{"Y" or "N" to use stratified random sampling (percent, numeric or classification)}
 
 \item{train_amount}{set the amount for the training data}
 
