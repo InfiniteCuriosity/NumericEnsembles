@@ -271,9 +271,9 @@ if(save_all_plots == "Y"){
   dpi <- as.numeric(readline("Plot resolution. Applies only to raster output types (jpeg, png, tiff): "))
 }
 
-head_df <- reactable::reactable(head(df, n = 10),
-                                searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
-                                striped = TRUE, highlight = TRUE, resizable = TRUE
+head_df <- head(df, 10) %>%  dplyr::mutate(dplyr::across(is.numeric, round, digits=4))
+head_df <-  head_df %>% reactable::reactable(searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
+                                             striped = TRUE, highlight = TRUE, resizable = TRUE
 )%>%
   reactablefmtr::add_title("Head of the data frame")
 
