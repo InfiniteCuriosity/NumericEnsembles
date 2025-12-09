@@ -1,5 +1,5 @@
 # 0.10.7
-## Added automatic stratified sampling for train, test and validation sets.
+## Added automatic stratified sampling for train, test and validation sets. Also added automatic histograms of the overfitting data.
 
 # 0.10.6
 ## Add back remove_data_correlations_greater_than. This addresses issues when data has columns that are highly correlated.
