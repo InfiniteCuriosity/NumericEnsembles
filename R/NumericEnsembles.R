@@ -20,9 +20,6 @@
 #' @param test_amount set the amount for the testing data
 #' @param validation_amount Set the amount for the validation data
 #'
-#' @return a real number
-#' @export Numeric
-
 #' @importFrom arm bayesglm
 #' @importFrom brnn brnn
 #' @importFrom broom tidy
@@ -59,6 +56,9 @@
 #' @importFrom tree tree cv.tree misclass.tree
 #' @importFrom utils tail str head read.csv
 #' @importFrom xgboost xgb.DMatrix xgb.train
+#'
+#' @return a real number
+#' @export Numeric
 
 Numeric <- function(data, colnum, numresamples,
                     remove_VIF_above = 5.00, remove_data_correlations_greater_than = 0.99, remove_ensemble_correlations_greater_than = 0.98, scale_all_predictors_in_data = c("Y", "N"),
@@ -271,7 +271,7 @@ if(save_all_plots == "Y"){
   dpi <- as.numeric(readline("Plot resolution. Applies only to raster output types (jpeg, png, tiff): "))
 }
 
-head_df <- head(df, 10) %>%  dplyr::mutate(dplyr::across(is.numeric, round, digits=4))
+head_df <- round(head(df, 10))
 head_df <-  head_df %>% reactable::reactable(searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
                                              striped = TRUE, highlight = TRUE, resizable = TRUE
 )%>%
@@ -795,6 +795,7 @@ xgb_t_test_p_value <- 0
 y_hat_xgb_total <- 0
 xgb_actual <- 0
 xgb_actual_total <- 0
+
 
 ensemble_bagging_train_RMSE <- 0
 ensemble_bagging_test_RMSE <- 0
@@ -2290,12 +2291,12 @@ for (i in 1:numresamples) {
 
   if(set_seed == "Y"){
     set.seed(seed = seed)
-    xgb_model <- xgboost::xgb.train(data = xgb_train, max.depth = 3, watchlist = watchlist_test, nrounds = 70)
-    xgb_model_validation <- xgboost::xgb.train(data = xgb_train, max.depth = 3, watchlist = watchlist_validation, nrounds = 70)
+    xgb_model <- xgboost::xgb.train(data = xgb_train, params = xgboost::xgb.params(max_depth = 10, nthread = 100), evals = watchlist_test, nrounds = 70)
+    xgb_model_validation <- xgboost::xgb.train(data = xgb_train, params = xgboost::xgb.params(max_depth = 10, nthread = 100), evals = watchlist_validation, nrounds = 70)
   }
   if(set_seed == "N"){
-    xgb_model <- xgboost::xgb.train(data = xgb_train, max.depth = 3, watchlist = watchlist_test, nrounds = 70)
-    xgb_model_validation <- xgboost::xgb.train(data = xgb_train, max.depth = 3, watchlist = watchlist_validation, nrounds = 70)
+    xgb_model <-  xgboost::xgb.train(data = xgb_train, params = xgboost::xgb.params(max_depth = 10, nthread = 100), evals = watchlist_test, nrounds = 70)
+    xgb_model_validation <- xgboost::xgb.train(data = xgb_train, params = xgboost::xgb.params(max_depth = 10, nthread = 100), evals = watchlist_validation, nrounds = 70)
   }
   xgboost_min <- which.min(xgb_model$evaluation_log$validation_rmse)
   xgboost_validation.min <- which.min(xgb_model$evaluation_log$validation_rmse)
@@ -3426,12 +3427,12 @@ for (i in 1:numresamples) {
 
   if(set_seed == "Y"){
     set.seed(seed = seed)
-    ensemble_xgb_model <- xgboost::xgb.train(data = ensemble_xgb_train, max.depth = 3, watchlist = ensemble_watchlist_test, nrounds = 70)
-    ensemble_xgb_model_validation <- xgboost::xgb.train(data = ensemble_xgb_train, max.depth = 3, watchlist = ensemble_watchlist_validation, nrounds = 70)
+    ensemble_xgb_model <- xgboost::xgb.train(data = ensemble_xgb_train, params = xgboost::xgb.params(max_depth = 10, nthread = 100), evals = ensemble_watchlist_test, nrounds = 70)
+    ensemble_xgb_model_validation <- xgboost::xgb.train(data = ensemble_xgb_train, params = xgboost::xgb.params(max_depth = 10, nthread = 100), evals = ensemble_watchlist_validation, nrounds = 70)
   }
   if(set_seed == "N"){
-    ensemble_xgb_model <- xgboost::xgb.train(data = ensemble_xgb_train, max.depth = 3, watchlist = ensemble_watchlist_test, nrounds = 70)
-    ensemble_xgb_model_validation <- xgboost::xgb.train(data = ensemble_xgb_train, max.depth = 3, watchlist = ensemble_watchlist_validation, nrounds = 70)
+    ensemble_xgb_model <- xgboost::xgb.train(data = ensemble_xgb_train, params = xgboost::xgb.params(max_depth = 10, nthread = 100), evals = ensemble_watchlist_test, nrounds = 70)
+    ensemble_xgb_model_validation <-xgboost::xgb.train(data = ensemble_xgb_train, params = xgboost::xgb.params(max_depth = 10, nthread = 100), evals = ensemble_watchlist_validation, nrounds = 70)
   }
   ensemble_xgboost.min <- which.min(ensemble_xgb_model$evaluation_log$validation_rmse)
   ensemble_xgboost_validation.min <- which.min(ensemble_xgb_model$evaluation_log$validation_rmse)
@@ -3849,6 +3850,32 @@ if(save_all_plots == "Y" && device == "svg"){
 }
 if(save_all_plots == "Y" && device == "tiff"){
   ggplot2::ggsave("overfitting_plot_free_scales.tiff", plot = overfitting_plot_free_scales, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+
+overfitting_histograms <- ggplot2::ggplot(overfitting_data, aes(x=data, fill=model)) +
+  ggplot2::geom_histogram(color='black', alpha=0.4, position='identity', bins = numresamples) +
+  ggplot2::geom_vline(xintercept = 1, color = "red") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "free") +
+  ggplot2::theme(legend.position = "none") +
+  ggplot2::ggtitle("Overfitting histograms by model, closer to 1 and normally distributed are better. \nThe red vertical line = 1.00") +
+  ggplot2::labs(y = "Overfitting by model, closer to 1 and normally distributed are better.")
+if(save_all_plots == "Y" && device == "eps"){
+  ggplot2::ggsave("overfitting_histograms.eps", plot = overfitting_histograms,  width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "jpeg"){
+  ggplot2::ggsave("overfitting_histograms.jpeg", plot = overfitting_histograms, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "pdf"){
+  ggplot2::ggsave("overfitting_histograms.pdf", plot = overfitting_histograms, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "png"){
+  ggplot2::ggsave("overfitting_histograms.png", plot = overfitting_histograms, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "svg"){
+  ggplot2::ggsave("overfitting_histograms.svg", plot = overfitting_histograms, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+}
+if(save_all_plots == "Y" && device == "tiff"){
+  ggplot2::ggsave("overfitting_histograms.tiff", plot = overfitting_histograms, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 bias_data <-
@@ -6837,7 +6864,7 @@ if (predict_on_new_data == "Y") {
     "Cooks_distance" = cooks_distance_plot, "histograms" = histograms, "boxplots" = boxplots, "predictor_vs_target" = predictor_vs_target,
     "final_results_table" = final_results, "data_correlation" = data_correlation, "data_summary" = data_summary, "head_of_ensemble" = head_ensemble, "ensemble_correlation" = ensemble_correlation,
     "accuracy_barchart" = accuracy_barchart, "train_vs_holdout" = total_plot, "duration_barchart" = duration_barchart, "overfitting_barchart" = overfitting_barchart,
-    "bias_barchart" = bias_barchart,
+    "overfitting_histograms" = overfitting_histograms, "bias_barchart" = bias_barchart,
     "bias_plot" = bias_plot, "Kolmogorov-Smirnov test p-score" = k_s_test_barchart,
     "colnum" = colnum, "numresamples" = numresamples, "predict_on_new_data" = predictions_of_new_data, "save_all_trained_models" = save_all_trained_models,
     "how_to_handle_strings" = how_to_handle_strings, "data_reduction_method" = data_reduction_method, 'VIF' = VIF, "scale_data" = scale_all_predictors_in_data,
@@ -6977,7 +7004,7 @@ return(list(
   "head_of_data" = head_df, "boxplots" = boxplots, "Cooks_distance" = cooks_distance_plot, "histograms" = histograms, "predictor_vs_target" = predictor_vs_target, "data_correlation" = data_correlation,
   "Correlation_as_numbers" = corrplot_number, "Correlation_as_circles" = corrplot_circle, "Corrplot_full" = corrplot_full,'VIF' = VIF,
   "accuracy_barchart" = accuracy_barchart, "accuracy_plot_fixed_scales" = accuracy_plot_fixed_scales, "accuracy_free_scales" = accuracy_plot_free_scales, "bias_barchart" = bias_barchart, "bias_plot" = bias_plot, "duration_barchart" = duration_barchart,
-  "head_of_ensemble" = head_ensemble, "overfitting_barchart" = overfitting_barchart,
+  "head_of_ensemble" = head_ensemble, "overfitting_barchart" = overfitting_barchart, "overfitting_histograms" = overfitting_histograms,
   "overfitting_plot_fixed_scales" = overfitting_plot_fixed_scales, "overfitting_plot_free_scales" = overfitting_plot_free_scales,
   "train_vs_holdout" = total_plot_fixed_scales, "train_vs_holdout_free_scales" = total_plot_free_scales,
   "Kolmogorov-Smirnov test p-score" = k_s_test_barchart, "p-value_barchart" = p_value_barchart,
