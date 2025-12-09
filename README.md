@@ -30,6 +30,7 @@ Numeric(data = MASS::Boston,
         ensemble_reduction_method = 0,
         how_to_handle_strings = 0,
         predict_on_new_data = "N",
+        stratified_random_sampling = "N",
         save_all_trained_models = "N",
         set_seed = "N",
         save_all_plots = "N",
@@ -87,26 +88,21 @@ The 30 plots created automatically:
 08. Most accurate model: Q-Q plot
 09. Accuracy by resample and model, fixed scales
 10. Accuracy by resample and model, free scales
-11. Holdout RMSE/train RMSE, fixed scales
-12. Holdout RMSE/train RMSE, free scales
+11. Train vs holdout by model and resample, fixed scales
+12. Train vs holdout by model and resample, free scales
 13. Histograms of each numeric column
 14. Boxplots of each numeric column
 15. Predictor vs target variable
 16. Model accuracy bar chart (RMSE)
 17. t-test p-value bar chart
-18. Train vs holdout by resample and model, free scales
-19. Train vs holdout by resampleand model, fixed scales
+18. Overfitting by resample and model, free scales
+19. Overfitting by resampleand model, fixed scales
 20. Duration bar chart
-21. Holdout RMSE / train RMSE bar chart
+21. Overfitting bar chart
+22. Overfitting histograms
 22. Mean bias bar chart
-23. Mean MSE bar chart
-24. Mean MAE bar chart
-25. Mean SSE bar chart
-26. Kolmogorov-Smirnof test bar chart
-27. Bias plot by model and resample
-28. MSE plot by model and resample
-29. MAE plot by model and resample
-30. SSE plot by model and resample
+23. Kolmogorov-Smirnof test bar chart
+24. Bias plot by model and resample
 
 The tables created automatically (which are both searchable and sortable) are:
 
