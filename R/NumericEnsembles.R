@@ -20,6 +20,9 @@
 #' @param test_amount set the amount for the testing data
 #' @param validation_amount Set the amount for the validation data
 #'
+#' @return a real number
+#' @export Numeric
+
 #' @importFrom arm bayesglm
 #' @importFrom brnn brnn
 #' @importFrom broom tidy
@@ -56,9 +59,6 @@
 #' @importFrom tree tree cv.tree misclass.tree
 #' @importFrom utils tail str head read.csv
 #' @importFrom xgboost xgb.DMatrix xgb.train
-#'
-#' @return a real number
-#' @export Numeric
 
 Numeric <- function(data, colnum, numresamples,
                     remove_VIF_above = 5.00, remove_data_correlations_greater_than = 0.99, remove_ensemble_correlations_greater_than = 0.98, scale_all_predictors_in_data = c("Y", "N"),
@@ -271,9 +271,9 @@ if(save_all_plots == "Y"){
   dpi <- as.numeric(readline("Plot resolution. Applies only to raster output types (jpeg, png, tiff): "))
 }
 
-head_df <- round(head(df, 10))
-head_df <-  head_df %>% reactable::reactable(searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
-                                             striped = TRUE, highlight = TRUE, resizable = TRUE
+head_df <- reactable::reactable(head(df, n = 10),
+                                searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
+                                striped = TRUE, highlight = TRUE, resizable = TRUE
 )%>%
   reactablefmtr::add_title("Head of the data frame")
 
@@ -796,7 +796,6 @@ y_hat_xgb_total <- 0
 xgb_actual <- 0
 xgb_actual_total <- 0
 
-
 ensemble_bagging_train_RMSE <- 0
 ensemble_bagging_test_RMSE <- 0
 ensemble_bagging_validation_RMSE <- 0
@@ -1018,6 +1017,24 @@ ensemble_y_hat_linear_total <- 0
 ensemble_linear_actual <- 0
 ensemble_linear_actual_total <- 0
 
+ensemble_neuralnet_train_RMSE <- 0
+ensemble_neuralnet_test_RMSE <- 0
+ensemble_neuralnet_validation_RMSE <- 0
+ensemble_neuralnet_sd <- 0
+ensemble_neuralnet_overfitting <- 0
+ensemble_neuralnet_duration <- 0
+ensemble_neuralnet_holdout_RMSE <- 0
+ensemble_neuralnet_holdout_RMSE_mean <- 0
+ensemble_neuralnet_bias <- 0
+ensemble_neuralnet_ks_stat <- 0
+ensemble_neuralnet_ks_p_value <- 0
+ensemble_neuralnet_test_predict_value_mean <- 0
+ensemble_neuralnet_t_test_t <- 0
+ensemble_neuralnet_t_test_p_value <- 0
+y_hat_ensemble_neuralnet_total <- 0
+ensemble_neuralnet_actual <- 0
+ensemble_neuralnet_actual_total <- 0
+
 ensemble_ridge_test_RMSE <- 0
 ensemble_ridge_test_RMSE_df <- data.frame(ensemble_ridge_test_RMSE)
 ensemble_ridge_validation_RMSE <- 0
@@ -1130,40 +1147,6 @@ ensemble_y_hat_tree_total <- 0
 ensemble_tree_actual <- 0
 ensemble_tree_actual_total <- 0
 
-ensemble_xgb_test_RMSE <- 0
-ensemble_xgb_test_RMSE_df <- data.frame(ensemble_xgb_test_RMSE)
-ensemble_xgb_test_RMSE_mean <- 0
-ensemble_xgb_test_mean <- 0
-ensemble_xgb_test_mean_df <- data.frame(ensemble_xgb_test_mean)
-ensemble_xgb_validation_RMSE <- 0
-ensemble_xgb_validation_RMSE_df <- data.frame(ensemble_xgb_validation_RMSE)
-ensemble_xgb_validation_RMSE_mean <- 0
-ensemble_xgb_test_sd <- 0
-ensemble_y_hat_xgb <- 0
-ensemble_xgb_test_sd <- 0
-ensemble_xgb_test_sd_df <- data.frame(ensemble_xgb_test_sd)
-ensemble_xgb_train_RMSE <- 0
-ensemble_xgb_train_RMSE_df <- data.frame(ensemble_xgb_train_RMSE)
-ensemble_xgb_train_RMSE_mean <- 0
-ensemble_xgb_overfitting <- 0
-ensemble_xgb_overfitting_df <- data.frame(ensemble_xgb_overfitting)
-ensemble_xgb_overfitting_mean <- 0
-ensemble_xgb_duration <- 0
-ensemble_xgb_duration_mean <- 0
-ensemble_xgb_holdout_RMSE <- 0
-ensemble_xgb_holdout_RMSE_mean <- 0
-ensemble_xgb_holdout_RMSE_sd_mean <- 0
-ensemble_xgb_predict_value_mean <- 0
-ensemble_xgb_sd_mean <- 0
-ensemble_xgb_bias <- 0
-ensemble_xgb_ks_stat <- 0
-ensemble_xgb_ks_p_value <- 0
-ensemble_xgb_t_test_t <- 0
-ensemble_xgb_t_test_p_value <- 0
-ensemble_y_hat_xgb_total <- 0
-ensemble_xgb_actual <- 0
-ensemble_xgb_actual_total <- 0
-
 
 actual <- 0
 cols <- 0
@@ -1195,9 +1178,10 @@ t.test <- 0
 t_test_p.value_mean <- 0
 t_test_p_value_sd <- 0
 plot <- 0
+total_plot <- 0
 Overfitting_mean <- 0
 Overfitting_sd <- 0
-total_plot <- 0
+
 
 for (i in 1:numresamples) {
   message(noquote(""))
@@ -2291,12 +2275,12 @@ for (i in 1:numresamples) {
 
   if(set_seed == "Y"){
     set.seed(seed = seed)
-    xgb_model <- xgboost::xgb.train(data = xgb_train, params = xgboost::xgb.params(max_depth = 10, nthread = 100), evals = watchlist_test, nrounds = 70)
-    xgb_model_validation <- xgboost::xgb.train(data = xgb_train, params = xgboost::xgb.params(max_depth = 10, nthread = 100), evals = watchlist_validation, nrounds = 70)
+    xgb_model <- xgboost::xgb.train(data = xgb_train, params = xgboost::xgb.params(max_depth = 3), nrounds = 70)
+    xgb_model_validation <- xgboost::xgb.train(data = xgb_train, params = xgboost::xgb.params(max_depth = 3), nrounds = 70)
   }
   if(set_seed == "N"){
-    xgb_model <-  xgboost::xgb.train(data = xgb_train, params = xgboost::xgb.params(max_depth = 10, nthread = 100), evals = watchlist_test, nrounds = 70)
-    xgb_model_validation <- xgboost::xgb.train(data = xgb_train, params = xgboost::xgb.params(max_depth = 10, nthread = 100), evals = watchlist_validation, nrounds = 70)
+    xgb_model <- xgboost::xgb.train(data = xgb_train, params = xgboost::xgb.params(max_depth = 3), nrounds = 70)
+    xgb_model_validation <- xgboost::xgb.train(data = xgb_train, params = xgboost::xgb.params(max_depth = 3), nrounds = 70)
   }
   xgboost_min <- which.min(xgb_model$evaluation_log$validation_rmse)
   xgboost_validation.min <- which.min(xgb_model$evaluation_log$validation_rmse)
@@ -3132,6 +3116,59 @@ for (i in 1:numresamples) {
   ensemble_linear_duration_mean <- mean(ensemble_linear_duration)
   ensemble_linear_duration_sd <- sd(ensemble_linear_duration)
 
+  #### Model 28 Ensemble Neuralnet ####
+
+  ensemble_neuralnet_start <- Sys.time()
+  if(set_seed == "Y"){
+    set.seed(seed = seed)
+    ensemble_neuralnet_train_fit <- nnet::nnet(ensemble_train$y_ensemble ~ ., data = ensemble_train, size = 0, linout = TRUE, skip = TRUE)
+  }
+  if(set_seed == "N"){
+    ensemble_neuralnet_train_fit <- nnet::nnet(ensemble_train$y_ensemble ~ ., data = ensemble_train, size = 0, linout = TRUE, skip = TRUE)
+  }
+  ensemble_neuralnet_train_RMSE[i] <- Metrics::rmse(actual = ensemble_train$y_ensemble, predicted = predict(object = ensemble_neuralnet_train_fit, newdata = ensemble_train))
+  ensemble_neuralnet_train_RMSE_mean <- mean(ensemble_neuralnet_train_RMSE)
+  ensemble_neuralnet_test_RMSE[i] <- Metrics::rmse(actual = ensemble_test$y_ensemble, predicted = predict(object = ensemble_neuralnet_train_fit, newdata = ensemble_test))
+  ensemble_neuralnet_test_RMSE_mean <- mean(ensemble_neuralnet_test_RMSE)
+  ensemble_neuralnet_validation_RMSE[i] <- Metrics::rmse(actual = ensemble_validation$y_ensemble, predicted = predict(object = ensemble_neuralnet_train_fit, newdata = ensemble_validation))
+  ensemble_neuralnet_validation_RMSE_mean <- mean(ensemble_neuralnet_validation_RMSE)
+  ensemble_neuralnet_holdout_RMSE[i] <- mean(c(ensemble_neuralnet_test_RMSE_mean, ensemble_neuralnet_validation_RMSE_mean))
+  ensemble_neuralnet_holdout_RMSE_mean <- mean(ensemble_neuralnet_holdout_RMSE)
+  ensemble_neuralnet_holdout_RMSE_sd_mean <- sd(c(ensemble_neuralnet_test_RMSE_mean, ensemble_neuralnet_validation_RMSE_mean))
+  ensemble_neuralnet_train_predict_value <- predict(object = ensemble_neuralnet_train_fit, newdata = ensemble_train)
+  ensemble_neuralnet_test_predict_value <- predict(object = ensemble_neuralnet_train_fit, newdata = ensemble_test)
+  ensemble_neuralnet_validation_predict_value <- predict(object = ensemble_neuralnet_train_fit, newdata = ensemble_validation)
+  ensemble_neuralnet_predict_value_mean <- mean(c(ensemble_neuralnet_test_predict_value, ensemble_neuralnet_validation_predict_value))
+  ensemble_neuralnet_sd[i] <- sd(c(ensemble_neuralnet_test_predict_value, ensemble_neuralnet_validation_predict_value))
+  ensemble_neuralnet_sd_mean <- mean(ensemble_neuralnet_sd)
+  ensemble_neuralnet_overfitting[i] <- ensemble_neuralnet_holdout_RMSE_mean / ensemble_neuralnet_train_RMSE_mean
+  ensemble_neuralnet_overfitting_mean <- mean(ensemble_neuralnet_overfitting)
+  ensemble_neuralnet_overfitting_range <- range(ensemble_neuralnet_overfitting)
+  ensemble_neuralnet_overfitting_sd <- sd(ensemble_neuralnet_overfitting)
+  y_hat_ensemble_neuralnet <- c(ensemble_neuralnet_test_predict_value, ensemble_neuralnet_validation_predict_value)
+  y_hat_ensemble_neuralnet_total <- c(y_hat_ensemble_neuralnet, y_hat_ensemble_neuralnet_total)
+  ensemble_neuralnet_actual <- c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble)
+  ensemble_neuralnet_actual_total <- c(ensemble_neuralnet_actual, ensemble_neuralnet_actual_total)
+  ensemble_neuralnet_t_test_t[i] <- as.numeric(t.test(x = y_hat_ensemble_neuralnet, y = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), var.equal = TRUE)[1])
+  ensemble_neuralnet_t_test_p_value[i] <- as.numeric(t.test(x = y_hat_ensemble_neuralnet, y = c(ensemble_test$y_ensemble, validation$y), var.equal = TRUE)[3])
+  ensemble_neuralnet_t_test_t_mean <- mean(as.numeric(ensemble_neuralnet_t_test_t))
+  ensemble_neuralnet_t_test_p_value_mean <- mean(as.numeric(ensemble_neuralnet_t_test_p_value))
+  ensemble_neuralnet_t_test_p_value_sd <- sd(as.numeric(ensemble_neuralnet_t_test_p_value))
+  ensemble_neuralnet_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = c(ensemble_neuralnet_test_predict_value, ensemble_neuralnet_validation_predict_value))
+  ensemble_neuralnet_bias_mean <- mean(ensemble_neuralnet_bias)
+  ensemble_neuralnet_bias_sd <- sd(ensemble_neuralnet_bias)
+  ensemble_neuralnet_ks_p_value[i] <- stats::ks.test(x = y_hat_ensemble_neuralnet, y = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), exact = TRUE)$p.value
+  ensemble_neuralnet_ks_p_value_mean <- mean(ensemble_neuralnet_ks_p_value)
+  ensemble_neuralnet_ks_p_value_sd <- sd(ensemble_neuralnet_ks_p_value)
+  ensemble_neuralnet_ks_stat[i] <- stats::ks.test(x = y_hat_ensemble_neuralnet, y = c(test$y, validation$y), exact = TRUE)$statistic
+  ensemble_neuralnet_ks_stat_mean <- mean(ensemble_neuralnet_ks_stat)
+  ensemble_neuralnet_ks_test <- c(ensemble_neuralnet_ks_stat_mean, ensemble_neuralnet_ks_p_value_mean)
+
+  ensemble_neuralnet_end <- Sys.time()
+  ensemble_neuralnet_duration[i] <- ensemble_neuralnet_end - ensemble_neuralnet_start
+  ensemble_neuralnet_duration_mean <- mean(ensemble_neuralnet_duration)
+  ensemble_neuralnet_duration_sd <- sd(ensemble_neuralnet_duration)
+
   #### Model # 28 Ensembles Using Ridge ####
   ensemble_ridge_start <- Sys.time()
 
@@ -3399,89 +3436,6 @@ for (i in 1:numresamples) {
   ensemble_tree_duration_mean <- mean(ensemble_tree_duration)
   ensemble_tree_duration_sd <- sd(ensemble_tree_duration)
 
-  #### Model # 32 Ensemble Using XGBoost ####
-  ensemble_xgb_start <- Sys.time()
-
-  ensemble_train_x <- data.matrix(ensemble_train[, -ncol(ensemble_train)])
-  ensemble_train_y <- ensemble_train[, ncol(ensemble_train)]
-
-  # define predictor and response variables in test set
-  ensemble_test_x <- data.matrix(ensemble_test[, -ncol(ensemble_test)])
-  ensemble_test_y <- ensemble_test[, ncol(ensemble_test)]
-
-  # define predictor and response variables in validation set
-  ensemble_validation_x <- data.matrix(ensemble_validation[, -ncol(ensemble_validation)])
-  ensemble_validation_y <- ensemble_validation[, ncol(ensemble_validation)]
-
-  # define final train, test and validationing sets
-  ensemble_xgb_train <- xgboost::xgb.DMatrix(data = ensemble_train_x, label = ensemble_train_y)
-  ensemble_xgb_test <- xgboost::xgb.DMatrix(data = ensemble_test_x, label = ensemble_test_y)
-  ensemble_xgb_validation <- xgboost::xgb.DMatrix(data = ensemble_validation_x, label = ensemble_validation_y)
-
-  # define watchlist
-  ensemble_watchlist <- list(train = ensemble_xgb_train, validation = ensemble_xgb_validation)
-  ensemble_watchlist_test <- list(train = ensemble_xgb_train, test = ensemble_xgb_test)
-  ensemble_watchlist_validation <- list(train = ensemble_xgb_train, validation = ensemble_xgb_validation)
-
-  # fit XGBoost model and display training and validation data at each round
-
-  if(set_seed == "Y"){
-    set.seed(seed = seed)
-    ensemble_xgb_model <- xgboost::xgb.train(data = ensemble_xgb_train, params = xgboost::xgb.params(max_depth = 10, nthread = 100), evals = ensemble_watchlist_test, nrounds = 70)
-    ensemble_xgb_model_validation <- xgboost::xgb.train(data = ensemble_xgb_train, params = xgboost::xgb.params(max_depth = 10, nthread = 100), evals = ensemble_watchlist_validation, nrounds = 70)
-  }
-  if(set_seed == "N"){
-    ensemble_xgb_model <- xgboost::xgb.train(data = ensemble_xgb_train, params = xgboost::xgb.params(max_depth = 10, nthread = 100), evals = ensemble_watchlist_test, nrounds = 70)
-    ensemble_xgb_model_validation <-xgboost::xgb.train(data = ensemble_xgb_train, params = xgboost::xgb.params(max_depth = 10, nthread = 100), evals = ensemble_watchlist_validation, nrounds = 70)
-  }
-  ensemble_xgboost.min <- which.min(ensemble_xgb_model$evaluation_log$validation_rmse)
-  ensemble_xgboost_validation.min <- which.min(ensemble_xgb_model$evaluation_log$validation_rmse)
-
-  ensemble_xgb_train_RMSE[i] <- round(Metrics::rmse(actual = ensemble_train$y_ensemble, predicted = predict(object = ensemble_xgb_model, newdata = ensemble_train_x)), 4)
-  ensemble_xgb_train_RMSE_mean <- mean(ensemble_xgb_train_RMSE)
-
-  ensemble_xgb_test_RMSE[i] <- round(Metrics::rmse(actual = ensemble_test$y_ensemble, predicted = predict(object = ensemble_xgb_model, newdata = ensemble_test_x)), 4)
-  ensemble_xgb_test_RMSE_mean <- mean(ensemble_xgb_test_RMSE)
-
-  ensemble_xgb_validation_RMSE[i] <- round(Metrics::rmse(actual = ensemble_validation$y_ensemble, predicted = predict(object = ensemble_xgb_model, newdata = ensemble_validation_x)), 4)
-  ensemble_xgb_validation_RMSE_mean <- mean(ensemble_xgb_validation_RMSE)
-
-  ensemble_xgb_holdout_RMSE[i] <- mean(c(ensemble_xgb_test_RMSE, ensemble_xgb_validation_RMSE))
-  ensemble_xgb_holdout_RMSE_mean <- mean(ensemble_xgb_holdout_RMSE)
-  ensemble_xgb_holdout_RMSE_sd_mean <- mean(sd(c(ensemble_xgb_test_RMSE, ensemble_xgb_validation_RMSE)))
-
-  ensemble_y_hat_xgb <- c(predict(object = ensemble_xgb_model, newdata = ensemble_test_x), predict(object = ensemble_xgb_model, newdata = ensemble_validation_x))
-  ensemble_y_hat_xgb_total <- c(ensemble_y_hat_xgb, ensemble_y_hat_xgb_total)
-  ensemble_xgb_actual <- c(ensemble_test$y, ensemble_validation$y)
-  ensemble_xgb_actual_total <- c(ensemble_xgb_actual, ensemble_xgb_actual_total)
-  ensemble_xgb_t_test_t[i] <- as.numeric(t.test(x = ensemble_y_hat_xgb, y = c(ensemble_test$y, ensemble_validation$y), var.equal = TRUE)[1])
-  ensemble_xgb_t_test_p_value[i] <- as.numeric(t.test(x = ensemble_y_hat_xgb, y = c(ensemble_test$y, ensemble_validation$y), var.equal = TRUE)[3])
-  ensemble_xgb_t_test_t_mean <- mean(as.numeric(ensemble_xgb_t_test_t))
-  ensemble_xgb_t_test_p_value_mean <- mean(as.numeric(ensemble_xgb_t_test_p_value))
-  ensemble_xgb_t_test_p_value_sd <- sd(as.numeric(ensemble_xgb_t_test_p_value))
-  ensemble_xgb_predict_value_mean <- round(mean(ensemble_y_hat_xgb), 4)
-  ensemble_xgb_sd_mean <- round(sd(ensemble_y_hat_xgb), 4)
-
-  ensemble_xgb_overfitting <- ensemble_xgb_holdout_RMSE_mean / ensemble_xgb_train_RMSE_mean
-  ensemble_xgb_overfitting_df <- rbind(ensemble_xgb_overfitting_df, ensemble_xgb_overfitting)
-  ensemble_xgb_overfitting_mean <- mean(ensemble_xgb_overfitting_df$ensemble_xgb_overfitting[2:nrow(ensemble_xgb_overfitting_df)])
-  ensemble_xgb_overfitting_range <- range(ensemble_xgb_overfitting_df$ensemble_xgb_overfitting[2:nrow(ensemble_xgb_overfitting_df)])
-  ensemble_xgb_overfitting_sd <- sd(ensemble_xgb_overfitting_df$ensemble_xgb_overfitting)
-
-  ensemble_xgb_bias[i] <- Metrics::bias(actual = c(ensemble_test$y_ensemble, ensemble_validation$y_ensemble), predicted = ensemble_y_hat_xgb)
-  ensemble_xgb_bias_mean <- mean(ensemble_xgb_bias)
-  ensemble_xgb_bias_sd <- sd(ensemble_xgb_bias)
-  ensemble_xgb_ks_p_value[i] <- stats::ks.test(x = ensemble_y_hat_xgb, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$p.value
-  ensemble_xgb_ks_p_value_mean <- mean(ensemble_xgb_ks_p_value)
-  ensemble_xgb_ks_p_value_sd <- sd(ensemble_xgb_ks_p_value)
-  ensemble_xgb_ks_stat[i] <- stats::ks.test(x = ensemble_y_hat_xgb, y = c(ensemble_test$y, ensemble_validation$y), exact = TRUE)$statistic
-  ensemble_xgb_ks_stat_mean <- mean(ensemble_xgb_ks_stat)
-  ensemble_xgb_ks_test <- c(ensemble_xgb_ks_stat_mean, ensemble_xgb_ks_p_value_mean)
-
-  ensemble_xgb_end <- Sys.time()
-  ensemble_xgb_duration[i] <- ensemble_xgb_end - ensemble_xgb_start
-  ensemble_xgb_duration_mean <- mean(ensemble_xgb_duration)
-  ensemble_xgb_duration_sd <- sd(ensemble_xgb_duration)
 }
 
 
@@ -3498,8 +3452,8 @@ summary_results <- data.frame(
     "PCR", "Ridge", "Rpart", "SVM", "Tree", "XGBoost",
     "Ensemble Bagging", "Ensemble BayesGLM", "Ensemble BayesRNN", "Ensemble Cubist",
     "Ensemble Earth", "Ensemble Elastic", "Ensemble Gradient Boosted",
-    "Ensemble Lasso", "Ensemble Linear",  "Ensemble Ridge", "Ensemble Rpart",
-    "Ensemble SVM", "Ensemble Trees", "Ensemble XGBoost"
+    "Ensemble Lasso", "Ensemble Linear", "Ensemble Neuralnet",  "Ensemble Ridge", "Ensemble Rpart",
+    "Ensemble SVM", "Ensemble Trees"
   ),
   "Mean_holdout_RMSE" = round(c(
     actual_RMSE, bagging_holdout_RMSE_mean, bayesglm_holdout_RMSE_mean,
@@ -3510,9 +3464,9 @@ summary_results <- data.frame(
     ensemble_bagging_holdout_RMSE_mean, ensemble_bayesglm_holdout_RMSE_mean,
     ensemble_bayesrnn_holdout_RMSE_mean, ensemble_cubist_holdout_RMSE_mean, ensemble_earth_holdout_RMSE_mean,
     ensemble_elastic_holdout_RMSE_mean, ensemble_gb_holdout_RMSE_mean,
-    ensemble_lasso_holdout_RMSE_mean, ensemble_linear_holdout_RMSE_mean,
+    ensemble_lasso_holdout_RMSE_mean, ensemble_linear_holdout_RMSE_mean, ensemble_neuralnet_holdout_RMSE_mean,
     ensemble_ridge_holdout_RMSE_mean, ensemble_rpart_holdout_RMSE_mean,
-    ensemble_svm_holdout_RMSE_mean, ensemble_tree_holdout_RMSE_mean, ensemble_xgb_holdout_RMSE_mean
+    ensemble_svm_holdout_RMSE_mean, ensemble_tree_holdout_RMSE_mean
   ), 4),
   "Std_Deviation_of_holdout_RMSE" = round(c(
     actual_RMSE, bagging_holdout_RMSE_sd_mean, bayesglm_holdout_RMSE_sd_mean,
@@ -3523,9 +3477,9 @@ summary_results <- data.frame(
     ensemble_bagging_holdout_RMSE_sd_mean, ensemble_bayesglm_holdout_RMSE_sd_mean,
     ensemble_bayesrnn_holdout_RMSE_sd_mean, ensemble_cubist_holdout_RMSE_sd_mean, ensemble_earth_holdout_RMSE_sd_mean,
     ensemble_elastic_holdout_RMSE_sd_mean, ensemble_gb_holdout_RMSE_sd_mean,
-    ensemble_lasso_holdout_RMSE_sd_mean, ensemble_linear_holdout_RMSE_sd_mean,
+    ensemble_lasso_holdout_RMSE_sd_mean, ensemble_linear_holdout_RMSE_sd_mean, ensemble_neuralnet_holdout_RMSE_sd_mean,
     ensemble_ridge_holdout_RMSE_sd_mean, ensemble_rpart_holdout_RMSE_sd_mean,
-    ensemble_svm_holdout_RMSE_sd_mean, ensemble_tree_holdout_RMSE_sd_mean, ensemble_xgb_holdout_RMSE_sd_mean
+    ensemble_svm_holdout_RMSE_sd_mean, ensemble_tree_holdout_RMSE_sd_mean
   ), 4),
   "t-test" = round(c(
     0, bagging_t_test_t_mean, bayesglm_t_test_t_mean,
@@ -3536,9 +3490,9 @@ summary_results <- data.frame(
     ensemble_bagging_t_test_t_mean,  ensemble_bayesglm_t_test_t_mean,
     ensemble_bayesrnn_t_test_t_mean, ensemble_cubist_t_test_t_mean, ensemble_earth_t_test_t_mean,
     ensemble_elastic_t_test_t_mean, ensemble_gb_t_test_t_mean,
-    ensemble_lasso_t_test_t_mean, ensemble_linear_t_test_t_mean,
+    ensemble_lasso_t_test_t_mean, ensemble_linear_t_test_t_mean, ensemble_neuralnet_t_test_t_mean,
     ensemble_ridge_t_test_t_mean, ensemble_rpart_t_test_t_mean,
-    ensemble_svm_t_test_t_mean, ensemble_tree_t_test_t_mean, ensemble_xgb_t_test_t_mean
+    ensemble_svm_t_test_t_mean, ensemble_tree_t_test_t_mean
   ), 4),
   "t_test_p-value_mean" = round(c(
     0, bagging_t_test_p_value_mean, bayesglm_t_test_p_value_mean,
@@ -3549,9 +3503,9 @@ summary_results <- data.frame(
     ensemble_bagging_t_test_p_value_mean,  ensemble_bayesglm_t_test_p_value_mean,
     ensemble_bayesrnn_t_test_p_value_mean, ensemble_cubist_t_test_p_value_mean, ensemble_earth_t_test_p_value_mean,
     ensemble_elastic_t_test_p_value_mean, ensemble_gb_t_test_p_value_mean,
-    ensemble_lasso_t_test_p_value_mean, ensemble_linear_t_test_p_value_mean,
+    ensemble_lasso_t_test_p_value_mean, ensemble_linear_t_test_p_value_mean, ensemble_neuralnet_t_test_p_value_mean,
     ensemble_ridge_t_test_p_value_mean, ensemble_rpart_t_test_p_value_mean,
-    ensemble_svm_t_test_p_value_mean, ensemble_tree_t_test_p_value_mean, ensemble_xgb_t_test_p_value_mean
+    ensemble_svm_t_test_p_value_mean, ensemble_tree_t_test_p_value_mean
   ), 4),
   "t_test_p_value_sd" = round(c(
     0, bagging_t_test_p_value_sd, bayesglm_t_test_p_value_sd,
@@ -3562,9 +3516,9 @@ summary_results <- data.frame(
     ensemble_bagging_t_test_p_value_sd,  ensemble_bayesglm_t_test_p_value_sd,
     ensemble_bayesrnn_t_test_p_value_sd, ensemble_cubist_t_test_p_value_sd, ensemble_earth_t_test_p_value_sd,
     ensemble_elastic_t_test_p_value_sd, ensemble_gb_t_test_p_value_sd,
-    ensemble_lasso_t_test_p_value_sd, ensemble_linear_t_test_p_value_sd,
+    ensemble_lasso_t_test_p_value_sd, ensemble_linear_t_test_p_value_sd, ensemble_neuralnet_t_test_p_value_sd,
     ensemble_ridge_t_test_p_value_sd, ensemble_rpart_t_test_p_value_sd,
-    ensemble_svm_t_test_p_value_sd, ensemble_tree_t_test_p_value_sd, ensemble_xgb_t_test_p_value_sd
+    ensemble_svm_t_test_p_value_sd, ensemble_tree_t_test_p_value_sd
   ), 4),
   "KS_Test_Stat_mean" = round(c(
     0, bagging_ks_stat_mean, bayesglm_ks_stat_mean,
@@ -3575,9 +3529,9 @@ summary_results <- data.frame(
     ensemble_bagging_ks_stat_mean,  ensemble_bayesglm_ks_stat_mean,
     ensemble_bayesrnn_ks_stat_mean, ensemble_cubist_ks_stat_mean, ensemble_earth_ks_stat_mean,
     ensemble_elastic_ks_stat_mean, ensemble_gb_ks_stat_mean,
-    ensemble_lasso_ks_stat_mean, ensemble_linear_ks_stat_mean,
+    ensemble_lasso_ks_stat_mean, ensemble_linear_ks_stat_mean, ensemble_neuralnet_ks_stat_mean,
     ensemble_ridge_ks_stat_mean, ensemble_rpart_ks_stat_mean,
-    ensemble_svm_ks_stat_mean, ensemble_tree_ks_stat_mean, ensemble_xgb_ks_stat_mean
+    ensemble_svm_ks_stat_mean, ensemble_tree_ks_stat_mean
   ), 4),
   "KS_Test_P_Value_mean" = round(c(
     0, bagging_ks_p_value_mean, bayesglm_ks_p_value_mean,
@@ -3588,9 +3542,9 @@ summary_results <- data.frame(
     ensemble_bagging_ks_p_value_mean,  ensemble_bayesglm_ks_p_value_mean,
     ensemble_bayesrnn_ks_p_value_mean, ensemble_cubist_ks_p_value_mean, ensemble_earth_ks_p_value_mean,
     ensemble_elastic_ks_p_value_mean, ensemble_gb_ks_p_value_mean,
-    ensemble_lasso_ks_p_value_mean, ensemble_linear_ks_p_value_mean,
+    ensemble_lasso_ks_p_value_mean, ensemble_linear_ks_p_value_mean, ensemble_neuralnet_ks_p_value_mean,
     ensemble_ridge_ks_p_value_mean, ensemble_rpart_ks_p_value_mean,
-    ensemble_svm_ks_p_value_mean, ensemble_tree_ks_p_value_mean, ensemble_xgb_ks_p_value_mean
+    ensemble_svm_ks_p_value_mean, ensemble_tree_ks_p_value_mean
   ), 4),
   "KS_Test_P_Value_std_dev" = round(c(
     0, bagging_ks_p_value_sd, bayesglm_ks_p_value_sd,
@@ -3601,9 +3555,9 @@ summary_results <- data.frame(
     ensemble_bagging_ks_p_value_sd,  ensemble_bayesglm_ks_p_value_sd,
     ensemble_bayesrnn_ks_p_value_sd, ensemble_cubist_ks_p_value_sd, ensemble_earth_ks_p_value_sd,
     ensemble_elastic_ks_p_value_sd, ensemble_gb_ks_p_value_sd,
-    ensemble_lasso_ks_p_value_sd, ensemble_linear_ks_p_value_sd,
+    ensemble_lasso_ks_p_value_sd, ensemble_linear_ks_p_value_sd, ensemble_neuralnet_ks_p_value_sd,
     ensemble_ridge_ks_p_value_sd, ensemble_rpart_ks_p_value_sd,
-    ensemble_svm_ks_p_value_sd, ensemble_tree_ks_p_value_sd, ensemble_xgb_ks_p_value_sd
+    ensemble_svm_ks_p_value_sd, ensemble_tree_ks_p_value_sd
   ), 4),
   "Bias" = round(c(
     0, bagging_bias_mean, bayesglm_bias_mean,
@@ -3614,9 +3568,9 @@ summary_results <- data.frame(
     ensemble_bagging_bias_mean, ensemble_bayesglm_bias_mean,
     ensemble_bayesrnn_bias_mean, ensemble_cubist_bias_mean, ensemble_earth_bias_mean,
     ensemble_elastic_bias_mean, ensemble_gb_bias_mean,
-    ensemble_lasso_bias_mean, ensemble_linear_bias_mean,
+    ensemble_lasso_bias_mean, ensemble_linear_bias_mean, ensemble_neuralnet_bias_mean,
     ensemble_ridge_bias_mean, ensemble_rpart_bias_mean,
-    ensemble_svm_bias_mean, ensemble_tree_bias_mean, ensemble_xgb_bias_mean
+    ensemble_svm_bias_mean, ensemble_tree_bias_mean
   ), 4),
   "Bias_sd" = round(c(
     0, bagging_bias_sd, bayesglm_bias_sd,
@@ -3627,9 +3581,9 @@ summary_results <- data.frame(
     ensemble_bagging_bias_sd, ensemble_bayesglm_bias_sd,
     ensemble_bayesrnn_bias_sd, ensemble_cubist_bias_sd, ensemble_earth_bias_sd,
     ensemble_elastic_bias_sd, ensemble_gb_bias_sd,
-    ensemble_lasso_bias_sd, ensemble_linear_bias_sd,
+    ensemble_lasso_bias_sd, ensemble_linear_bias_sd, ensemble_neuralnet_bias_sd,
     ensemble_ridge_bias_sd, ensemble_rpart_bias_sd,
-    ensemble_svm_bias_sd, ensemble_tree_bias_sd, ensemble_xgb_bias_sd
+    ensemble_svm_bias_sd, ensemble_tree_bias_sd
   ), 4),
   "Mean_data" = round(c(
     actual_mean, bagging_predict_value_mean, bayesglm_predict_value_mean,
@@ -3640,8 +3594,8 @@ summary_results <- data.frame(
     ensemble_bagging_predict_value_mean, ensemble_bayesglm_predict_value_mean,
     ensemble_bayesrnn_predict_value_mean, ensemble_cubist_predict_value_mean, ensemble_earth_predict_value_mean,
     ensemble_elastic_predict_value_mean, ensemble_gb_predict_value_mean,
-    ensemble_lasso_predict_value_mean, ensemble_linear_predict_value_mean, ensemble_ridge_predict_value_mean,
-    ensemble_rpart_predict_value_mean, ensemble_svm_predict_value_mean, ensemble_tree_predict_value_mean, ensemble_xgb_predict_value_mean
+    ensemble_lasso_predict_value_mean, ensemble_linear_predict_value_mean, ensemble_neuralnet_predict_value_mean, ensemble_ridge_predict_value_mean,
+    ensemble_rpart_predict_value_mean, ensemble_svm_predict_value_mean, ensemble_tree_predict_value_mean
   ), 4),
   "Std_Dev_of_the_model" = round(c(
     actual_sd, bagging_sd_mean, bayesglm_sd_mean, bayesrnn_sd_mean,
@@ -3651,8 +3605,8 @@ summary_results <- data.frame(
     ensemble_bagging_sd_mean, ensemble_bayesglm_sd_mean,
     ensemble_bayesrnn_sd_mean, ensemble_cubist_sd_mean, ensemble_earth_sd_mean,
     ensemble_elastic_sd_mean, ensemble_gb_sd_mean,
-    ensemble_lasso_sd_mean, ensemble_linear_sd_mean,  ensemble_ridge_sd_mean,
-    ensemble_rpart_sd_mean, ensemble_svm_sd_mean, ensemble_tree_sd_mean, ensemble_xgb_sd_mean
+    ensemble_lasso_sd_mean, ensemble_linear_sd_mean, ensemble_neuralnet_sd_mean, ensemble_ridge_sd_mean,
+    ensemble_rpart_sd_mean, ensemble_svm_sd_mean, ensemble_tree_sd_mean
   ), 4),
   "Mean_train_RMSE" = round(c(
     0, bagging_train_RMSE_mean, bayesglm_train_RMSE_mean, bayesrnn_train_RMSE_mean,
@@ -3663,8 +3617,8 @@ summary_results <- data.frame(
     ensemble_bagging_train_RMSE_mean,ensemble_bayesglm_train_RMSE_mean,
     ensemble_bayesrnn_train_RMSE_mean, ensemble_cubist_train_RMSE_mean, ensemble_earth_train_RMSE_mean,
     ensemble_elastic_train_RMSE_mean, ensemble_gb_train_RMSE_mean,
-    ensemble_lasso_train_RMSE_mean, ensemble_linear_train_RMSE_mean, ensemble_ridge_train_RMSE_mean,
-    ensemble_rpart_train_RMSE_mean, ensemble_svm_train_RMSE_mean, ensemble_tree_train_RMSE_mean, ensemble_xgb_train_RMSE_mean
+    ensemble_lasso_train_RMSE_mean, ensemble_linear_train_RMSE_mean, ensemble_neuralnet_train_RMSE_mean, ensemble_ridge_train_RMSE_mean,
+    ensemble_rpart_train_RMSE_mean, ensemble_svm_train_RMSE_mean, ensemble_tree_train_RMSE_mean
   ), 4),
   "Mean_test_RMSE" = round(c(
     0, bagging_test_RMSE_mean, bayesglm_test_RMSE_mean,
@@ -3675,8 +3629,8 @@ summary_results <- data.frame(
     ensemble_bagging_test_RMSE_mean, ensemble_bayesglm_test_RMSE_mean,
     ensemble_bayesrnn_test_RMSE_mean, ensemble_cubist_test_RMSE_mean, ensemble_earth_test_RMSE_mean,
     ensemble_elastic_test_RMSE_mean, ensemble_gb_test_RMSE_mean,
-    ensemble_lasso_test_RMSE_mean, ensemble_linear_test_RMSE_mean,ensemble_ridge_test_RMSE,
-    ensemble_rpart_test_RMSE_mean, ensemble_svm_test_RMSE_mean, ensemble_tree_test_RMSE_mean, ensemble_xgb_test_RMSE_mean
+    ensemble_lasso_test_RMSE_mean, ensemble_linear_test_RMSE_mean, ensemble_neuralnet_test_RMSE_mean,  ensemble_ridge_test_RMSE,
+    ensemble_rpart_test_RMSE_mean, ensemble_svm_test_RMSE_mean, ensemble_tree_test_RMSE_mean
   ), 4),
   "Mean_validation_RMSE" = round(c(
     0, bagging_validation_RMSE_mean, bayesglm_validation_RMSE_mean,
@@ -3688,8 +3642,8 @@ summary_results <- data.frame(
     ensemble_bagging_validation_RMSE_mean, ensemble_bayesglm_validation_RMSE_mean,
     ensemble_bayesrnn_validation_RMSE_mean, ensemble_cubist_validation_RMSE_mean, ensemble_earth_validation_RMSE_mean,
     ensemble_elastic_validation_RMSE_mean, ensemble_gb_validation_RMSE_mean,
-    ensemble_lasso_validation_RMSE_mean, ensemble_linear_validation_RMSE_mean, ensemble_ridge_validation_RMSE_mean,
-    ensemble_rpart_validation_RMSE_mean, ensemble_svm_validation_RMSE_mean, ensemble_tree_validation_RMSE_mean, ensemble_xgb_validation_RMSE_mean
+    ensemble_lasso_validation_RMSE_mean, ensemble_linear_validation_RMSE_mean, ensemble_neuralnet_validation_RMSE_mean, ensemble_ridge_validation_RMSE_mean,
+    ensemble_rpart_validation_RMSE_mean, ensemble_svm_validation_RMSE_mean, ensemble_tree_validation_RMSE_mean
   ), 4),
   "Overfitting_mean" = round(c(
     0, bagging_overfitting_mean, bayesglm_overfitting_mean, bayesrnn_overfitting_mean,
@@ -3700,8 +3654,8 @@ summary_results <- data.frame(
     ensemble_bagging_overfitting_mean,  ensemble_bayesglm_overfitting_mean,
     ensemble_bayesrnn_overfitting_mean, ensemble_cubist_overfitting_mean, ensemble_earth_overfitting_mean,
     ensemble_elastic_overfitting_mean, ensemble_gb_overfitting_mean,
-    ensemble_lasso_overfitting_mean, ensemble_linear_overfitting_mean, ensemble_ridge_overfitting_mean,
-    ensemble_rpart_overfitting_mean, ensemble_svm_overfitting_mean, ensemble_tree_overfitting_mean, ensemble_xgb_overfitting_mean
+    ensemble_lasso_overfitting_mean, ensemble_linear_overfitting_mean, ensemble_neuralnet_overfitting_mean, ensemble_ridge_overfitting_mean,
+    ensemble_rpart_overfitting_mean, ensemble_svm_overfitting_mean, ensemble_tree_overfitting_mean
   ), 4),
   "Overfitting_sd" = round(c(
     0, bagging_overfitting_sd, bayesglm_overfitting_sd, bayesrnn_overfitting_sd,
@@ -3712,8 +3666,8 @@ summary_results <- data.frame(
     ensemble_bagging_overfitting_sd,  ensemble_bayesglm_overfitting_sd,
     ensemble_bayesrnn_overfitting_sd, ensemble_cubist_overfitting_sd, ensemble_earth_overfitting_sd,
     ensemble_elastic_overfitting_sd, ensemble_gb_overfitting_sd,
-    ensemble_lasso_overfitting_sd, ensemble_linear_overfitting_sd, ensemble_ridge_overfitting_sd,
-    ensemble_rpart_overfitting_sd, ensemble_svm_overfitting_sd, ensemble_tree_overfitting_sd, ensemble_xgb_overfitting_sd
+    ensemble_lasso_overfitting_sd, ensemble_linear_overfitting_sd, ensemble_neuralnet_overfitting_sd, ensemble_ridge_overfitting_sd,
+    ensemble_rpart_overfitting_sd, ensemble_svm_overfitting_sd, ensemble_tree_overfitting_sd
   ), 4),
   "Duration" = round(c(
     0, bagging_duration_mean, bayesglm_duration_mean, bayesrnn_duration_mean,
@@ -3724,8 +3678,8 @@ summary_results <- data.frame(
     ensemble_bagging_duration_mean, ensemble_bayesglm_duration_mean,
     ensemble_bayesrnn_duration_mean, ensemble_cubist_duration_mean, ensemble_earth_duration_mean,
     ensemble_elastic_duration_mean, ensemble_gb_duration_mean,
-    ensemble_lasso_duration_mean, ensemble_linear_duration_mean, ensemble_ridge_duration_mean,
-    ensemble_rpart_duration_mean, ensemble_svm_duration_mean, ensemble_tree_duration_mean, ensemble_xgb_duration_mean
+    ensemble_lasso_duration_mean, ensemble_linear_duration_mean, ensemble_neuralnet_duration_mean, ensemble_ridge_duration_mean,
+    ensemble_rpart_duration_mean, ensemble_svm_duration_mean, ensemble_tree_duration_mean
   ), 4),
   "Duration_sd" = round(c(
     0, bagging_duration_sd, bayesglm_duration_sd, bayesrnn_duration_sd,
@@ -3736,8 +3690,8 @@ summary_results <- data.frame(
     ensemble_bagging_duration_sd, ensemble_bayesglm_duration_sd,
     ensemble_bayesrnn_duration_sd, ensemble_cubist_duration_sd, ensemble_earth_duration_sd,
     ensemble_elastic_duration_sd, ensemble_gb_duration_sd,
-    ensemble_lasso_duration_sd, ensemble_linear_duration_sd, ensemble_ridge_duration_sd,
-    ensemble_rpart_duration_sd, ensemble_svm_duration_sd, ensemble_tree_duration_sd, ensemble_xgb_duration_sd
+    ensemble_lasso_duration_sd, ensemble_linear_duration_sd, ensemble_neuralnet_duration_sd, ensemble_ridge_duration_sd,
+    ensemble_rpart_duration_sd, ensemble_svm_duration_sd, ensemble_tree_duration_sd
   ), 4)
 )
 
@@ -3756,9 +3710,9 @@ overfitting_data <-
       c(rep("Ensemble BayesGLM", numresamples)), c(rep("Ensemble BayesRNN", numresamples)),
       c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)), c(rep("Ensemble Elastic", numresamples)),
       c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble Lasso", numresamples)),
-      c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Ridge", numresamples)),
+      c(rep("Ensemble Linear", numresamples)), rep("Ensemble Neuralnet", numresamples), c(rep("Ensemble Ridge", numresamples)),
       c(rep("Ensemble RPart", numresamples)), c(rep("Ensemble Support Vector Machines", numresamples)),
-      c(rep("Ensemble Trees", numresamples)), c(rep("Ensemble XGBoost", numresamples))
+      c(rep("Ensemble Trees", numresamples))
     ),
     "data" = c(
       bagging_overfitting, bayesglm_overfitting,
@@ -3773,9 +3727,9 @@ overfitting_data <-
       ensemble_cubist_overfitting, ensemble_earth_overfitting,
       ensemble_elastic_overfitting_df$ensemble_elastic_overfitting[2:nrow(ensemble_elastic_overfitting_df)],
       ensemble_gb_overfitting, ensemble_lasso_overfitting_df$ensemble_lasso_overfitting[2:nrow(ensemble_lasso_overfitting_df)],
-      ensemble_linear_overfitting, ensemble_ridge_overfitting_df$ensemble_ridge_overfitting[2:nrow(ensemble_ridge_overfitting_df)],
+      ensemble_linear_overfitting, ensemble_neuralnet_overfitting, ensemble_ridge_overfitting_df$ensemble_ridge_overfitting[2:nrow(ensemble_ridge_overfitting_df)],
       ensemble_rpart_overfitting, ensemble_svm_overfitting,
-      ensemble_tree_overfitting, ensemble_xgb_overfitting_df$ensemble_xgb_overfitting[2:nrow(ensemble_xgb_overfitting_df)]
+      ensemble_tree_overfitting
     ),
     "mean" = rep(c(
       bagging_overfitting_mean, bayesglm_overfitting_mean,
@@ -3790,9 +3744,9 @@ overfitting_data <-
       ensemble_cubist_overfitting_mean, ensemble_earth_overfitting_mean,
       ensemble_elastic_overfitting_mean,
       ensemble_gb_overfitting_mean, ensemble_lasso_overfitting_mean, ensemble_linear_overfitting_mean,
-      ensemble_ridge_overfitting_mean,
+      ensemble_neuralnet_overfitting_mean, ensemble_ridge_overfitting_mean,
       ensemble_rpart_overfitting_mean, ensemble_svm_overfitting_mean,
-      ensemble_tree_overfitting_mean, ensemble_xgb_overfitting_mean
+      ensemble_tree_overfitting_mean
     ), each = numresamples)
   )
 
@@ -3853,29 +3807,29 @@ if(save_all_plots == "Y" && device == "tiff"){
 }
 
 overfitting_histograms <- ggplot2::ggplot(overfitting_data, aes(x=data, fill=model)) +
-  ggplot2::geom_histogram(color='black', alpha=0.4, position='identity', bins = numresamples) +
+  geom_histogram(color='black', alpha=0.4, position='identity', bins = numresamples) +
   ggplot2::geom_vline(xintercept = 1, color = "red") +
   ggplot2::facet_wrap(~model, ncol = 4, scales = "free") +
   ggplot2::theme(legend.position = "none") +
   ggplot2::ggtitle("Overfitting histograms by model, closer to 1 and normally distributed are better. \nThe red vertical line = 1.00") +
   ggplot2::labs(y = "Overfitting by model, closer to 1 and normally distributed are better.")
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("overfitting_histograms.eps", plot = overfitting_histograms,  width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("overfitting_histograms.eps", plot = overfitting_plot_free_scales,  width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("overfitting_histograms.jpeg", plot = overfitting_histograms, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("overfitting_histograms.jpeg", plot = overfitting_plot_free_scales, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("overfitting_histograms.pdf", plot = overfitting_histograms, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("overfitting_histograms.pdf", plot = overfitting_plot_free_scales, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("overfitting_histograms.png", plot = overfitting_histograms, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("overfitting_histograms.png", plot = overfitting_plot_free_scales, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("overfitting_histograms.svg", plot = overfitting_histograms, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("overfitting_histograms.svg", plot = overfitting_plot_free_scales, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("overfitting_histograms.tiff", plot = overfitting_histograms, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("overfitting_histograms.tiff", plot = overfitting_plot_free_scales, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 bias_data <-
@@ -3893,9 +3847,9 @@ bias_data <-
       c(rep("Ensemble BayesGLM", numresamples)), c(rep("Ensemble BayesRNN", numresamples)),
       c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)), c(rep("Ensemble Elastic", numresamples)),
       c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble Lasso", numresamples)),
-      c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Ridge", numresamples)),
+      c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Neuralnet", numresamples)), c(rep("Ensemble Ridge", numresamples)),
       c(rep("Ensemble RPart", numresamples)), c(rep("Ensemble Support Vector Machines", numresamples)),
-      c(rep("Ensemble Trees", numresamples)), c(rep("Ensemble XGBoost", numresamples))
+      c(rep("Ensemble Trees", numresamples))
     ),
     "data" = c(
       bagging_bias_mean, bayesglm_bias_mean,
@@ -3909,9 +3863,9 @@ bias_data <-
       ensemble_bayesglm_bias_mean, ensemble_bayesrnn_bias_mean,
       ensemble_cubist_bias_mean, ensemble_earth_bias_mean,
       ensemble_elastic_bias_mean, ensemble_gb_bias_mean, ensemble_lasso_bias_mean,
-      ensemble_linear_bias_mean, ensemble_ridge_bias_mean,
+      ensemble_linear_bias_mean, ensemble_neuralnet_bias_mean, ensemble_ridge_bias_mean,
       ensemble_rpart_bias_mean, ensemble_svm_bias_mean,
-      ensemble_tree_bias_mean, ensemble_xgb_bias_mean
+      ensemble_tree_bias_mean
     )
   )
 
@@ -4662,6 +4616,32 @@ ensemble_linear_qq <- ggplot2::ggplot(ensemble_linear_df, aes(sample = as.numeri
   ggplot2::labs(title = "Ensemble Linear model: Q-Q plot") +
   ggplot2::stat_qq_line(color = "red")
 
+#### Ensemble Neuralnet data visualizations ####
+ensemble_neuralnet_df <- data.frame(
+  actual = ensemble_neuralnet_actual_total,
+  predicted = y_hat_ensemble_neuralnet_total ,
+  residuals = ensemble_neuralnet_actual_total - y_hat_ensemble_neuralnet_total
+)
+
+ensemble_neuralnet_pred_vs_actual <- ggplot2::ggplot(ensemble_neuralnet_df, mapping = aes(x = actual, y = predicted)) +
+  ggplot2::geom_point() +
+  ggplot2::geom_abline(intercept = 0, slope = 1, color = "red") +
+  ggplot2::labs(title = "ensemble_neuralnet model: Predicted vs actual", x = "Actual", y = "Predicted")
+
+ensemble_neuralnet_resid_vs_actual <- ggplot2::ggplot(ensemble_neuralnet_df, mapping = aes(x = actual, y = residuals)) +
+  ggplot2::geom_point() +
+  ggplot2::geom_hline(yintercept = 0, color = "red") +
+  ggplot2::labs(title = "ensemble_neuralnet model: Residuals", x = "Actual", y = "Predicted")
+
+ensemble_neuralnet_hist_residuals <- ggplot2::ggplot(ensemble_neuralnet_df, mapping = aes(x = residuals)) +
+  ggplot2::geom_histogram(bins = round(nrow(df))) +
+  ggplot2::geom_vline(xintercept = 0, color = "red") +
+  ggplot2::labs(title = "ensemble_neuralnet model: Histogram of residuals")
+
+ensemble_neuralnet_qq <- ggplot2::ggplot(ensemble_neuralnet_df, aes(sample = as.numeric(predicted))) + ggplot2::stat_qq() +
+  ggplot2::labs(title = "ensemble_neuralnet model: Q-Q plot") +
+  ggplot2::stat_qq_line(color = "red")
+
 #### Ensemble Ridge data visualizations ####
 ensemble_ridge_df <- data.frame(
   actual = ensemble_ridge_actual_total,
@@ -4766,31 +4746,6 @@ ensemble_tree_qq <- ggplot2::ggplot(ensemble_tree_df, aes(sample = as.numeric(pr
   ggplot2::labs(title = "Ensemble Trees model: Q-Q plot") +
   ggplot2::stat_qq_line(color = "red")
 
-#### Ensemble XGBoost data visualizations ####
-ensemble_XGBoost_df <- data.frame(
-  actual = ensemble_xgb_actual_total,
-  predicted =  ensemble_y_hat_xgb_total,
-  residuals = ensemble_xgb_actual_total - ensemble_y_hat_xgb_total
-)
-
-ensemble_xgb_pred_vs_actual <- ggplot2::ggplot(ensemble_XGBoost_df, mapping = aes(x = actual, y = predicted)) +
-  ggplot2::geom_point() +
-  ggplot2::geom_abline(intercept = 0, slope = 1, color = "red") +
-  ggplot2::labs(title = "Ensemble XGBoost model: Predicted vs actual", x = "Actual", y = "Predicted")
-
-ensemble_xgb_resid_vs_actual <- ggplot2::ggplot(ensemble_XGBoost_df, mapping = aes(x = actual, y = residuals)) +
-  ggplot2::geom_point() +
-  ggplot2::geom_hline(yintercept = 0, color = "red") +
-  ggplot2::labs(title = "Ensemble XGBoost model: Residuals", x = "Actual", y = "Predicted")
-
-ensemble_xgb_hist_residuals <- ggplot2::ggplot(ensemble_XGBoost_df, mapping = aes(x = residuals)) +
-  ggplot2::geom_histogram(bins = round(nrow(df))) +
-  ggplot2::geom_vline(xintercept = 0, color = "red") +
-  ggplot2::labs(title = "Ensemble XGBoost model: Histogram of residuals")
-
-ensemble_xgb_qq <- ggplot2::ggplot(ensemble_XGBoost_df, aes(sample = as.numeric(predicted))) + ggplot2::stat_qq() +
-  ggplot2::labs(title = "Ensemble XGBoost model: Q-Q plot") +
-  ggplot2::stat_qq_line(color = "red")
 
 #### Barcharts ####
 
@@ -4879,7 +4834,6 @@ overfitting_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, 
   ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1, hjust=1)) +
   ggplot2::labs(x = "Model", y = "Overfitting mean", title = "Overfitting, closer to 1 is better, 1 std deviation error bars") +
   ggplot2::geom_text(aes(label = Overfitting_mean), vjust = 0,hjust = -0.5, angle = 90) +
-  ggplot2::ylim(0, max(1.5*max(summary_results$Overfitting_mean[!is.infinite(summary_results$Overfitting_mean)])) +2) +
   ggplot2::geom_errorbar(aes(x=Model, ymin=Overfitting_mean-Overfitting_sd, ymax = Overfitting_mean + Overfitting_sd))
 if(save_all_plots == "Y" && device == "eps"){
   ggplot2::ggsave("overfitting_barchart.eps", plot = overfitting_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
@@ -4931,7 +4885,7 @@ bias_barchart <- ggplot2::ggplot(summary_results, aes(x = reorder(Model, Bias), 
   ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1, hjust=1)) +
   ggplot2::labs(x = "Model", y = "Holdout bias", title = "Mean bias, closer to zero is better") +
   ggplot2::geom_text(aes(label = Bias), vjust = -0.5, hjust = -0.5, angle = 90) +
-  ggplot2::ylim(min(summary_results$Bias), 1.5*max(abs(summary_results$Bias)))
+  ggplot2::ylim(min(summary_results$Bias), 1.5*max(summary_results$Bias))
 if(save_all_plots == "Y" && device == "eps"){
   ggplot2::ggsave("bias_barchart.eps", plot = bias_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
@@ -6141,6 +6095,50 @@ if (data_visualizations[1] == "Ensemble Linear") {
   }
 }
 
+if (data_visualizations[1] == "ensemble_neuralnet") {
+  grid.arrange(ensemble_neuralnet_pred_vs_actual, ensemble_neuralnet_resid_vs_actual, ensemble_neuralnet_hist_residuals, ensemble_neuralnet_qq, ncol = 2)
+  gridExtra::grid.arrange(ensemble_neuralnet_pred_vs_actual)
+  gridExtra::grid.arrange(ensemble_neuralnet_resid_vs_actual)
+  gridExtra::grid.arrange(ensemble_neuralnet_hist_residuals)
+  gridExtra::grid.arrange(ensemble_neuralnet_qq)
+  if(save_all_plots == "Y" && data_visualizations[1] == "ensemble_neuralnet" && device == "eps"){
+    ggplot2::ggsave("ensemble_neuralnet_pred_vs_actual.eps", plot = ensemble_neuralnet_pred_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("ensemble_neuralnet_resid_vs_actual.eps", plot = ensemble_neuralnet_resid_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("ensemble_neuralnet_hist_residuals.eps", plot = ensemble_neuralnet_hist_residuals, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("ensemble_neuralnet_qq.eps", plot = ensemble_neuralnet_qq, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "ensemble_neuralnet" && device == "pdf"){
+    ggplot2::ggsave("ensemble_neuralnet_pred_vs_actual.pdf", plot = ensemble_neuralnet_pred_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("ensemble_neuralnet_resid_vs_actual.pdf", plot = ensemble_neuralnet_resid_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("ensemble_neuralnet_hist_residuals.pdf", plot = ensemble_neuralnet_hist_residuals, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("ensemble_neuralnet_qq.pdf", plot = ensemble_neuralnet_qq, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "ensemble_neuralnet" && device == "jpeg"){
+    ggplot2::ggsave("ensemble_neuralnet_pred_vs_actual.jpeg", plot = ensemble_neuralnet_pred_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("ensemble_neuralnet_resid_vs_actual.jpeg", plot = ensemble_neuralnet_resid_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("ensemble_neuralnet_hist_residuals.jpeg", plot = ensemble_neuralnet_hist_residuals, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("ensemble_neuralnet_qq.jpeg", plot = ensemble_neuralnet_qq, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "ensemble_neuralnet" && device == "tiff"){
+    ggplot2::ggsave("ensemble_neuralnet_pred_vs_actual.tiff", plot = ensemble_neuralnet_pred_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("ensemble_neuralnet_resid_vs_actual.tiff", plot = ensemble_neuralnet_resid_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("ensemble_neuralnet_hist_residuals.tiff", plot = ensemble_neuralnet_hist_residuals, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("ensemble_neuralnet_qq.tiff", plot = ensemble_neuralnet_qq, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "ensemble_neuralnet" && device == "png"){
+    ggplot2::ggsave("ensemble_neuralnet_pred_vs_actual.png", plot = ensemble_neuralnet_pred_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("ensemble_neuralnet_resid_vs_actual.png", plot = ensemble_neuralnet_resid_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("ensemble_neuralnet_hist_residuals.png", plot = ensemble_neuralnet_hist_residuals, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("ensemble_neuralnet_qq.png", plot = ensemble_neuralnet_qq, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+  if(save_all_plots == "Y" && data_visualizations[1] == "ensemble_neuralnet" && device == "svg"){
+    ggplot2::ggsave("ensemble_neuralnet_pred_vs_actual.svg", plot = ensemble_neuralnet_pred_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("ensemble_neuralnet_resid_vs_actual.svg", plot = ensemble_neuralnet_resid_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("ensemble_neuralnet_hist_residuals.svg", plot = ensemble_neuralnet_hist_residuals, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+    ggplot2::ggsave("ensemble_neuralnet_qq.svg", plot = ensemble_neuralnet_qq, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  }
+}
+
 if (data_visualizations[1] == "Ensemble_Ridge") {
   grid.arrange(ensemble_ridge_pred_vs_actual, ensemble_ridge_resid_vs_actual, ensemble_ridge_hist_residuals, ensemble_ridge_qq, ncol = 2)
   gridExtra::grid.arrange(ensemble_ridge_pred_vs_actual)
@@ -6317,50 +6315,6 @@ if (data_visualizations[1] == "Ensemble Trees") {
   }
 }
 
-if (data_visualizations[1] == "Ensemble XGBoost") {
-  gridExtra::grid.arrange(ensemble_xgb_pred_vs_actual, ensemble_xgb_resid_vs_actual, ensemble_xgb_hist_residuals, ensemble_xgb_qq, ncol = 2)
-  gridExtra::grid.arrange(ensemble_xgb_pred_vs_actual)
-  gridExtra::grid.arrange(ensemble_xgb_resid_vs_actual)
-  gridExtra::grid.arrange(ensemble_xgb_hist_residuals)
-  gridExtra::grid.arrange(ensemble_xgb_qq)
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble XGBoost" && device == "eps"){
-    ggplot2::ggsave("ensemble_xgb_pred_vs_actual.eps", plot = ensemble_xgb_pred_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-    ggplot2::ggsave("ensemble_xgb_resid_vs_actual.eps", plot = ensemble_xgb_resid_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-    ggplot2::ggsave("ensemble_xgb_hist_residuals.eps", plot = ensemble_xgb_hist_residuals, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-    ggplot2::ggsave("ensemble_xgb_qq.eps", plot = ensemble_xgb_qq, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble XGBoost" && device == "pdf"){
-    ggplot2::ggsave("ensemble_xgb_pred_vs_actual.pdf", plot = ensemble_xgb_pred_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-    ggplot2::ggsave("ensemble_xgb_resid_vs_actual.pdf", plot = ensemble_xgb_resid_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-    ggplot2::ggsave("ensemble_xgb_hist_residuals.pdf", plot = ensemble_xgb_hist_residuals, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-    ggplot2::ggsave("ensemble_xgb_qq.pdf", plot = ensemble_xgb_qq, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble XGBoost" && device == "jpeg"){
-    ggplot2::ggsave("ensemble_xgb_pred_vs_actual.jpeg", plot = ensemble_xgb_pred_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-    ggplot2::ggsave("ensemble_xgb_resid_vs_actual.jpeg", plot = ensemble_xgb_resid_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-    ggplot2::ggsave("ensemble_xgb_hist_residuals.jpeg", plot = ensemble_xgb_hist_residuals, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-    ggplot2::ggsave("ensemble_xgb_qq.jpeg", plot = ensemble_xgb_qq, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble XGBoost" && device == "tiff"){
-    ggplot2::ggsave("ensemble_xgb_pred_vs_actual.tiff", plot = ensemble_xgb_pred_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-    ggplot2::ggsave("ensemble_xgb_resid_vs_actual.tiff", plot = ensemble_xgb_resid_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-    ggplot2::ggsave("ensemble_xgb_hist_residuals.tiff", plot = ensemble_xgb_hist_residuals, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-    ggplot2::ggsave("ensemble_xgb_qq.tiff", plot = ensemble_xgb_qq, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble XGBoost" && device == "png"){
-    ggplot2::ggsave("ensemble_xgb_pred_vs_actual.png", plot = ensemble_xgb_pred_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-    ggplot2::ggsave("ensemble_xgb_resid_vs_actual.png", plot = ensemble_xgb_resid_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-    ggplot2::ggsave("ensemble_xgb_hist_residuals.png", plot = ensemble_xgb_hist_residuals, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-    ggplot2::ggsave("ensemble_xgb_qq.png", plot = ensemble_xgb_qq, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-  if(save_all_plots == "Y" && data_visualizations[1] == "Ensemble XGBoost" && device == "svg"){
-    ggplot2::ggsave("ensemble_xgb_pred_vs_actual.svg", plot = ensemble_xgb_pred_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-    ggplot2::ggsave("ensemble_xgb_resid_vs_actual.svg", plot = ensemble_xgb_resid_vs_actual, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-    ggplot2::ggsave("ensemble_xgb_hist_residuals.svg", plot = ensemble_xgb_hist_residuals, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-    ggplot2::ggsave("ensemble_xgb_qq.svg", plot = ensemble_xgb_qq, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
-  }
-}
-
 accuracy_data <-
   data.frame(
     "count" = 1:numresamples,
@@ -6376,9 +6330,9 @@ accuracy_data <-
       c(rep("Ensemble BayesGLM", numresamples)), c(rep("Ensemble BayesRNN", numresamples)),
       c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)), c(rep("Ensemble Elastic", numresamples)),
       c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble Lasso", numresamples)),
-      c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Ridge", numresamples)),
+      c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Neuralnet", numresamples)), c(rep("Ensemble Ridge", numresamples)),
       c(rep("Ensemble RPart", numresamples)), c(rep("Ensemble Support Vector Machines", numresamples)),
-      c(rep("Ensemble Trees", numresamples)), c(rep("Ensemble XGBoost", numresamples))
+      c(rep("Ensemble Trees", numresamples))
     ),
     "data" = c(
       bagging_holdout_RMSE, bayesglm_holdout_RMSE,
@@ -6392,9 +6346,9 @@ accuracy_data <-
       ensemble_bayesglm_holdout_RMSE, ensemble_bayesrnn_holdout_RMSE,
       ensemble_cubist_holdout_RMSE, ensemble_earth_holdout_RMSE, ensemble_elastic_holdout_RMSE,
       ensemble_gb_holdout_RMSE, ensemble_lasso_holdout_RMSE,
-      ensemble_linear_holdout_RMSE, ensemble_ridge_holdout_RMSE,
+      ensemble_linear_holdout_RMSE, ensemble_neuralnet_holdout_RMSE, ensemble_ridge_holdout_RMSE,
       ensemble_rpart_holdout_RMSE, ensemble_svm_holdout_RMSE,
-      ensemble_tree_holdout_RMSE, ensemble_xgb_holdout_RMSE
+      ensemble_tree_holdout_RMSE
     ),
     "mean" = rep(c(
       bagging_holdout_RMSE_mean, bayesglm_holdout_RMSE_mean,
@@ -6408,9 +6362,9 @@ accuracy_data <-
       ensemble_bayesglm_holdout_RMSE_mean, ensemble_bayesrnn_holdout_RMSE_mean,
       ensemble_cubist_holdout_RMSE_mean, ensemble_earth_holdout_RMSE_mean, ensemble_elastic_holdout_RMSE_mean,
       ensemble_gb_holdout_RMSE_mean, ensemble_lasso_holdout_RMSE_mean, ensemble_linear_holdout_RMSE_mean,
-      ensemble_ridge_holdout_RMSE_mean,
+      ensemble_neuralnet_holdout_RMSE_mean, ensemble_ridge_holdout_RMSE_mean,
       ensemble_rpart_holdout_RMSE_mean, ensemble_svm_holdout_RMSE_mean,
-      ensemble_tree_holdout_RMSE_mean, ensemble_xgb_holdout_RMSE_mean
+      ensemble_tree_holdout_RMSE_mean
     ), each = numresamples)
   )
 
@@ -6484,9 +6438,9 @@ total_data <-
         c(rep("Ensemble BayesGLM", numresamples)), c(rep("Ensemble BayesRNN", numresamples)),
         c(rep("Ensemble Cubist", numresamples)), c(rep("Ensemble Earth", numresamples)), c(rep("Ensemble Elastic", numresamples)),
         c(rep("Ensemble Gradient Boosted", numresamples)), c(rep("Ensemble Lasso", numresamples)),
-        c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Ridge", numresamples)),
+        c(rep("Ensemble Linear", numresamples)), c(rep("Ensemble Neuralnet", numresamples)), c(rep("Ensemble Ridge", numresamples)),
         c(rep("Ensemble RPart", numresamples)), c(rep("Ensemble Support Vector Machines", numresamples)),
-        c(rep("Ensemble Trees", numresamples)), c(rep("Ensemble XGBoost", numresamples))
+        c(rep("Ensemble Trees", numresamples))
       ),
     "train" = c(
       bagging_train_RMSE, bayesglm_train_RMSE,
@@ -6502,10 +6456,10 @@ total_data <-
       ensemble_elastic_train_RMSE_df$ensemble_elastic_train_RMSE[2:nrow(ensemble_elastic_train_RMSE_df)],
       ensemble_gb_train_RMSE,
       ensemble_lasso_train_RMSE_df$ensemble_lasso_train_RMSE[2:nrow(ensemble_lasso_train_RMSE_df)],
-      ensemble_linear_train_RMSE,
+      ensemble_linear_train_RMSE, ensemble_neuralnet_train_RMSE,
       ensemble_ridge_train_RMSE_df$ensemble_ridge_train_RMSE[2:nrow(ensemble_ridge_train_RMSE_df)],
       ensemble_rpart_train_RMSE, ensemble_svm_train_RMSE,
-      ensemble_tree_train_RMSE, ensemble_xgb_train_RMSE
+      ensemble_tree_train_RMSE
     ),
 
     "holdout" = c(
@@ -6520,9 +6474,9 @@ total_data <-
       ensemble_bayesglm_holdout_RMSE, ensemble_bayesrnn_holdout_RMSE,
       ensemble_cubist_holdout_RMSE, ensemble_earth_holdout_RMSE, ensemble_elastic_holdout_RMSE,
       ensemble_gb_holdout_RMSE, ensemble_lasso_holdout_RMSE,
-      ensemble_linear_holdout_RMSE, ensemble_ridge_holdout_RMSE,
+      ensemble_linear_holdout_RMSE, ensemble_neuralnet_holdout_RMSE, ensemble_ridge_holdout_RMSE,
       ensemble_rpart_holdout_RMSE, ensemble_svm_holdout_RMSE,
-      ensemble_tree_holdout_RMSE, ensemble_xgb_holdout_RMSE
+      ensemble_tree_holdout_RMSE
     )
   )
 
@@ -6533,7 +6487,7 @@ total_plot_free_scales <- ggplot2::ggplot(data = total_data, mapping = ggplot2::
   ggplot2::geom_point(mapping = aes(x = count, y = holdout)) +
   ggplot2::geom_hline(aes(yintercept = 0, color = "optimal")) +
   ggplot2::facet_wrap(~model, ncol = 4, scales = "free") +
-  ggplot2::ggtitle("RMSE (Train vs holdout) results by resample and model. Free scales \nRoot Mean Squared Error by model, lower is better. \nThe black horizontal line is 0.") +
+  ggplot2::ggtitle("Overfitting (Train vs holdout) results by resample and model. Free scales \nRoot Mean Squared Error by model, lower is better. \nThe black horizontal line is 0.") +
   ggplot2::labs(y = "Root Mean Squared Error (RMSE), lower is better \nthe black line is 0.\n") +
   ggplot2::scale_color_manual(
     name = "Total Results",
@@ -6567,7 +6521,7 @@ total_plot_fixed_scales <- ggplot2::ggplot(data = total_data, mapping = ggplot2:
   ggplot2::geom_point(mapping = aes(x = count, y = holdout)) +
   ggplot2::geom_hline(aes(yintercept = 0, color = "optimal")) +
   ggplot2::facet_wrap(~model, ncol = 4, scales = "fixed") +
-  ggplot2::ggtitle("RMSE (Train vs holdout) results by resample and model. Fixed scales \nRoot Mean Squared Error by model, lower is better. \nThe black horizontal line is 0.") +
+  ggplot2::ggtitle("Overfitting (Train vs holdout) results by resample and model. Fixed scales \nRoot Mean Squared Error by model, lower is better. \nThe black horizontal line is 0.") +
   ggplot2::labs(y = "Root Mean Squared Error (RMSE), lower is better \nthe black line is 0.\n") +
   ggplot2::scale_color_manual(
     name = "Total Results",
@@ -6620,27 +6574,6 @@ if (predict_on_new_data == "Y") {
   new_svm <- predict(object = svm_train_fit$best.model, k = svm_train_fit$best_model$k, newdata = new_data)
   new_tree <- predict(object = tree_train_fit, newdata = new_data)
 
-  # XGBoost
-  # split into training and testing set
-  new_train <- train
-  new_test <- new_data
-
-  # define predictor and response variables in training set
-  new_train_x <- data.matrix(new_train[, -ncol(new_train)])
-  new_train_y <- new_test[, ncol(new_test)]
-
-  # define predictor and response variables in testing set
-  new_test_x <- data.matrix(new_test[, -ncol(new_test)])
-  new_test_y <- new_test[, ncol(new_test)]
-
-  new_xgb_test <- xgboost::xgb.DMatrix(data = test_x, label = test_y)
-
-  new_watchlist_test <- list(train = xgb_train, test = xgb_test)
-
-  new_xgb_model <- xgboost::xgb.train(data = new_xgb_test, max.depth = 3, watchlist = new_watchlist_test, nrounds = 70)
-
-  new_XGBoost <- predict(object = new_xgb_model, newdata = new_test_x)
-
   new_ensemble <- data.frame(
     "Bagging" = new_bagging / bagging_holdout_RMSE_mean,
     "BayesGLM" = new_bayesglm / bayesglm_holdout_RMSE_mean,
@@ -6659,7 +6592,6 @@ if (predict_on_new_data == "Y") {
     "Rpart" = new_rpart / rpart_holdout_RMSE_mean,
     "SVM" = new_svm / svm_holdout_RMSE_mean,
     "Tree" = new_tree / tree_holdout_RMSE_mean,
-    "XGBoost" = new_XGBoost / xgb_holdout_RMSE_mean
   )
 
   new_ensemble$y_ensemble <- new_data$y
@@ -6678,32 +6610,11 @@ if (predict_on_new_data == "Y") {
   new_ensemble_gb <- predict(object = ensemble_gb_train_fit, newdata = new_ensemble)
   new_ensemble_lasso <- rowMeans(predict(object = ensemble_lasso_model, newx = data.matrix(new_ensemble %>% dplyr::select(-y_ensemble))))
   new_ensemble_linear <- predict(object = ensemble_linear_train_fit$best.model, newdata = new_ensemble)
+  new_ensemble_neuralnet <- predict(object = ensemble_neuralnet_train_fit, newdata = new_ensemble)
   new_ensemble_rpart <- predict(object = ensemble_rpart_train_fit, newdata = new_ensemble)
   new_ensemble_ridge <- rowMeans(predict(object = ensemble_ridge_model, newx = data.matrix(new_ensemble %>% dplyr::select(-y_ensemble))))
   new_ensemble_svm <- predict(object = ensemble_svm_train_fit$best.model, newdata = new_ensemble)
   new_ensemble_tree <- predict(object = ensemble_tree_train_fit, newdata = new_ensemble)
-
-  # XGBoost
-  # split into training and testing set
-  new_train <- ensemble_train
-  new_test <- new_data
-
-  # define predictor and response variables in training set
-  new_train_x <- data.matrix(new_train[, -ncol(new_test)])
-  new_train_y <- new_test[, ncol(new_test)]
-
-  # define predictor and response variables in testing set
-  new_test_x <- data.matrix(new_test[, -ncol(new_test)])
-  new_test_y <- new_test[, ncol(new_test)]
-
-  new_xgb_test <- xgboost::xgb.DMatrix(data = new_test_x, label = new_test_y)
-
-  new_watchlist_test <- list(train = xgb_train, test = xgb_test)
-
-  new_xgb_model <- xgboost::xgb.train(data = new_xgb_test, max.depth = 3, watchlist = new_watchlist_test, nrounds = 70)
-
-  new_ensemble_xgboost <- predict(object = new_xgb_model, newdata = new_test_x)
-
 
   new_data_results <-
     data.frame(
@@ -6725,7 +6636,6 @@ if (predict_on_new_data == "Y") {
       "Rpart" = round(new_rpart, 4),
       "SVM" = round(new_svm, 4),
       "Tree" = round(new_tree, 4),
-      "XGBoost" = round(new_XGBoost, 4),
       "Ensemble_Bagging" = round(new_ensemble_bagging, 4),
       "Ensemble_BayesGLM" = round(new_ensemble_bayesglm, 4),
       "Ensemble_BayesRNN" = round(new_ensemble_bayesrnn, 4),
@@ -6736,10 +6646,10 @@ if (predict_on_new_data == "Y") {
       "Ensemble_Gardient_Boosted" = round(new_ensemble_gb, 4),
       "Ensemble_Lasso" = round(new_ensemble_lasso, 4),
       "Ensemble_Linear" = round(new_ensemble_linear, 4),
+      "Ensemble_Neuralnet" = round(new_ensemble_neuralnet, 4),
       "Ensemble_RPart" = round(new_ensemble_rpart, 4),
       "Ensemble_SVM" = round(new_ensemble_svm, 4),
       "Ensemble_Tree" = round(new_ensemble_tree, 4),
-      "Ensemble_XGBoost" = round(new_ensemble_xgboost, 4)
     )
 
   df1 <- t(new_data_results)
@@ -6835,6 +6745,9 @@ if (predict_on_new_data == "Y") {
     fil <- tempfile("ensemble_linear_train_fit", fileext = ".RDS")
     saveRDS(ensemble_linear_train_fit, fil)
 
+    fil <- tempfile("ensemble_neuralnet_train_fit", fileext = ".RDS")
+    saveRDS(ensemble_neuralnet_train_fit, fil)
+
     fil <- tempfile("ensemble_bagging_fit", fileext = ".RDS")
     saveRDS(ensemble_bagging_train_fit, fil)
 
@@ -6850,8 +6763,6 @@ if (predict_on_new_data == "Y") {
     fil <- tempfile("ensemble_tree_train_fit", fileext = ".RDS")
     saveRDS(ensemble_tree_train_fit, fil)
 
-    fil <- tempfile("ensemble_xgb_model", fileext = ".RDS")
-    saveRDS(ensemble_xgb_model, fil)
   }
 
   message('The trained models are temporariliy saved in this directory: tempdir1. This directory is automatically deleted at the end of the R session.
@@ -6864,7 +6775,7 @@ if (predict_on_new_data == "Y") {
     "Cooks_distance" = cooks_distance_plot, "histograms" = histograms, "boxplots" = boxplots, "predictor_vs_target" = predictor_vs_target,
     "final_results_table" = final_results, "data_correlation" = data_correlation, "data_summary" = data_summary, "head_of_ensemble" = head_ensemble, "ensemble_correlation" = ensemble_correlation,
     "accuracy_barchart" = accuracy_barchart, "train_vs_holdout" = total_plot, "duration_barchart" = duration_barchart, "overfitting_barchart" = overfitting_barchart,
-    "overfitting_histograms" = overfitting_histograms, "bias_barchart" = bias_barchart,
+    "bias_barchart" = bias_barchart,
     "bias_plot" = bias_plot, "Kolmogorov-Smirnov test p-score" = k_s_test_barchart,
     "colnum" = colnum, "numresamples" = numresamples, "predict_on_new_data" = predictions_of_new_data, "save_all_trained_models" = save_all_trained_models,
     "how_to_handle_strings" = how_to_handle_strings, "data_reduction_method" = data_reduction_method, 'VIF' = VIF, "scale_data" = scale_all_predictors_in_data,
@@ -6957,6 +6868,8 @@ if (save_all_trained_models == "Y") {
   fil <- tempfile("ensemble_linear_train_fit", fileext = ".RDS")
   saveRDS(ensemble_linear_train_fit, fil)
 
+  fil <- tempfile("ensemble_neuralnet_train_fit", fileext = ".RDS")
+  saveRDS(ensemble_neuralnet_train_fit, fil)
   fil <- tempfile("ensemble_bagging_fit", fileext = ".RDS")
   saveRDS(ensemble_bagging_train_fit, fil)
 
@@ -6972,8 +6885,6 @@ if (save_all_trained_models == "Y") {
   fil <- tempfile("ensemble_tree_train_fit", fileext = ".RDS")
   saveRDS(ensemble_tree_train_fit, fil)
 
-  fil <- tempfile("ensemble_xgb_model", fileext = ".RDS")
-  saveRDS(ensemble_xgb_model, fil)
 }
 
 message('The trained models are temporariliy saved in this directory: tempdir1. This directory is automatically deleted at the end of the R session.
@@ -7000,7 +6911,7 @@ for (i in 1:ncol(df2)) {
   message(noquote(""))
 }
 
-return(list(
+list(
   "head_of_data" = head_df, "boxplots" = boxplots, "Cooks_distance" = cooks_distance_plot, "histograms" = histograms, "predictor_vs_target" = predictor_vs_target, "data_correlation" = data_correlation,
   "Correlation_as_numbers" = corrplot_number, "Correlation_as_circles" = corrplot_circle, "Corrplot_full" = corrplot_full,'VIF' = VIF,
   "accuracy_barchart" = accuracy_barchart, "accuracy_plot_fixed_scales" = accuracy_plot_fixed_scales, "accuracy_free_scales" = accuracy_plot_free_scales, "bias_barchart" = bias_barchart, "bias_plot" = bias_plot, "duration_barchart" = duration_barchart,
@@ -7013,7 +6924,6 @@ return(list(
   "colnum" = colnum, "numresamples" = numresamples, "save_all_trained_modesl" = save_all_trained_models, "how_to_handle_strings" = how_to_handle_strings,
   "data_reduction_method" = data_reduction_method,  "scale_data" = scale_all_predictors_in_data,
   "train_amount" = train_amount, "test_amount" = test_amount, "validation_amount" = validation_amount
-)
 )
 
 }
