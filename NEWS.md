@@ -1,3 +1,6 @@
+# 0.10.8
+## Removed ensemble_XGBoost due to problems with overfitting, replaced with ensemble_neuralnet, which does not have any issues with overfitting.
+
 # 0.10.7
 ## Added automatic stratified sampling for train, test and validation sets. Also added automatic histograms of the overfitting data.
 
