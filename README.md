@@ -58,11 +58,11 @@ The 32 models which are all built automatically and without error are:
 13. Ensemble Gradient Boosted
 14. Ensemble Lasso (optimized by cross-validation)
 15. Ensemble Linear (tuned)
-16. Ensemble Ridge (optimized by cross-validation)
-17. Ensemble RPart
-18. EnsembleSVM (tuned)
-19. Ensemble Trees
-20. Ensemble XGBoost
+16. Ensemble Neuralnet (optimized)
+17. Ensemble Ridge (optimized by cross-validation)
+18. Ensemble RPart
+10. EnsembleSVM (tuned)
+20. Ensemble Trees
 21. GAM (Generalized Additive Models, with smoothing splines)
 22. Gradient Boosted (optimized)
 23. Lasso
@@ -122,21 +122,15 @@ The tables created automatically (which are both searchable and sortable) are:
   8. Kolmogorov-Smirnov stat standard deviation
   9. Mean bias
   10. Mean bias standard deviation
-  11. Mean MAE
-  12. Mean MAE standard deviation
-  13. Mean MSE
-  14. Mean MSE standard deviation
-  15. Mean SSE
-  16. Mean SSE standard deviation
-  17. Mean data (this is the mean of the target column in the original data set)
-  18. Standard deviation of mean data (this is the standard deviation of the data in the target column in the original data set)
-  19. Mean train RMSE
-  20. Mean test RMSE
-  21. Mean validation RMSE
-  22. Holdout vs train mean
-  23. Holdout vs train standard deviation
-  24. Duration
-  25. Duration standard deviation
+  11. Mean data (this is the mean of the target column in the original data set)
+  12. Standard deviation of mean data (this is the standard deviation of the data in the target column in the original data set)
+  13. Mean train RMSE
+  14. Mean test RMSE
+  15. Mean validation RMSE
+  16. Holdout vs train mean
+  17. Holdout vs train standard deviation
+  19. Duration
+  19. Duration standard deviation
 
 ## Example using pre-trained models on totally new data in the NumericEnsembles package
 
