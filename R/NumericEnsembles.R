@@ -5001,7 +5001,7 @@ Numeric <- function(data, colnum, numresamples,
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1, hjust=1)) +
     ggplot2::labs(x = "Model", y = "P-Value", title = "Kolmogorov-Smirnov test, p-value, 1 std deviation error bars, above your p-value is better") +
     ggplot2::geom_text(aes(label = KS_Test_P_Value_mean), vjust = -0.5, hjust = -0.5, angle = 90) +
-    ggplot2::ylim(0, 1.5*max(summary_results$KS_Test_P_Value_mean)) +
+    ggplot2::ylim(0, 2) +
     ggplot2::scale_y_continuous(breaks = c(0.05, 0.10)) +
     ggplot2::geom_hline(yintercept = c(0.05, 0.10), linetype='dashed', color=c('blue', 'blue')) +
     ggplot2::geom_errorbar(aes(x = Model, ymin = KS_Test_P_Value_mean - KS_Test_P_Value_std_dev, ymax = KS_Test_P_Value_mean + KS_Test_P_Value_std_dev))
