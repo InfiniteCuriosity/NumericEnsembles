@@ -1,6 +1,6 @@
 Package: NumericEnsembles
 Title: Automatically Runs 18 Individual and 14 Ensembles of Models
-Version: 0.10.8
+Version: 0.10.9
 Authors@R: 
     person("Russ", "Conte", , "russconte@mac.com", role = c("aut", "cre", "cph"))
 Depends:
@@ -35,10 +35,12 @@ Depends:
     reactablefmtr,
     readr,
     rpart,
+    scales,
     stats,
     tidyr,
     tree,
     utils,
+    vip,
     xgboost,
     R (>= 4.1.0)
 Description: Automatically runs 18 individual models and 14 ensembles on numeric data, for a total of 32 models. The package automatically returns complete results on all 32 models,
