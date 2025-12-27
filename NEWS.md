@@ -1,3 +1,6 @@
+# 0.10.9
+## Added several functions to separate best performing from worst performing data, using the vip package
+
 # 0.10.8
 ## Removed ensemble_XGBoost due to problems with overfitting, replaced with ensemble_neuralnet, which does not have any issues with overfitting.
 
