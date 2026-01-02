@@ -7229,31 +7229,29 @@ if (save_all_trained_models == "Y") {
 message('The trained models are temporariliy saved in this directory: tempdir1. This directory is automatically deleted at the end of the R session.
           You may save the trained models before you end this session if you chose to do so.')
 
-
-newdf <- old_data
-newdf <- newdf %>% dplyr::arrange(dplyr::desc(newdf[, ncol(newdf)]))
-separator <- round(nrow(newdf)*0.05,0)
-high_5_percent <- head(newdf, n = separator)
+olddata <- old_data %>% dplyr::relocate(colnum, .after = last_col())
+olddata <- olddata %>% dplyr::arrange(dplyr::desc(olddata[, ncol(olddata)]))
+separator <- round(nrow(olddata)*0.05,0)
+high_5_percent <- head(olddata, n = separator)
 high_5_percent$group <- as.factor(c("Highest_five_percent"))
-low_5_percent <- tail(newdf, n = separator)
+low_5_percent <- tail(olddata, n = separator)
 low_5_percent$group <- as.factor(c("Lowest_five_percent"))
 summary <- rbind(high_5_percent, low_5_percent)
 summary <- summary %>% mutate_if(is.numeric, round, digits = 0)
-
 summary_list <- reactable::reactable(summary,
                                      searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
                                      striped = TRUE, highlight = TRUE, resizable = TRUE
 )%>%
-  reactablefmtr::add_title("Highest 5% and lowest 5% of the data")
+  reactablefmtr::add_title("Highest five percent and lowest five percent of the data")
 
 plot_list <- lapply(1:(ncol(summary)-1), \(i) {
-  df2 <- stats::aggregate(
+  df1 <- stats::aggregate(
     summary[, ncol(summary) - 1],
     by = list(summary[, i], summary$group), FUN = sum
   )
-  max_y <- max(df2$x)
+  max_y <- max(df1$x)
 
-  ggplot2::ggplot(df2, aes(y = factor(Group.1), x = x)) +
+  ggplot2::ggplot(df1, ggplot2::aes(y = factor(Group.1), x = x)) +
     ggplot2::geom_col() +
     ggplot2::labs(
       y = NULL,
@@ -7267,7 +7265,7 @@ plot_list <- lapply(1:(ncol(summary)-1), \(i) {
         hjust = ifelse(x > .5 * max_y, 1, 0),
         color = I(ifelse(x > .5 * max_y, "white", "black"))
       ),
-      size = 12,
+      size = 6,
       fill = NA, border.color = NA
     ) +
     ggplot2::facet_grid(~Group.2)
@@ -7291,9 +7289,6 @@ if(save_all_plots == "Y" && device == "svg"){
 if(save_all_plots == "Y" && device == "tiff"){
   ggplot2::ggsave("plot_list.tiff", plot = plot_list, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
-
-
-
 
 return(list(
   "head_of_data" = head_df, "boxplots" = boxplots, "variable_importance_barchart" = variable_importance_barchart, "variable_importance_table" = variable_importance,
