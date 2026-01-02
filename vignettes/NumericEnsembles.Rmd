@@ -1,8 +1,8 @@
 ---
-title: "NumericEnsembles"
+title: "NumericEnsembles Introduction"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{NumericEnsembles}
+  %\VignetteIndexEntry{NumericEnsembles Introduction}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
