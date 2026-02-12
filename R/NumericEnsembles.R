@@ -1215,6 +1215,7 @@ train_ratio_df <- data.frame()
 test_ratio_df <- data.frame()
 validation_ratio_df <- data.frame()
 stratified_sampling_report <- 0
+section <- 0
 
 #### Resampling start here ####
 
@@ -1255,8 +1256,9 @@ for (i in 1:numresamples) {
 
     total_data_mean <- table(data[, stratified_random_column])/nrow(data)
 
-    df1 <- as.data.frame(rbind(train_ratio_mean, test_ratio_mean, validation_ratio_mean, total_data_mean))
-    row.names(df1) <- c('train ratio mean', 'test ratio mean', 'validation ratio mean', 'total data mean')
+    df1 <- as.data.frame(rbind(total_data_mean, train_ratio_mean, test_ratio_mean, validation_ratio_mean))
+    df1$section <- c('whole data set', 'train ratios', 'test ratios', 'validation ratios')
+    df1 <- df1 %>% dplyr::relocate(section)
     colnames(df1) <- levels
 
     df1 <- data.frame(lapply(df1, function(x) if(is.numeric(x)) round(x, 4) else x))
