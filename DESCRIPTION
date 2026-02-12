@@ -1,6 +1,6 @@
 Package: NumericEnsembles
 Title: Automatically Runs 18 Individual and 14 Ensembles of Models
-Version: 0.10.9
+Version: 0.10.10
 Authors@R: 
     person("Russ", "Conte", , "russconte@mac.com", role = c("aut", "cre", "cph"))
 Depends:
