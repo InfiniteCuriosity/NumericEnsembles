@@ -30,7 +30,7 @@ Numeric(data = MASS::Boston,
         ensemble_reduction_method = 0,
         how_to_handle_strings = 0,
         predict_on_new_data = "N",
-        stratified_random_sampling = "N",
+        stratified_random_sampling = 0,
         save_all_trained_models = "N",
         set_seed = "N",
         save_all_plots = "N",
@@ -38,7 +38,6 @@ Numeric(data = MASS::Boston,
         train_amount = 0.60,
         test_amount = 0.20,
         validation_amount = 0.20)
-
 ```
 
 The 32 models which are all built automatically and without error are:
