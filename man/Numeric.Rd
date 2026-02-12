@@ -2,7 +2,7 @@
 % Please edit documentation in R/NumericEnsembles.R
 \name{Numeric}
 \alias{Numeric}
-\title{Numeric—function to automatically build 23 individual models and 17 ensembles then return the results to the user}
+\title{Numeric—function to automatically build 18 individual models and 14 ensembles then return the results to the user}
 \usage{
 Numeric(
   data,
@@ -74,5 +74,5 @@ Numeric(
 a real number
 }
 \description{
-Numeric—function to automatically build 23 individual models and 17 ensembles then return the results to the user
+Numeric—function to automatically build 18 individual models and 14 ensembles then return the results to the user
 }
