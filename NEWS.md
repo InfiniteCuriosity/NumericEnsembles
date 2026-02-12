@@ -1,3 +1,7 @@
+# 0.10.10
+## Added stratified random sampling
+## Added extensive documentation, set up sections so the code is easy for the user to navigate.
+
 # 0.10.9
 ## Added several functions to separate best performing from worst performing data, using the vip package
 
