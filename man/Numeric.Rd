@@ -25,7 +25,7 @@ Numeric(
   save_all_trained_models = c("Y", "N"),
   save_all_plots = c("Y", "N"),
   use_parallel = c("Y", "N"),
-  stratified_random_sampling = c("Y", "N"),
+  stratified_random_column,
   train_amount,
   test_amount,
   validation_amount
@@ -56,13 +56,13 @@ Numeric(
 
 \item{set_seed}{"Y" or "N" to set the seed to make the results fully reproducible}
 
-\item{save_all_trained_models}{"Y" or "N". If "Y", then places all the trained models in the Environment}
+\item{save_all_trained_models}{"Y" or "N". If "Y", then places all the trained models in the temporary directory, tempdir(), and the trained models may be retreived from there}
 
-\item{save_all_plots}{Saves all plots to the working directory}
+\item{save_all_plots}{Saves all plots to the tempdir() directory, and the plots may be retreived from there}
 
 \item{use_parallel}{"Y" or "N" for parallel processing}
 
-\item{stratified_random_sampling}{"Y" or "N" to use stratified random sampling (percent, numeric or classification)}
+\item{stratified_random_column}{0 if no stratified random sampling, or column number for stratified random sampling}
 
 \item{train_amount}{set the amount for the training data}
 
