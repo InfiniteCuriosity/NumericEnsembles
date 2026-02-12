@@ -1,20 +1,20 @@
-#' Numeric—function to automatically build 23 individual models and 17 ensembles then return the results to the user
+#' Numeric—function to automatically build 18 individual models and 14 ensembles then return the results to the user
 #'
 #' @param data data can be a CSV file or within an R package, such as MASS::Boston
 #' @param colnum a column number in your data
 #' @param numresamples the number of resamples
 #' @param how_to_handle_strings 0: No strings, 1: Factor values, 2: One-hot encoding, 3: One-hot encoding AND jitter
 #' @param predict_on_new_data "Y" or "N". If "Y", then you will be asked for the new data
-#' @param save_all_trained_models "Y" or "N". If "Y", then places all the trained models in the Environment
+#' @param save_all_trained_models "Y" or "N". If "Y", then places all the trained models in the temporary directory, tempdir(), and the trained models may be retreived from there
 #' @param set_seed "Y" or "N" to set the seed to make the results fully reproducible
-#' @param save_all_plots Saves all plots to the working directory
+#' @param save_all_plots Saves all plots to the tempdir() directory, and the plots may be retreived from there
 #' @param scale_all_predictors_in_data "Y" or "N" to scale numeric data
 #' @param remove_data_correlations_greater_than maximum value for correlations of the original data (such as the Boston Housing data set)
 #' @param remove_ensemble_correlations_greater_than maximum value for correlations of the ensemble
 #' @param remove_VIF_above remove columns with Variable Inflation Factor above value chosen by the user
 #' @param data_reduction_method 0(none), BIC (1, 2, 3, 4) or Mallow's_cp (5, 6, 7, 8) for Forward, Backward, Exhaustive and SeqRep
 #' @param ensemble_reduction_method 0(none), BIC (1, 2, 3, 4) or Mallow's_cp (5, 6, 7, 8) for Forward, Backward, Exhaustive and SeqRep
-#' @param stratified_random_sampling "Y" or "N" to use stratified random sampling (percent, numeric or classification)
+#' @param stratified_random_column 0 if no stratified random sampling, or column number for stratified random sampling
 #' @param use_parallel "Y" or "N" for parallel processing
 #' @param train_amount set the amount for the training data
 #' @param test_amount set the amount for the testing data
@@ -31,7 +31,7 @@
 #' @importFrom corrplot corrplot
 #' @importFrom Cubist cubist
 #' @importFrom doParallel registerDoParallel
-#' @importFrom dplyr all_of arrange desc relocate rename last_col n_distinct filter %>% mutate_if
+#' @importFrom dplyr all_of arrange bind_rows desc relocate rename last_col n_distinct filter %>% mutate_if
 #' @importFrom e1071 tune.svm tune.gknn tune.randomForest
 #' @importFrom earth earth
 #' @importFrom gam gam gam.s s
@@ -70,7 +70,7 @@ Numeric <- function(data, colnum, numresamples,
                                                   5("Mallows_cp exhaustive"), 6("Mallows_cp forward"), 7("Mallows_cp backward"), 8("Mallows_cp, seqrep")),
                     how_to_handle_strings = c(0("none"), 1("factor levels"), 2("One-hot encoding"), 3("One-hot encoding with jitter")),
                     predict_on_new_data = c("Y", "N"), set_seed = c("Y", "N"), save_all_trained_models = c("Y", "N"), save_all_plots = c("Y", "N"),
-                    use_parallel = c("Y", "N"), stratified_random_sampling = c("Y", "N"),
+                    use_parallel = c("Y", "N"), stratified_random_column,
                     train_amount, test_amount, validation_amount) {
 
 use_parallel <- 0
@@ -210,6 +210,9 @@ if (predict_on_new_data == "Y") {
   new_data <- new_data %>% dplyr::relocate(y, .after = last_col()) # Moves the target column in the new data to the last column on the right
 }
 
+if(stratified_random_column >0) {
+  levels <- levels(as.factor((df[, stratified_random_column]))) # gets the levels for stratified data
+}
 
 if (how_to_handle_strings == 1) {
   df <- dplyr::mutate_if(df, is.character, as.factor)
@@ -243,11 +246,13 @@ if (how_to_handle_strings == 3 && predict_on_new_data == "Y") {
   newdata <- data.frame(lapply(newdata, jitter))
 }
 
-tmp <- stats::cor(df) # This section removes strongly correlated the user chooses (for example >0.995) rows and columns from the data
-tmp[upper.tri(tmp)] <- 0
-diag(tmp) <- 0
-data_new <- df[, !apply(tmp, 2, function(x) any(abs(x) > remove_data_correlations_greater_than, na.rm = TRUE))]
-df <- data_new # new data without strongly correlated predictors
+if(remove_data_correlations_greater_than <1.00){
+  tmp <- stats::cor(df) # This section removes strongly correlated the user chooses (for example >0.995) rows and columns from the data
+  tmp[upper.tri(tmp)] <- 0
+  diag(tmp) <- 0
+  data_new <- df[, !apply(tmp, 2, function(x) any(abs(x) > remove_data_correlations_greater_than, na.rm = TRUE))]
+  df <- data_new # new data without strongly correlated predictors
+}
 
 vif <- car::vif(lm(y ~ ., data = df[, 1:ncol(df)]))
 for (i in 1:ncol(df)) {
@@ -340,6 +345,8 @@ if(save_all_plots == "Y" && device == "tiff"){
 }
 # Thanks to https://rstudio-pubs-static.s3.amazonaws.com/388596_e21196f1adf04e0ea7cd68edd9eba966.html
 
+#### Histograms here ####
+
 histograms <- ggplot2::ggplot(tidyr::gather(df1, cols, value), aes(x = value)) +
   ggplot2::geom_histogram(bins = round(nrow(df1))) +
   ggplot2::facet_wrap(. ~ cols, scales = "free") +
@@ -362,6 +369,8 @@ if(save_all_plots == "Y" && device == "svg"){
 if(save_all_plots == "Y" && device == "tiff"){
   ggplot2::ggsave("histograms.tiff", plot = histograms, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
+
+#### Predictor vs target here ####
 
 predictor_vs_target <- df %>%
   tidyr::gather(-y, key = "var", value = "value") %>%
@@ -388,6 +397,8 @@ if(save_all_plots == "Y" && device == "svg"){
 if(save_all_plots == "Y" && device == "tiff"){
   ggplot2::ggsave("predictor_vs_target.tiff", plot = predictor_vs_target, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
+
+#### Calculate outliers here ####
 
 model <- lm(y ~ ., data = df)
 cooks_distance_plot <- olsrr::ols_plot_cooksd_bar(model) # Thanks to https://cran.r-project.org/web/packages/olsrr/vignettes/influence_measures.html
@@ -420,6 +431,8 @@ outlier_list <- reactable::reactable(outliers,
 
 
 #### Full analysis starts here ####
+
+#### Initialize values to 0 ####
 
 bagging_train_RMSE <- 0
 bagging_test_RMSE <- 0
@@ -1197,7 +1210,13 @@ Variable <- 0
 RMSE_Std_Dev <- 0
 Group.1 <- 0
 .pt <- 0
+which_column_number <- 0
+train_ratio_df <- data.frame()
+test_ratio_df <- data.frame()
+validation_ratio_df <- data.frame()
+stratified_sampling_report <- 0
 
+#### Resampling start here ####
 
 for (i in 1:numresamples) {
   message(noquote(""))
@@ -1217,19 +1236,35 @@ for (i in 1:numresamples) {
     validation <- df[idx == 3, ]
   }
 
-  if(stratified_random_sampling == "Y"){
-    which_column_number <- readline("Which column number to use to stratify the data?")
-    train <- train %>%
-      dplyr::group_by(df[, which_column_number]) %>%
-      dplyr::sample_frac(train_amount)
+  if(stratified_random_column > 0){
+    df <- df[sample(nrow(df)),]
+    train <- as.data.frame(df %>% dplyr::group_by(colnames(df[, stratified_random_column])) %>% dplyr::sample_frac(train_amount))
+    train_ratio <- table(train[, stratified_random_column])/nrow(train)
+    train_ratio_df <- dplyr::bind_rows(train_ratio_df, train_ratio)
+    train_ratio_mean <- colMeans(train_ratio_df)
 
-    test <- test %>%
-      dplyr::group_by(df[, which_column_number]) %>%
-      dplyr::sample_frac(test_amount)
+    test <- as.data.frame(df %>% dplyr::group_by(colnames(df[, stratified_random_column])) %>% dplyr::sample_frac(test_amount))
+    test_ratio <- table(test[, stratified_random_column])/nrow(test)
+    test_ratio_df <- dplyr::bind_rows(test_ratio_df, test_ratio)
+    test_ratio_mean <- colMeans(test_ratio_df)
 
-    validation <- validation %>%
-      dplyr::group_by(df[, which_column_number]) %>%
-      dplyr::sample_frac(validation_amount)
+    validation <- as.data.frame(df %>% dplyr::group_by(colnames(df[, stratified_random_column])) %>% dplyr::sample_frac(validation_amount))
+    validation_ratio <- table(validation[, stratified_random_column])/nrow(validation)
+    validation_ratio_df <- dplyr::bind_rows(validation_ratio_df, validation_ratio)
+    validation_ratio_mean <- colMeans(validation_ratio_df)
+
+    total_data_mean <- table(data[, stratified_random_column])/nrow(data)
+
+    df1 <- as.data.frame(rbind(train_ratio_mean, test_ratio_mean, validation_ratio_mean, total_data_mean))
+    row.names(df1) <- c('train ratio mean', 'test ratio mean', 'validation ratio mean', 'total data mean')
+    colnames(df1) <- levels
+
+    df1 <- data.frame(lapply(df1, function(x) if(is.numeric(x)) round(x, 4) else x))
+
+    stratified_sampling_report <- reactable::reactable(df1, searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
+                                                       striped = TRUE, highlight = TRUE, resizable = TRUE
+    )%>%
+      reactablefmtr::add_title("Stratified Random Sampling Report")
   }
 
   ####  Model #1 Bagging ####
@@ -3678,12 +3713,12 @@ for (i in 1:numresamples) {
 
 }
 
+#### End of models here ####
 
-##########################################
 
-####### Start summary results here #######
+#### All summary results start here ####
 
-##########################################
+#### Summary results data frame ####
 
 summary_results <- data.frame(
   "Model" = c(
@@ -3985,6 +4020,8 @@ summary_results <- data.frame(
   ), 4)
 )
 
+
+#### Overfitting data frame and plots ####
 overfitting_data <-
   data.frame(
     "count" = 1:numresamples,
@@ -4122,6 +4159,8 @@ if(save_all_plots == "Y" && device == "tiff"){
   ggplot2::ggsave("overfitting_histograms.tiff", plot = overfitting_histograms, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
+
+#### Bias data frame and plots ####
 bias_data <-
   data.frame(
     "count" = 1:numresamples,
@@ -4196,7 +4235,7 @@ final_results <- reactable::reactable(summary_results,
   reactablefmtr::add_title("RMSE, means, fitting, model summaries of the train, test and validation sets")
 
 
-#### <-----------------------------------------  8. Summary data visualizations ----------------------------------------------------> ####
+#### <-----------------------------------------  8. Summary model data visualizations ----------------------------------------------------> ####
 
 #### bagging data visualizations ####
 bagging_df <- data.frame(
@@ -5260,6 +5299,8 @@ if(save_all_plots == "Y" && device == "svg"){
 if(save_all_plots == "Y" && device == "tiff"){
   ggplot2::ggsave("bias_barchart.tiff", plot = bias_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
+
+#### Plot of predicted vs actual, residuals, histogram of residuals and Q-Q plot for all models ####
 
 for (i in 2:4) {
 
@@ -6865,6 +6906,8 @@ for (i in 2:4) {
   }
 }
 
+
+#### Accuracy data frame and plots ####
 accuracy_data <-
   data.frame(
     "count" = 1:numresamples,
@@ -6972,6 +7015,9 @@ if(save_all_plots == "Y" && device == "svg"){
 if(save_all_plots == "Y" && device == "tiff"){
   ggplot2::ggsave("accuracy_plot_free_scales.tiff", plot = accuracy_plot_free_scales, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
+
+
+#### Total data (train vs holdout) data frame and plots ####
 total_data <-
   data.frame(
     "count" = 1:numresamples,
@@ -7098,13 +7144,8 @@ if(save_all_plots == "Y" && device == "tiff"){
   ggplot2::ggsave("total_plot_fixed_scales.tiff", plot = total_plot_fixed_scales, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
-#########################################################################
 
-###### Start making prescriptions here ######################
-
-#########################################################################
-
-
+#### Variable importance plot ####
 lm_vip <- lm(y ~ ., data = df)
 vip_df <- vip::vi(lm_vip)
 vip_df$Percentage <- round(vip_df$Importance / sum(vip_df$Importance), 4)
@@ -7124,11 +7165,7 @@ variable_importance_barchart <- ggplot2::ggplot(data = vip_df, mapping = aes(x =
   ggplot2::scale_y_continuous(labels = scales::label_percent())
 
 
-#########################################################################
-
-###### Start making predictions on new data here ########################
-
-#########################################################################
+#### Start making predictions on new data here ####
 
 if (predict_on_new_data == "Y") {
   new_bagging <- predict(object = bagging_train_fit, newdata = new_data)
@@ -7383,6 +7420,8 @@ if (predict_on_new_data == "Y") {
   )
 }
 
+
+#### Separators start here ####
 olddata <- old_data %>% dplyr::relocate(all_of(colnum), .after = last_col())
 olddata <- olddata %>% dplyr::arrange(dplyr::desc(olddata[, ncol(olddata)]))
 separator <- round(nrow(olddata)*0.05,0)
@@ -7444,6 +7483,8 @@ if(save_all_plots == "Y" && device == "tiff"){
   ggplot2::ggsave("plot_list.tiff", plot = plot_list, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
+
+#### Save all trained models starts here ####
 if (save_all_trained_models == "Y") {
   tempdir1 <- tempdir()
 
@@ -7589,12 +7630,13 @@ return(list(
   "accuracy_barchart" = accuracy_barchart, "accuracy_plot_fixed_scales" = accuracy_plot_fixed_scales, "accuracy_free_scales" = accuracy_plot_free_scales, "bias_barchart" = bias_barchart, "bias_plot" = bias_plot, "duration_barchart" = duration_barchart,
   "head_of_ensemble" = head_ensemble, "overfitting_barchart" = overfitting_barchart, "overfitting_histograms" = overfitting_histograms,
   "overfitting_plot_fixed_scales" = overfitting_plot_fixed_scales, "overfitting_plot_free_scales" = overfitting_plot_free_scales,
-  "train_vs_holdout" = total_plot_fixed_scales, "train_vs_holdout_free_scales" = total_plot_free_scales,
+  "train_vs_holdout" = total_plot_fixed_scales, "train_vs_holdout_free_scales" = total_plot_free_scales, "stratified_resampling_report" = stratified_sampling_report,
   "Kolmogorov-Smirnov test p-score" = k_s_test_barchart, "p-value_barchart" = p_value_barchart,
   "final_results_table" = final_results,  "ensemble_correlation" = ensemble_correlation,
   "data_summary" = data_summary, "plot_list" = plot_list, "outlier_data" = outlier_list, "summary_list" = summary_list,
   "colnum" = colnum, "numresamples" = numresamples, "save_all_trained_modesl" = save_all_trained_models, "how_to_handle_strings" = how_to_handle_strings,
   "data_reduction_method" = data_reduction_method,  "scale_data" = scale_all_predictors_in_data,
-  "train_amount" = train_amount, "test_amount" = test_amount, "validation_amount" = validation_amount)
+  "train_amount" = train_amount, "test_amount" = test_amount, "validation_amount" = validation_amount
+)
 )
 }
