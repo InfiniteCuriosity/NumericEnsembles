@@ -1,3 +1,6 @@
+# 1.0.0
+## All desired features are included and working great, ready for version 1.0.0!
+
 # 0.10.10
 ## Added stratified random sampling
 ## Added extensive documentation, set up sections so the code is easy for the user to navigate.
