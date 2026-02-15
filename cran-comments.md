@@ -53,3 +53,5 @@ This took a very large amount of work, but is fixed. Nothing writes to the user'
 * 0.10.7 Added stratified random sampling for the train, test and validation data sets
 
 * 0.10.8 Removed Ensemble_XGBoost due to massive overfitting, replaced with ensemble_neuralnet, which does not have any issues with overfitting.
+
+* 1.0.0, NumericEnsembles has all the desired functionality and features, all running very well. This is version 1.0.0.
