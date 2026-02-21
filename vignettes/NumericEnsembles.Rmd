@@ -31,19 +31,20 @@ The NumericEnsembles package only has one function, Numeric (with a capital N), 
 
 Here is what the Numeric function looks like with comments about each part:
 
-```         
+``` R
 library(NumericEnsembles)
 Numeric(data = MASS::Boston,
         colnum = 14,
         numresamples = 2,
         remove_VIF_above = 5.00,
-        remove_ensemble_correlations_greater_than = 100,
+        remove_data_correlations_greater_than = 1.00,
+        remove_ensemble_correlations_greater_than = 1.00,
         scale_all_predictors_in_data = "N",
         data_reduction_method = 0,
         ensemble_reduction_method = 0,
         how_to_handle_strings = 0,
         predict_on_new_data = "N",
-        stratified_random_sampling = "N",
+        stratified_random_column = 0,
         save_all_trained_models = "N",
         set_seed = "Y",
         save_all_plots = "N",
@@ -57,7 +58,7 @@ The function uses set.seed, so the results are consistent.
 
 ### **The value used for the seed in this example is 12345.**
 
-The lowest RMSE is 0.1624 ± 0.0751, as this shows:
+The lowest RMSE is 0.1444 ± 0.0381, as this shows:
 
 ![set.seed=12345](images/setseed=12345.jpg)
 
@@ -233,22 +234,22 @@ The function automatically creates a summary table with the following results fo
 
 • Duration
 
-Here is an example of the head of the summary report when we ran the function on Boston Housing. Note that all the most accurate models are ensembles except one (BayesRNN):
+Here is an example of the head of the summary report when we ran the function on Boston Housing. Note that all the most accurate models are all ensembles:
 
-| Model            | RMSE   | 1 standard deviation |
-|------------------|--------|----------------------|
-| EnsembleBayesRNN | 0.1624 | 0.0751               |
-| EnsembleCubist   | 0.2043 | 0.0084               |
-| EnsembleEarth    | 0.3884 | 0.0537               |
-| EnsembleXGBoost  | 0.4987 | 0.0531               |
-| EnsembleLasso    | 0.5601 | 0.0054               |
-| EnsembleElastic  | 0.5648 | 0                    |
+| Model             | RMSE   | 1 standard deviation |
+|-------------------|--------|----------------------|
+| EnsembleBayesRNN  | 0.1444 | 0.0381               |
+| EnsembleCubist    | 0.2644 | 0.0787               |
+| EnsembleEarth     | 0.3884 | 0.0537               |
+| EnsembleBayesGLM  | 0.5708 | 0.0181               |
+| EnsembleNueralnet | 0.0575 | 0.0289               |
+| EnsembleLasso     | 0.5783 | 0.0029               |
 
 **Automatic summary plots**
 
 The function automatically returns 25 plots, here is the predicted vs actual for the best model:
 
-![Predicted vs actual for set.seed=12345](images/pred_vs_actual.jpeg){width="700"}
+![Predicted vs actual for the model with the lowest RMSE](images/Best_model_actual_vs_predicted.jpg.jpeg)
 
 As a note, the overfitting by resample plot is potentially very useful. Clearly some of the models overfit more than others. This plot gives the results for each resample (25 in this case), and it's very easy to see some of the models are more consistent than others. Here is a closeup of a few of the results, so the difference between train and holdout can be easily seen:
 
@@ -314,16 +315,18 @@ Otherwise everything runs exactly the same as in the first example.
 library(NumericEnsembles)
 Numeric(data = ISLR::Carseats,
         colnum = 1,
-        numresamples = 2,
+        numresamples = 25,
         remove_VIF_above = 5.00,
-        remove_ensemble_correlations_greater_than = 1.00,
+        remove_data_correlations_greater_than = 0.90,
+        remove_ensemble_correlations_greater_than = 0.90,
+        stratified_random_column = 0,
         scale_all_predictors_in_data = "N",
         data_reduction_method = 0,
         ensemble_reduction_method = 0,
-        how_to_handle_strings = 2,
+        how_to_handle_strings = 1,
         predict_on_new_data = "N",
         save_all_trained_models = "N",
-        set_seed = "Y",
+        set_seed = "N",
         save_all_plots = "N",
         use_parallel = "Y",
         train_amount = 0.60,
