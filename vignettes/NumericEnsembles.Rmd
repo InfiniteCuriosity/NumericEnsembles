@@ -27,6 +27,8 @@ The Boston Housing data set is in the MASS package. It can be found by MASS::Bos
 
 The NumericEnsembles package only has one function, Numeric (with a capital N), and it automatically does everything for the user.
 
+#### All the arguments in the Numeric function must have a value, or the function will not work correctly.
+
 **Set up the NumericEnsembles function**
 
 Here is what the Numeric function looks like with comments about each part:
@@ -102,8 +104,6 @@ For example, I frequently do 25 random resamplings, as this gives a more accurat
 
 • Gradient Boosted
 
-• K-Nearest Neighbors (tuned with optimized hyperparamaters)
-
 • Lasso (optimized via cross validation)
 
 • Linear (optimized hyperparameters)
@@ -176,8 +176,6 @@ Fit the model on the training data, make predictions and check accuracy on the t
 
 • Ensemble BayesRNN
 
-• Ensemble Boosted Random Forest (tuned with optimized hyperparameters)
-
 • Ensemble Cubist
 
 • Ensemble Earth
@@ -190,13 +188,13 @@ Fit the model on the training data, make predictions and check accuracy on the t
 
 • Ensemble Linear (tuned with optimized hyperparameters)
 
+• Ensemble Neuralnet
+
 • Ensemble Ridge (optimized via cross validation)
 
 • Ensemble RPart
 
 • Ensemble Trees
-
-• Ensemble XGBoost
 
 **Automatic summary table**
 
