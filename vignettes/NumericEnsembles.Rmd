@@ -200,21 +200,27 @@ Fit the model on the training data, make predictions and check accuracy on the t
 
 **Automatic summary table**
 
-The function automatically creates a summary table with the following results for each of the 40 models, sorted by Holdout RMSE:
+The function automatically creates a summary table with the following results for each of the 32 models, sorted by Holdout RMSE:
 
 • Model name
 
 • Holdout RMSE (accuracy)
 
+• RMSE lower 95% confidence interval
+
+• RMSE upper 95% confidence interval
+
 • Standard deviation of the holdout RMSE
 
+• Overfitting mean
+
+• Overfitting lower 95% confidence interval
+
+• Overfitting upper 95% confidence interval
+
+• Overfitting standard deviation
+
 • Mean bias
-
-• Mean MAE
-
-• Mean MSE
-
-• Mean SSE
 
 • Mean of the data
 
@@ -271,23 +277,23 @@ As a note, the overfitting by resample plot is potentially very useful. Clearly 
 
 Lowest RMSE from the Kaggle competition: 2.09684
 
-Lowest RMSE from the NumericEnsembles package: 0.1206
+Lowest RMSE from the NumericEnsembles package: 0.1444
 
-Decrease in error rate:94.7397% decrease using Numeric Ensembles compared to the best result from the student Kaggle competition. In addition, NumericEnsembles returns tables, charts, and much more.
+Decrease in error rate:93.1134% decrease using Numeric Ensembles compared to the best result from the student Kaggle competition. In addition, NumericEnsembles returns tables, charts, and much more.
 
-Calculate percentage change: from V~1~ = 2.09684 to V~2~ = 0.1206 
+Calculate percentage change: from V~1~ = 2.09684 to V~2~ = 0.1444 
 
-#### (𝑉2−𝑉1)\|𝑉1\|×100
+#### **(𝑉2−𝑉1)\|𝑉1\|×100**
 
-#### =(0.1269−2.41243)\|2.41243\|×100
+#### **=(0.1269−2.41243)\|2.41243\|×100**
 
-#### =−2.285532.41243×100
+#### **=−2.285532.41243×100**
 
-#### =−0.947397×100
+#### **=−0.947397×100**
 
-#### =−94.2485% change
+#### **=−94.2485% change**
 
-#### =94.2485 % decrease
+#### **=94.2485 % decrease**
 
 Source: <https://www.calculatorsoup.com/calculators/algebra/percent-change-calculator.php>
 
