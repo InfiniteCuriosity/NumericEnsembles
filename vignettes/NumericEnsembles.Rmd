@@ -198,7 +198,7 @@ Fit the model on the training data, make predictions and check accuracy on the t
 
 **Automatic summary table**
 
-The function automatically creates a summary table with the following results for each of the 32 models, sorted by Holdout RMSE:
+The function automatically creates a summary table with the following results for each of the 32 models, initally sorted by Holdout RMSE, but the table can be sorted by any column:
 
 • Model name
 
