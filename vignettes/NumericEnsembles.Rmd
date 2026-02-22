@@ -33,7 +33,7 @@ The NumericEnsembles package only has one function, Numeric (with a capital N), 
 
 Here is what the Numeric function looks like with comments about each part:
 
-``` R
+``` r
 library(NumericEnsembles)
 Numeric(data = MASS::Boston,
         colnum = 14,
