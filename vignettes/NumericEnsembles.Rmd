@@ -112,9 +112,9 @@ For example, I frequently do 25 random resamplings, as this gives a more accurat
 
 • Partial Least Squares
 
-• Principal Components Regression
+• Principal Components Regression
 
-• Ridge (optimized via cross validation)
+• Ridge (optimized via cross validation)
 
 • RPart
 
@@ -136,7 +136,7 @@ For each of the models, the function fits the model and completes the following,
 
 • Calculates overfitting as mean of the holdout RMSE / mean of the train RMSE
 
-• Calculates Bias, MAE, MSE
+• Calculates Bias
 
 • Creates a vector of predictions, called y_hat (such as y_hat_bag_rf) which will be used to make ensembles of model results
 
