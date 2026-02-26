@@ -1,3 +1,12 @@
+# 1.0.3
+## Fixed errors on predicting on new data using XGBoost
+
+# 1.0.2
+## I received word that the package reactablefmtr will be archived on 2026-03-17. I replaced those functions in NumericEnsembles using the htmlwidges and htmltools libraries.
+
+# 1.0.1
+## Corrected mistakes in the vignette.
+
 # 1.0.0
 ## All desired features are included and working great, ready for version 1.0.0!
 
