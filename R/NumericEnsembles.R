@@ -41,6 +41,8 @@
 #' @importFrom graphics mtext par hist rect panel.smooth
 #' @importFrom grDevices dev.off recordPlot
 #' @importFrom gridExtra arrangeGrob
+#' @importFrom htmltools h2
+#' @importFrom htmlwidgets prependContent
 #' @importFrom ipred bagging
 #' @importFrom leaps regsubsets
 #' @importFrom Metrics rmse
@@ -51,7 +53,6 @@
 #' @importFrom purrr keep map_dbl
 #' @importFrom randomForest randomForest
 #' @importFrom reactable reactable
-#' @importFrom reactablefmtr add_title
 #' @importFrom readr read_lines
 #' @importFrom rpart rpart
 #' @importFrom scales label_percent
@@ -211,7 +212,7 @@ if (predict_on_new_data == "Y") {
 }
 
 if(stratified_random_column >0) {
-  levels <- levels(as.factor((df[, stratified_random_column]))) # gets the levels for stratified data
+  levels <- levels(as.factor((df[, stratified_random_column-1]))) # gets the levels for stratified data
 }
 
 if (how_to_handle_strings == 1) {
@@ -258,6 +259,7 @@ vif <- car::vif(lm(y ~ ., data = df[, 1:ncol(df)]))
 for (i in 1:ncol(df)) {
   if(max(vif) > remove_VIF_above){
     df <- df %>% dplyr::select(-which.max(vif))
+    new_data <- new_data %>% dplyr::select(-which.max(vif))
     vif <- car::vif(lm(y ~ ., data = df[, 1:ncol(df)]))
   }
 }
@@ -265,8 +267,12 @@ for (i in 1:ncol(df)) {
 VIF <- reactable::reactable(as.data.frame(vif),
                             searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
                             striped = TRUE, highlight = TRUE, resizable = TRUE
-)%>%
-  reactablefmtr::add_title("Variance Inflation Factor")
+)
+htmltools::div(class = "table",
+               htmltools::div(class = "title", "VIF")
+)
+
+VIF_report <- htmlwidgets::prependContent(VIF, htmltools::h2(class = "title", "VIF"))
 
 
 if(save_all_plots == "Y"){
@@ -281,8 +287,13 @@ if(save_all_plots == "Y"){
 head_df <- reactable::reactable(head(df, n = 10),
                                 searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
                                 striped = TRUE, highlight = TRUE, resizable = TRUE
-)%>%
-  reactablefmtr::add_title("Head of the data frame")
+)
+
+htmltools::div(class = "table",
+               htmltools::div(class = "title", "head_df")
+)
+
+head_df <- htmlwidgets::prependContent(head_df, htmltools::h2(class = "title", "Head of the data frame"))
 
 ## Set baseline RMSE and Standard Deviation (SD) based on the full data set
 actual_RMSE <- Metrics::rmse(actual = df$y, predicted = df$y)
@@ -294,8 +305,14 @@ data_summary <- summary(df)
 data_summary <- reactable::reactable(round(as.data.frame(do.call(cbind, lapply(df, summary))), 4),
                                      searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
                                      striped = TRUE, highlight = TRUE, resizable = TRUE
-)%>%
-  reactablefmtr::add_title("Data summary")
+)
+
+htmltools::div(class = "table",
+               htmltools::div(class = "title", "data_summary")
+)
+
+data_summary <- htmlwidgets::prependContent(data_summary, htmltools::h2(class = "title", "Data summary"))
+
 
 ## Correlation data and plots ##
 df1 <- df %>% purrr::keep(is.numeric)
@@ -303,8 +320,13 @@ M1 <- stats::cor(df1)
 data_correlation <- reactable::reactable(round(cor(df), 4),
                                          searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
                                          striped = TRUE, highlight = TRUE, resizable = TRUE
-)%>%
-  reactablefmtr::add_title("Correlation of the data")
+)
+
+htmltools::div(class = "table",
+               htmltools::div(class = "title", "data_correlation")
+)
+
+data_correlation <- htmlwidgets::prependContent(data_correlation, htmltools::h2(class = "title", "Data correlation"))
 
 title <- "Correlation plot of the numerical data"
 corrplot_number <- corrplot::corrplot(stats::cor(df1), method = "number", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
@@ -425,9 +447,13 @@ if(save_all_plots == "Y" && device == "tiff"){
 outlier_list <- reactable::reactable(outliers,
                                      searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
                                      striped = TRUE, highlight = TRUE, resizable = TRUE
-)%>%
-  reactablefmtr::add_title("Outlier data")
+)
 
+htmltools::div(class = "table",
+               htmltools::div(class = "title", "outlier_list")
+)
+
+outlier_list <- htmlwidgets::prependContent(outlier_list, htmltools::h2(class = "title", "Outlier list"))
 
 
 #### Full analysis starts here ####
@@ -1239,34 +1265,36 @@ for (i in 1:numresamples) {
 
   if(stratified_random_column > 0){
     df <- df[sample(nrow(df)),]
-    train <- as.data.frame(df %>% dplyr::group_by(colnames(df[, stratified_random_column])) %>% dplyr::sample_frac(train_amount))
-    train_ratio <- table(train[, stratified_random_column])/nrow(train)
+    train <- as.data.frame(df %>% dplyr::group_by(colnames(df[, stratified_random_column-1])) %>% dplyr::sample_frac(train_amount))
+    train_ratio <- table(train[, stratified_random_column-1])/nrow(train)
     train_ratio_df <- dplyr::bind_rows(train_ratio_df, train_ratio)
     train_ratio_mean <- colMeans(train_ratio_df)
 
-    test <- as.data.frame(df %>% dplyr::group_by(colnames(df[, stratified_random_column])) %>% dplyr::sample_frac(test_amount))
-    test_ratio <- table(test[, stratified_random_column])/nrow(test)
+    test <- as.data.frame(df %>% dplyr::group_by(colnames(df[, stratified_random_column-1])) %>% dplyr::sample_frac(test_amount))
+    test_ratio <- table(test[, stratified_random_column-1])/nrow(test)
     test_ratio_df <- dplyr::bind_rows(test_ratio_df, test_ratio)
     test_ratio_mean <- colMeans(test_ratio_df)
 
-    validation <- as.data.frame(df %>% dplyr::group_by(colnames(df[, stratified_random_column])) %>% dplyr::sample_frac(validation_amount))
-    validation_ratio <- table(validation[, stratified_random_column])/nrow(validation)
+    validation <- as.data.frame(df %>% dplyr::group_by(colnames(df[, stratified_random_column-1])) %>% dplyr::sample_frac(validation_amount))
+    validation_ratio <- table(validation[, stratified_random_column-1])/nrow(validation)
     validation_ratio_df <- dplyr::bind_rows(validation_ratio_df, validation_ratio)
     validation_ratio_mean <- colMeans(validation_ratio_df)
 
-    total_data_mean <- table(data[, stratified_random_column])/nrow(data)
-
-    df1 <- as.data.frame(rbind(total_data_mean, train_ratio_mean, test_ratio_mean, validation_ratio_mean))
-    df1$section <- c('whole data set', 'train ratios', 'test ratios', 'validation ratios')
-    df1 <- df1 %>% dplyr::relocate(section)
+    df1 <- as.data.frame(rbind(train_ratio_mean, test_ratio_mean, validation_ratio_mean))
     colnames(df1) <- levels
-
-    df1 <- data.frame(lapply(df1, function(x) if(is.numeric(x)) round(x, 4) else x))
+    row.names(df1) <- c('train ratios', 'test ratios', 'validation ratios')
+    df1 <- df1 %>% mutate_if(is.numeric, round, 4)
 
     stratified_sampling_report <- reactable::reactable(df1, searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
                                                        striped = TRUE, highlight = TRUE, resizable = TRUE
-    )%>%
-      reactablefmtr::add_title("Stratified Random Sampling Report")
+    )
+
+    htmltools::div(class = "table",
+                   htmltools::div(class = "title", "stratified_sampling_report")
+    )
+
+    stratified_sampling_report <- htmlwidgets::prependContent(stratified_sampling_report, htmltools::h2(class = "title", "Stratified sampling report"))
+
   }
 
   ####  Model #1 Bagging ####
@@ -2659,16 +2687,25 @@ for (i in 1:numresamples) {
     reactable::reactable(round(head_ensemble, 4),
                          searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
                          striped = TRUE, highlight = TRUE, resizable = TRUE
-    )%>%
-    reactablefmtr::add_title("Head of the ensemble")
+    )
 
+  htmltools::div(class = "table",
+                 htmltools::div(class = "title", "head_ensemble")
+  )
+
+  head_ensemble <- htmlwidgets::prependContent(head_ensemble, htmltools::h2(class = "title", "Head of the ensemble"))
 
   ensemble_correlation <- cor(ensemble)
   ensemble_correlation <- reactable::reactable(round(cor(ensemble), 4),
                                                searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
                                                striped = TRUE, highlight = TRUE, resizable = TRUE
-  )%>%
-    reactablefmtr::add_title("Correlation of the ensemble")
+  )
+
+  htmltools::div(class = "table",
+                 htmltools::div(class = "title", "ensemble_correlation")
+  )
+
+  ensemble_correlation <- htmlwidgets::prependContent(ensemble_correlation, htmltools::h2(class = "title", "Ensemble correlation"))
 
 
   #### Split the ensemble data into train (60%), test (20%) and validation (20%) ####
@@ -4233,8 +4270,13 @@ summary_results <- summary_results %>% dplyr::arrange(Mean_holdout_RMSE)
 final_results <- reactable::reactable(summary_results,
                                       searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
                                       striped = TRUE, highlight = TRUE, resizable = TRUE
-) %>%
-  reactablefmtr::add_title("RMSE, means, fitting, model summaries of the train, test and validation sets")
+)
+
+htmltools::div(class = "table",
+               htmltools::div(class = "title", "final_results")
+)
+
+final_results <- htmlwidgets::prependContent(final_results, htmltools::h2(class = "title", "Summary report"))
 
 
 #### <-----------------------------------------  8. Summary model data visualizations ----------------------------------------------------> ####
@@ -7156,8 +7198,13 @@ vip_df <- vip_df %>% dplyr::arrange(dplyr::desc(Percentage))
 variable_importance <- reactable::reactable(as.data.frame(vip_df),
                                             searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
                                             striped = TRUE, highlight = TRUE, resizable = TRUE
-)%>%
-  reactablefmtr::add_title("Variable importance")
+)
+
+htmltools::div(class = "table",
+               htmltools::div(class = "title", "variable_importance")
+)
+
+variable_importance <- htmlwidgets::prependContent(variable_importance, htmltools::h2(class = "title", "Variable importance report"))
 
 variable_importance_barchart <- ggplot2::ggplot(data = vip_df, mapping = aes(x = stats::reorder(Variable, -Percentage), y = Percentage)) +
   ggplot2::geom_col() +
@@ -7188,6 +7235,27 @@ if (predict_on_new_data == "Y") {
   new_svm <- predict(object = svm_train_fit$best.model, k = svm_train_fit$best_model$k, newdata = new_data)
   new_tree <- predict(object = tree_train_fit, newdata = new_data)
 
+  # XGBoost
+  # split into training and testing set
+  new_train <- train
+  new_test <- new_data
+
+  # define predictor and response variables in training set
+  new_train_x <- data.matrix(new_train[, -ncol(new_train)])
+  new_train_y <- new_test[, ncol(new_test)]
+
+  # define predictor and response variables in testing set
+  new_test_x <- data.matrix(new_test[, -ncol(new_test)])
+  new_test_y <- new_test[, ncol(new_test)]
+
+  new_xgb_test <- xgboost::xgb.DMatrix(data = test_x, label = test_y)
+
+  new_watchlist_test <- list(train = xgb_train, test = xgb_test)
+
+  new_xgb_model <- xgboost::xgb.train(data = new_xgb_test, evals = new_watchlist_test, nrounds = 70)
+
+  new_XGBoost <- predict(object = new_xgb_model, newdata = new_test_x)
+
   new_ensemble <- data.frame(
     "Bagging" = new_bagging / bagging_holdout_RMSE_mean,
     "BayesGLM" = new_bayesglm / bayesglm_holdout_RMSE_mean,
@@ -7206,6 +7274,7 @@ if (predict_on_new_data == "Y") {
     "Rpart" = new_rpart / rpart_holdout_RMSE_mean,
     "SVM" = new_svm / svm_holdout_RMSE_mean,
     "Tree" = new_tree / tree_holdout_RMSE_mean,
+    "XGBoost" = new_XGBoost / xgb_holdout_RMSE_mean
   )
 
   new_ensemble$y_ensemble <- new_data$y
@@ -7250,6 +7319,7 @@ if (predict_on_new_data == "Y") {
       "Rpart" = round(new_rpart, 4),
       "SVM" = round(new_svm, 4),
       "Tree" = round(new_tree, 4),
+      "XGBoost" = round(new_XGBoost, 4),
       "Ensemble_Bagging" = round(new_ensemble_bagging, 4),
       "Ensemble_BayesGLM" = round(new_ensemble_bayesglm, 4),
       "Ensemble_BayesRNN" = round(new_ensemble_bayesrnn, 4),
@@ -7263,7 +7333,7 @@ if (predict_on_new_data == "Y") {
       "Ensemble_Neuralnet" = round(new_ensemble_neuralnet, 4),
       "Ensemble_RPart" = round(new_ensemble_rpart, 4),
       "Ensemble_SVM" = round(new_ensemble_svm, 4),
-      "Ensemble_Tree" = round(new_ensemble_tree, 4),
+      "Ensemble_Tree" = round(new_ensemble_tree, 4)
     )
 
   df1 <- t(new_data_results)
@@ -7271,8 +7341,13 @@ if (predict_on_new_data == "Y") {
   predictions_of_new_data <- reactable::reactable(
     data = df1, searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
     striped = TRUE, highlight = TRUE, resizable = TRUE
-  ) %>%
-    reactablefmtr::add_title("Predictions of new data")
+  )
+
+  htmltools::div(class = "table",
+                 htmltools::div(class = "title", "predictions_of_new_data")
+  )
+
+  predictions_of_new_data <- htmlwidgets::prependContent(predictions_of_new_data, htmltools::h2(class = "title", "Predictions of new data"))
 
 
   if (save_all_trained_models == "Y") {
@@ -7409,14 +7484,18 @@ if (predict_on_new_data == "Y") {
 
 
   return(list(
-    "head_of_data" = head_df, "accuracy_plot_fixed_scales" = accuracy_plot_fixed_scales, "accuracy_plot_free_scales" = accuracy_plot_free_scales, "overfitting_plot_fixed_scales" = overfitting_plot_fixed_scales, "overfitting_plot_free_scales" = overfitting_plot_free_scales,
-    "Cooks_distance" = cooks_distance_plot, "histograms" = histograms, "boxplots" = boxplots, "predictor_vs_target" = predictor_vs_target, "predictor_vs_target" = predictor_vs_target,
-    "final_results_table" = final_results, "data_correlation" = data_correlation, "data_summary" = data_summary, "head_of_ensemble" = head_ensemble, "ensemble_correlation" = ensemble_correlation,
-    "accuracy_barchart" = accuracy_barchart, "train_vs_holdout" = total_plot, "duration_barchart" = duration_barchart, "overfitting_barchart" = overfitting_barchart,
-    "bias_barchart" = bias_barchart,
-    "bias_plot" = bias_plot, "Kolmogorov-Smirnov test p-score" = k_s_test_barchart,
-    "colnum" = colnum, "numresamples" = numresamples, "predict_on_new_data" = predictions_of_new_data, "save_all_trained_models" = save_all_trained_models,
-    "how_to_handle_strings" = how_to_handle_strings, "data_reduction_method" = data_reduction_method, 'VIF' = VIF, "scale_data" = scale_all_predictors_in_data,
+    "head_of_data" = head_df, "boxplots" = boxplots, "variable_importance_barchart" = variable_importance_barchart, "variable_importance_table" = variable_importance,
+    "Cooks_distance" = cooks_distance_plot, "histograms" = histograms, "predictor_vs_target" = predictor_vs_target, "predictor_vs_target" = predictor_vs_target, "data_correlation" = data_correlation,
+    "Correlation_as_numbers" = corrplot_number, "Correlation_as_circles" = corrplot_circle, "Corrplot_full" = corrplot_full,'VIF' = VIF_report,
+    "accuracy_barchart" = accuracy_barchart, "accuracy_plot_fixed_scales" = accuracy_plot_fixed_scales, "accuracy_free_scales" = accuracy_plot_free_scales, "bias_barchart" = bias_barchart, "bias_plot" = bias_plot, "duration_barchart" = duration_barchart,
+    "head_of_ensemble" = head_ensemble, "overfitting_barchart" = overfitting_barchart, "overfitting_histograms" = overfitting_histograms,
+    "overfitting_plot_fixed_scales" = overfitting_plot_fixed_scales, "overfitting_plot_free_scales" = overfitting_plot_free_scales,
+    "train_vs_holdout" = total_plot_fixed_scales, "train_vs_holdout_free_scales" = total_plot_free_scales, "stratified_resampling_report" = stratified_sampling_report,
+    "Kolmogorov-Smirnov test p-score" = k_s_test_barchart, "p-value_barchart" = p_value_barchart, "predictions_on_new_data" = predictions_of_new_data,
+    "final_results_table" = final_results,  "ensemble_correlation" = ensemble_correlation,
+    "data_summary" = data_summary, "outlier_data" = outlier_list,
+    "colnum" = colnum, "numresamples" = numresamples, "save_all_trained_modesl" = save_all_trained_models, "how_to_handle_strings" = how_to_handle_strings,
+    "data_reduction_method" = data_reduction_method,  "scale_data" = scale_all_predictors_in_data,
     "train_amount" = train_amount, "test_amount" = test_amount, "validation_amount" = validation_amount
   )
   )
@@ -7436,8 +7515,13 @@ summary <- summary %>% mutate_if(is.numeric, round, digits = 0)
 summary_list <- reactable::reactable(summary,
                                      searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
                                      striped = TRUE, highlight = TRUE, resizable = TRUE
-)%>%
-  reactablefmtr::add_title("Highest five percent and lowest five percent of the data")
+)
+
+htmltools::div(class = "table",
+               htmltools::div(class = "title", "summary_list")
+)
+
+summary_list <- htmlwidgets::prependContent(summary_list, htmltools::h2(class = "title", "Highest 5% and lowest 5% report"))
 
 plot_list <- lapply(1:(ncol(summary)-1), \(i) {
   df1 <- stats::aggregate(
@@ -7628,7 +7712,7 @@ message('The trained models are temporariliy saved in this directory: tempdir1. 
 return(list(
   "head_of_data" = head_df, "boxplots" = boxplots, "variable_importance_barchart" = variable_importance_barchart, "variable_importance_table" = variable_importance,
   "Cooks_distance" = cooks_distance_plot, "histograms" = histograms, "predictor_vs_target" = predictor_vs_target, "predictor_vs_target" = predictor_vs_target, "data_correlation" = data_correlation,
-  "Correlation_as_numbers" = corrplot_number, "Correlation_as_circles" = corrplot_circle, "Corrplot_full" = corrplot_full,'VIF' = VIF,
+  "Correlation_as_numbers" = corrplot_number, "Correlation_as_circles" = corrplot_circle, "Corrplot_full" = corrplot_full,'VIF' = VIF_report,
   "accuracy_barchart" = accuracy_barchart, "accuracy_plot_fixed_scales" = accuracy_plot_fixed_scales, "accuracy_free_scales" = accuracy_plot_free_scales, "bias_barchart" = bias_barchart, "bias_plot" = bias_plot, "duration_barchart" = duration_barchart,
   "head_of_ensemble" = head_ensemble, "overfitting_barchart" = overfitting_barchart, "overfitting_histograms" = overfitting_histograms,
   "overfitting_plot_fixed_scales" = overfitting_plot_fixed_scales, "overfitting_plot_free_scales" = overfitting_plot_free_scales,
