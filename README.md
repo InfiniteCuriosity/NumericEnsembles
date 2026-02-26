@@ -30,7 +30,7 @@ Numeric(data = MASS::Boston,
         ensemble_reduction_method = 0,
         how_to_handle_strings = 0,
         predict_on_new_data = "N",
-        stratified_random_sampling = 0,
+        stratified_random_column = 0,
         save_all_trained_models = "N",
         set_seed = "N",
         save_all_plots = "N",
@@ -148,6 +148,7 @@ Numeric(data = Boston_housing,
         data_reduction_method = 0,
         ensemble_reduction_method = 0,
         how_to_handle_strings = 0,
+        stratified_random_column = 0,
         predict_on_new_data = "Y",
         set_seed = "N",
         save_all_trained_models = "N",
@@ -156,7 +157,6 @@ Numeric(data = Boston_housing,
         train_amount = 0.60,
         test_amount = 0.20,
         validation_amount = 0.20)
-
 ```
 
 Use the data set New_Boston when asked for "What is the URL of the new data?". The URL for the new data is: https://raw.githubusercontent.com/InfiniteCuriosity/EnsemblesData/refs/heads/main/NewBoston.csv
