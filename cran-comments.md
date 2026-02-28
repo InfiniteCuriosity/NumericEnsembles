@@ -61,3 +61,5 @@ This took a very large amount of work, but is fixed. Nothing writes to the user'
 * 1.0.2, I received word from CRAN that the package reactablefmtr will be archived on 2026-03-17. I replaced those functions in NumericEnsembles using the htmlwidges and htmltools libraries.
 
 * 1.0.3 fixed errors in predicting on new data using XGBoost
+
+* 1.0.4, fixed error that the variable importance barchart was not being saved when the user requested it, and set_seed was crashing (due to the VIF function). Both are now fixed and working fine.
