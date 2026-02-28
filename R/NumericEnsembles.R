@@ -333,66 +333,12 @@ data_correlation <- htmlwidgets::prependContent(data_correlation, htmltools::h2(
 title <- "Correlation plot of the numerical data"
 corrplot_number <- corrplot::corrplot(stats::cor(df1), method = "number", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
 corrplot_number <- recordPlot(attach = corrplot_number)
-if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("corrplot_number.eps", plot = corrplot_number, width = width, path = tempdir(), height = height, units = units, scale = scale, device = device, dpi = dpi)
-}
-if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("corrplot_number.jpeg", plot = corrplot_number, width = width, path = tempdir(), height = height, units = units, scale = scale, device = device, dpi = dpi)
-}
-if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("corrplot_number.pdf", plot = corrplot_number, width = width, path = tempdir(), height = height, units = units, scale = scale, device = device, dpi = dpi)
-}
-if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("corrplot_number.png", plot = corrplot_number, width = width, path = tempdir(), height = height, units = units, scale = scale, device = device, dpi = dpi)
-}
-if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("corrplot_number.svg", plot = corrplot_number, width = width, path = tempdir(), height = height, units = units, scale = scale, device = device, dpi = dpi)
-}
-if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("corrplot_number.tiff", plot = corrplot_number, width = width, path = tempdir(), height = height, units = units, scale = scale, device = device, dpi = dpi)
-}
 
 corrplot_circle <- corrplot::corrplot(stats::cor(df1), method = "circle", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
 corrplot_circle <- recordPlot(corrplot_circle)
-if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("corrplot_circle.eps", plot = corrplot_circle, width = width, path = tempdir(), height = height, units = units, scale = scale, device = device, dpi = dpi)
-}
-if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("corrplot_circle.jpeg", plot = corrplot_circle, width = width, path = tempdir(), height = height, units = units, scale = scale, device = device, dpi = dpi)
-}
-if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("corrplot_circle.pdf", plot = corrplot_circle, width = width, path = tempdir(), height = height, units = units, scale = scale, device = device, dpi = dpi)
-}
-if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("corrplot_circle.png", plot = corrplot_circle, width = width, path = tempdir(), height = height, units = units, scale = scale, device = device, dpi = dpi)
-}
-if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("corrplot_circle.svg", plot = corrplot_circle, width = width, path = tempdir(), height = height, units = units, scale = scale, device = device, dpi = dpi)
-}
-if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("corrplot_circle.tiff", plot = corrplot_circle, width = width, path = tempdir(), height = height, units = units, scale = scale, device = device, dpi = dpi)
-}
 
 corrplot_full <- corrplot::corrplot(stats::cor(df1), method = "circle", title = title, mar = c(0, 0, 1, 0), addCoef.col = "white", type = "upper", bg = "gray")
 corrplot_full <- recordPlot(corrplot_full)
-if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("corrplot_full.eps", plot = corrplot_full, width = width, path = tempdir(), height = height, units = units, scale = scale, device = device, dpi = dpi)
-}
-if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("corrplot_full.jpeg", plot = corrplot_full, width = width, path = tempdir(), height = height, units = units, scale = scale, device = device, dpi = dpi)
-}
-if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("corrplot_full.pdf", plot = corrplot_full, width = width, path = tempdir(), height = height, units = units, scale = scale, device = device, dpi = dpi)
-}
-if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("corrplot_full.png", plot = corrplot_full, width = width, path = tempdir(), height = height, units = units, scale = scale, device = device, dpi = dpi)
-}
-if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("corrplot_full.svg", plot = corrplot_full, width = width, path = tempdir(), height = height, units = units, scale = scale, device = device, dpi = dpi)
-}
-if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("corrplot_full.tiff", plot = corrplot_full, width = width, path = tempdir(), height = height, units = units, scale = scale, device = device, dpi = dpi)
-}
 
 tempdir1 <- tempdir()
 
