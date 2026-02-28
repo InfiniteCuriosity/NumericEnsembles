@@ -1,4 +1,4 @@
-# NumericEnsembles (development version)
+# NumericEnsembles 1.0.5
 
 # 1.0.4
 ## Fixed errors that the variable importance barchart was not saving when the user requested it, and set_seed was crashing. Both are fixed, passed tests, running fine.
