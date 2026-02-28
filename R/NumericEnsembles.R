@@ -255,6 +255,8 @@ if(remove_data_correlations_greater_than <1.00){
   df <- data_new # new data without strongly correlated predictors
 }
 
+
+if(predict_on_new_data == "Y"){
 vif <- car::vif(lm(y ~ ., data = df[, 1:ncol(df)]))
 for (i in 1:ncol(df)) {
   if(max(vif) > remove_VIF_above){
@@ -273,6 +275,27 @@ htmltools::div(class = "table",
 )
 
 VIF_report <- htmlwidgets::prependContent(VIF, htmltools::h2(class = "title", "VIF"))
+}
+
+if(predict_on_new_data == "N"){
+  vif <- car::vif(lm(y ~ ., data = df[, 1:ncol(df)]))
+  for (i in 1:ncol(df)) {
+    if(max(vif) > remove_VIF_above){
+      df <- df %>% dplyr::select(-which.max(vif))
+      vif <- car::vif(lm(y ~ ., data = df[, 1:ncol(df)]))
+    }
+  }
+
+  VIF <- reactable::reactable(as.data.frame(vif),
+                              searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
+                              striped = TRUE, highlight = TRUE, resizable = TRUE
+  )
+  htmltools::div(class = "table",
+                 htmltools::div(class = "title", "VIF")
+  )
+
+  VIF_report <- htmlwidgets::prependContent(VIF, htmltools::h2(class = "title", "VIF"))
+}
 
 
 if(save_all_plots == "Y"){
@@ -313,6 +336,7 @@ htmltools::div(class = "table",
 
 data_summary <- htmlwidgets::prependContent(data_summary, htmltools::h2(class = "title", "Data summary"))
 
+tempdir1 <- tempdir()
 
 ## Correlation data and plots ##
 df1 <- df %>% purrr::keep(is.numeric)
@@ -332,15 +356,14 @@ data_correlation <- htmlwidgets::prependContent(data_correlation, htmltools::h2(
 
 title <- "Correlation plot of the numerical data"
 corrplot_number <- corrplot::corrplot(stats::cor(df1), method = "number", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
-corrplot_number <- recordPlot(attach = corrplot_number)
+corrplot_number <- grDevices::recordPlot(attach = corrplot_number)
 
 corrplot_circle <- corrplot::corrplot(stats::cor(df1), method = "circle", title = title, mar = c(0, 0, 1, 0)) # http://stackoverflow.com/a/14754408/54964)
-corrplot_circle <- recordPlot(corrplot_circle)
+corrplot_circle <- grDevices::recordPlot(corrplot_circle)
 
 corrplot_full <- corrplot::corrplot(stats::cor(df1), method = "circle", title = title, mar = c(0, 0, 1, 0), addCoef.col = "white", type = "upper", bg = "gray")
-corrplot_full <- recordPlot(corrplot_full)
+corrplot_full <- grDevices::recordPlot(corrplot_full)
 
-tempdir1 <- tempdir()
 
 ## Boxplots of the numeric data ##
 boxplots <- df %>%
