@@ -395,7 +395,7 @@ if(save_all_plots == "Y" && device == "tiff"){
 #### Histograms here ####
 
 histograms <- ggplot2::ggplot(tidyr::gather(df1, cols, value), aes(x = value)) +
-  ggplot2::geom_histogram(bins = round(nrow(df1)), stat = "count") +
+  ggplot2::geom_histogram(bins = round(nrow(df1))) +
   ggplot2::facet_wrap(. ~ cols, scales = "free") +
   ggplot2::labs(title = "Histograms of each numeric column.")
 if(save_all_plots == "Y" && device == "eps"){
