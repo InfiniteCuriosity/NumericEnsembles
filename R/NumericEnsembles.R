@@ -60,7 +60,6 @@
 #' @importFrom tidyr gather pivot_longer
 #' @importFrom tree tree cv.tree misclass.tree
 #' @importFrom utils tail str head read.csv
-#' @importFrom vip vip
 #' @importFrom xgboost xgb.DMatrix xgb.train
 
 Numeric <- function(data, colnum, numresamples,
