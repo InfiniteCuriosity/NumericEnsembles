@@ -1,4 +1,5 @@
-# NumericEnsembles (development version)
+# NumericEnsembles 1.1
+## Removed functions based on vif packacge because I received information the vif package will be archived
 
 # NumericEnsembles 1.0.5
 
