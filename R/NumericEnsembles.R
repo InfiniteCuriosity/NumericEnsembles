@@ -265,6 +265,8 @@ for (i in 1:ncol(df)) {
   }
 }
 
+VIF_final <- vif
+
 VIF <- reactable::reactable(as.data.frame(vif),
                             searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
                             striped = TRUE, highlight = TRUE, resizable = TRUE
@@ -323,7 +325,7 @@ actual_mean <- round(mean(df$y), 4)
 actual_sd <- round(sd(df$y), 4)
 
 # Data summary
-data_summary <- summary(df)
+data_summary_final <- summary(df)
 data_summary <- reactable::reactable(round(as.data.frame(do.call(cbind, lapply(df, summary))), 4),
                                      searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
                                      striped = TRUE, highlight = TRUE, resizable = TRUE
@@ -1266,6 +1268,8 @@ test_ratio_df <- data.frame()
 validation_ratio_df <- data.frame()
 stratified_sampling_report <- 0
 section <- 0
+t_values <- 0
+variable_importance_barchart <- 0
 
 #### Resampling start here ####
 
@@ -7213,12 +7217,15 @@ if(save_all_plots == "Y" && device == "tiff"){
 }
 
 
-#### Variable importance plot ####
+#### Variable importance table and plot ####
 lm_vip <- lm(y ~ ., data = df)
-vip_df <- vip::vi(lm_vip)
-vip_df$Percentage <- round(vip_df$Importance / sum(vip_df$Importance), 4)
-vip_df$Total_Percentage <- cumsum(vip_df$Percentage)
-vip_df <- vip_df %>% dplyr::arrange(dplyr::desc(Percentage))
+vip_summary <- summary(lm_vip)
+vip_values <- round(as.numeric(vip_summary$coefficients[, 3]), 4)
+vip_percentages <- round(vip_values / sum(vip_values), 4)
+vip_features <- row.names(vip_summary$coefficients)
+
+vip_df <- data.frame('t_values' = c(vip_values), 'names' = vip_features)
+
 variable_importance <- reactable::reactable(as.data.frame(vip_df),
                                             searchable = TRUE, pagination = FALSE, wrap = TRUE, rownames = TRUE, fullWidth = TRUE, filterable = TRUE, bordered = TRUE,
                                             striped = TRUE, highlight = TRUE, resizable = TRUE
@@ -7228,14 +7235,13 @@ htmltools::div(class = "table",
                htmltools::div(class = "title", "variable_importance")
 )
 
-variable_importance <- htmlwidgets::prependContent(variable_importance, htmltools::h2(class = "title", "Variable importance report"))
+variable_importance_table <- htmlwidgets::prependContent(variable_importance, htmltools::h2(class = "title", "Variable importance report"))
 
-variable_importance_barchart <- ggplot2::ggplot(data = vip_df, mapping = aes(x = stats::reorder(Variable, -Percentage), y = Percentage)) +
+variable_importance_barchart <- ggplot2::ggplot(vip_df, aes(x = names, y = t_values)) +
   ggplot2::geom_col() +
-  ggplot2::geom_text(mapping = aes(label = paste0(100*Percentage, "%"), y = 1.03 * Percentage)) +
-  ggplot2::ggtitle("Variable Importance (based on a linear model applied to the full data set)") +
-  ggplot2::xlab(label = "Features") +
-  ggplot2::scale_y_continuous(labels = scales::label_percent())
+  ggplot2::labs(title = "Variable importance barchart based on a linear model for the full data set") +
+  ggplot2::geom_text(aes(label = t_values, y = t_values), vjust = 2)
+
 if(save_all_plots == "Y" && device == "eps"){
   ggplot2::ggsave("variable_importance_barchart.eps", plot = variable_importance_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
@@ -7243,7 +7249,7 @@ if(save_all_plots == "Y" && device == "jpeg"){
   ggplot2::ggsave("variable_importance_barchart.jpeg", plot = variable_importance_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("variable_importance_barchart.pdf", plot = variable_importance_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("variable_importance_barchart.pdf", plot = variable_importance_barchart , width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
   ggplot2::ggsave("variable_importance_barchart.png", plot = variable_importance_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
@@ -7254,7 +7260,6 @@ if(save_all_plots == "Y" && device == "svg"){
 if(save_all_plots == "Y" && device == "tiff"){
   ggplot2::ggsave("variable_importance_barchart.tiff", plot = variable_importance_barchart, width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
-
 
 #### Start making predictions on new data here ####
 
@@ -7504,7 +7509,7 @@ if (predict_on_new_data == "Y") {
     saveRDS(M1, fil)
 
     fil <- tempfile("variance_inflation_factor", fileext = ".RDS")
-    saveRDS(VIF, fil)
+    saveRDS(VIF_final, fil)
 
     fil <- tempfile("head_of_ensemble", fileext = ".RDS")
     saveRDS(head(ensemble), fil)
@@ -7515,8 +7520,8 @@ if (predict_on_new_data == "Y") {
     fil <- tempfile("correlation_of_the_ensemble", fileext = ".RDS")
     saveRDS(cor(ensemble), fil)
 
-    fil <- tempfile("data_summary", fileext = ".RDS")
-    saveRDS(data_summary, fil)
+    fil <- tempfile("data_summary_final", fileext = ".RDS")
+    saveRDS(data_summary_final, fil)
 
   }
 
@@ -7526,7 +7531,7 @@ if (predict_on_new_data == "Y") {
 
 
   return(list(
-    "head_of_data" = head_df, "boxplots" = boxplots, "variable_importance_barchart" = variable_importance_barchart, "variable_importance_table" = variable_importance,
+    "head_of_data" = head_df, "boxplots" = boxplots, "variable_importance_barchart" = variable_importance_barchart, "variable_importance_table" = variable_importance_table,
     "Cooks_distance" = cooks_distance_plot, "histograms" = histograms, "predictor_vs_target" = predictor_vs_target, "predictor_vs_target" = predictor_vs_target, "data_correlation" = data_correlation,
     "Correlation_as_numbers" = corrplot_number, "Correlation_as_circles" = corrplot_circle, "Corrplot_full" = corrplot_full,'VIF' = VIF_report,
     "accuracy_barchart" = accuracy_barchart, "accuracy_plot_fixed_scales" = accuracy_plot_fixed_scales, "accuracy_free_scales" = accuracy_plot_free_scales, "bias_barchart" = bias_barchart, "bias_plot" = bias_plot, "duration_barchart" = duration_barchart,
@@ -7562,6 +7567,8 @@ summary_list <- reactable::reactable(summary,
 htmltools::div(class = "table",
                htmltools::div(class = "title", "summary_list")
 )
+
+summary_list_final <- summary_list
 
 summary_list <- htmlwidgets::prependContent(summary_list, htmltools::h2(class = "title", "Highest 5% and lowest 5% report"))
 
@@ -7725,7 +7732,7 @@ if (save_all_trained_models == "Y") {
   saveRDS(M1, fil)
 
   fil <- tempfile("variance_inflation_factor", fileext = ".RDS")
-  saveRDS(VIF, fil)
+  saveRDS(vif, fil)
 
   fil <- tempfile("head_of_ensemble", fileext = ".RDS")
   saveRDS(head(ensemble), fil)
@@ -7737,13 +7744,13 @@ if (save_all_trained_models == "Y") {
   saveRDS(cor(ensemble), fil)
 
   fil <- tempfile("data_summary", fileext = ".RDS")
-  saveRDS(data_summary, fil)
+  saveRDS(data_summary_final, fil)
 
   fil <- tempfile("outliers_list", fileext = ".RDS")
-  saveRDS(outlier_list, fil)
+  saveRDS(outliers, fil)
 
   fil <- tempfile("summary_list", fileext = ".RDS")
-  saveRDS(summary_list, fil)
+  saveRDS(summary_list_final, fil)
 
 }
 
@@ -7752,7 +7759,7 @@ message('The trained models are temporariliy saved in this directory: tempdir1. 
 
 
 return(list(
-  "head_of_data" = head_df, "boxplots" = boxplots, "variable_importance_barchart" = variable_importance_barchart, "variable_importance_table" = variable_importance,
+  "head_of_data" = head_df, "boxplots" = boxplots, "variable_importance_barchart" = variable_importance_barchart, "variable_importance_table" = variable_importance_table,
   "Cooks_distance" = cooks_distance_plot, "histograms" = histograms, "predictor_vs_target" = predictor_vs_target, "predictor_vs_target" = predictor_vs_target, "data_correlation" = data_correlation,
   "Correlation_as_numbers" = corrplot_number, "Correlation_as_circles" = corrplot_circle, "Corrplot_full" = corrplot_full,'VIF' = VIF_report,
   "accuracy_barchart" = accuracy_barchart, "accuracy_plot_fixed_scales" = accuracy_plot_fixed_scales, "accuracy_free_scales" = accuracy_plot_free_scales, "bias_barchart" = bias_barchart, "bias_plot" = bias_plot, "duration_barchart" = duration_barchart,
