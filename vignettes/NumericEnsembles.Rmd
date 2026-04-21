@@ -37,7 +37,7 @@ Here is what the Numeric function looks like with comments about each part:
 library(NumericEnsembles)
 Numeric(data = MASS::Boston,
         colnum = 14,
-        numresamples = 2,
+        numresamples = 25,
         remove_VIF_above = 5.00,
         remove_data_correlations_greater_than = 1.00,
         remove_ensemble_correlations_greater_than = 1.00,
