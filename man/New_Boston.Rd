@@ -8,7 +8,7 @@
 An object of class \code{data.frame} with 5 rows and 14 columns.
 }
 \source{
-\url{https://www.law.berkeley.edu/files/Hedonic.PDF}
+\url{https://www.law.berkeley.edu/archive/files/Hedonic.PDF}
 }
 \usage{
 New_Boston

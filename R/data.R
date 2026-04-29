@@ -20,7 +20,7 @@
 #' \item{medv}{Median value of owner occupied homes, from the 1970 United States census}
 #' }
 #'
-#' @source <https://www.law.berkeley.edu/files/Hedonic.PDF>
+#' @source <https://www.law.berkeley.edu/archive/files/Hedonic.PDF>
 "Boston_housing"
 
 
@@ -46,7 +46,7 @@
 #' \item{medv}{Median value of owner occupied homes, from the 1970 United States census}
 #' }
 #'
-#' @source <https://www.law.berkeley.edu/files/Hedonic.PDF>
+#' @source <https://www.law.berkeley.edu/archive/files/Hedonic.PDF>
 "New_Boston"
 
 #' Concrete - This is the strength of concrete daa set originally posted on UCI
