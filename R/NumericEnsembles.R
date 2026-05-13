@@ -6527,7 +6527,7 @@ for (i in 2:4) {
     }
   }
 
-  if (data_visualizations == "Ensemble_Elastic") {
+  if (data_visualizations == "Ensemble Elastic") {
     grid.arrange(ensemble_elastic_pred_vs_actual, ensemble_elastic_resid_vs_actual, ensemble_elastic_hist_residuals, ensemble_elastic_qq, ncol = 2)
     gridExtra::grid.arrange(ensemble_elastic_pred_vs_actual)
     gridExtra::grid.arrange(ensemble_elastic_resid_vs_actual)
@@ -6627,7 +6627,7 @@ for (i in 2:4) {
     }
   }
 
-  if (data_visualizations == "Ensemble_Lasso") {
+  if (data_visualizations == "Ensemble Lasso") {
     grid.arrange(ensemble_lasso_pred_vs_actual, ensemble_lasso_resid_vs_actual, ensemble_lasso_hist_residuals, ensemble_lasso_qq, ncol = 2)
     gridExtra::grid.arrange(ensemble_lasso_pred_vs_actual)
     gridExtra::grid.arrange(ensemble_lasso_resid_vs_actual)
@@ -6777,7 +6777,7 @@ for (i in 2:4) {
     }
   }
 
-  if (data_visualizations == "Ensemble_Ridge") {
+  if (data_visualizations == "Ensemble Ridge") {
     grid.arrange(ensemble_ridge_pred_vs_actual, ensemble_ridge_resid_vs_actual, ensemble_ridge_hist_residuals, ensemble_ridge_qq, ncol = 2)
     gridExtra::grid.arrange(ensemble_ridge_pred_vs_actual)
     gridExtra::grid.arrange(ensemble_ridge_resid_vs_actual)
@@ -6877,7 +6877,7 @@ for (i in 2:4) {
     }
   }
 
-  if (data_visualizations == "Ensemble Support Vector Machines") {
+  if (data_visualizations == "Ensemble SVM") {
     gridExtra::grid.arrange(ensemble_svm_pred_vs_actual, ensemble_svm_resid_vs_actual, ensemble_svm_hist_residuals, ensemble_svm_qq, ncol = 2)
     gridExtra::grid.arrange(ensemble_svm_pred_vs_actual)
     gridExtra::grid.arrange(ensemble_svm_resid_vs_actual)
