@@ -1,0 +1,166 @@
+---
+title: "Getting Started with NumericEnsembles: Advanced Continuous Stacking Optimization"
+author: "Russ Conte"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with NumericEnsembles}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r Getting started, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+**Introduction**:
+
+Ordinary regression analysis often forces analysts to commit to a single structural paradigm—such as Ordinary Least Squares (OLS) or a standard tree. However, real-world data contains complex surface topologies, multi-collinearity constraints, and variable interactions that single models frequently misinterpret.
+
+The `NumericEnsembles` package answers this problem by establishing a highly parallelized, production-grade **Team of Rivals** framework. It trains 17 independent base machine learning architectures simultaneously, feeds their out-of-sample prediction arrays into 3 specialized stacking meta-learners, and evaluates all possible pairwise hybrid blends to construct an optimized ensemble consensus model.
+
+## 1. The Core Stacking & Blending Architecture
+
+To maximize predictive generalization, `NumericEnsembles` leverages three progressive layers of statistical combinations:
+
+### Layer 1: The 17 Base Machine Learning Rivals
+
+The core engine concurrency loop estimates a diverse collection of algorithms spanning linear, tree-based, regularized, and neural network structures:
+
+- **Linear & Component Spaces:** OLS Linear Regression, Generalized Linear Models (GLM), Principal Component Regression (PCR), and Multivariate Adaptive Regression Splines (MARS).
+
+- **Regularization Matrix Containers:** Ridge, Lasso, and ElasticNet regressions optimized via elasticnet/glmnet grids.
+
+- **Tree & Advanced Ensembles:** Bagged Trees, Bagged MARS, Recursive Partitioning (RPart), Cubist Rule-Based Models, Random Forests, Quantile Random Forests, and Conditional Inference Forests.
+
+- **Neural Networks & Splines:** Bayesian Regularized Neural Networks (BRNN), standard Single-Layer Feed-Forward Neural Networks, and Model-Averaged Neural Networks.
+
+### Layer 2: Stacking Meta-Learners
+
+The out-of-sample training predictions of all 17 models are isolated into a primary meta-feature dataframe. This grid is used to train three structural stacking meta-learners (a Meta-GLM, a Meta-Random Forest, and a Meta-SVM) to learn exactly how to weight models based on contextual predictor densities.
+
+### Layer 3: Pairwise Blended Consensus Combinations
+
+The package evaluates all possible pairwise variations (C(17,2)=136 model combinations) using an out-of-sample validation split. It ranks every base model, meta-learner, and blended combination by Root Mean Squared Error (RMSE) to discover the champion configuration.
+
+## 2. End-to-End Operational Walkthrough
+
+Below is an end-to-end workflow demonstrating how to execute the multi-core pipeline over continuous variables and interpret its objects.
+
+### Initialize the Performance Dataset
+
+We will demonstrate using a simulated economic registry featuring continuous indicators and an underlying multi-collinear structure:
+
+```{r Code walkthrough}
+library(NumericEnsembles)
+
+set.seed(42)
+n_samples <- 400
+
+# Simulate continuous features
+housing_index <- runif(n_samples, min = 80, max = 150)
+unemploy_rate <- rnorm(n_samples, mean = 5.5, sd = 1.2)
+# Introduce explicit collinearity to trigger the VIF filter
+inflation_prox <- (0.45 * unemploy_rate) + rnorm(n_samples, mean = 2, sd = 0.2)
+
+# Construct a continuous target variable
+gdp_growth <- 2.5 + (0.04 * housing_index) - (0.35 * unemploy_rate) + rnorm(n_samples, sd = 0.5)
+
+economic_registry <- data.frame(
+  GDP_Growth      = gdp_growth,
+  Housing_Index   = housing_index,
+  Unemployment    = unemploy_rate,
+  Inflation_Proxy = inflation_prox
+)
+```
+
+### Deploying the Multi-Core Pipeline
+
+We configure our data-split proportion, map out our maximum allowable Multi-Collinearity threshold using Variable Inflation Factors (VIF), select a visualization theme palette, and execute the core `Numeric()` wrapper engine:
+
+```{r Multi-core pipeline}
+# Execute the complete 17-model parallel optimization backend
+trained_numeric_ensemble <- Numeric(
+  dataset       = economic_registry,
+  target_col    = "GDP_Growth",
+  cv_folds      = 5,          # 5-Fold Cross-Validation per candidate
+  train_pct     = 0.70,       # 70% Training / 40% Testing Evaluation Split
+  vif_threshold = 5,          # Max allowed VIF multiplier boundary
+  palette_style = "modern",   # High-contrast deep navy/teal theme layout
+  verbose       = TRUE
+)
+```
+
+## 3. Interacting with S3 Objects and Methods
+
+`NumericEnsembles` contains custom S3 methods designed to inspect performance reporting profiles and handle visual analytics arrays cleanly.
+
+### Executive Summary Report
+
+Passing your output object straight into the standard `print()` method prints your continuous evaluation portfolio, showing your training durations, overfitting ratios, and out-of-sample validation leaderboards:
+
+```{r print the methods}
+print(trained_numeric_ensemble)
+```
+
+### Multidimensional Performance Dashboards
+
+Calling the custom `plot()` method loops through an exhaustive visual audit portfolio, rendering your feature histograms, range boxplots, correlation space, and your core performance KPI panels (displaying RMSE, MAE, and Adjusted R2 with complete asymptotic 95% Confidence Intervals side-by-side):
+
+```{r Visual evaluation}
+# Paces through your visual evaluation windows interactively
+plot(trained_numeric_ensemble, pace_output = FALSE)
+```
+
+## 4. Deploying Scoring Inferences over Untrained Records
+
+To map un-indexed prospects or score incoming continuous spreadsheets, pass your trained pipeline object, the `newdata`data frame, and your chosen leaderboard model identifier directly into the S3 `predict()` wrapper method.
+
+Setting `model_name = "best"` automatically selects the absolute top-performing champion architecture from your validation trials:
+
+```{r Scoring Inferences on Untrained Records}
+# Establish a raw out-of-sample row profile
+
+# Simulate continuous features
+new_housing_index <- runif(n_samples, min = 80, max = 150)
+new_unemploy_rate <- rnorm(n_samples, mean = 5.5, sd = 1.2)
+# Introduce explicit collinearity to trigger the VIF filter
+new_inflation_prox <- (0.45 * unemploy_rate) + rnorm(n_samples, mean = 2, sd = 0.2)
+
+# Construct a continuous target variable
+new_gdp_growth <- 2.5 + (0.04 * housing_index) - (0.35 * unemploy_rate) + rnorm(n_samples, sd = 0.5)
+
+new_economic_registry <- data.frame(
+  GDP_Growth      = new_gdp_growth,
+  Housing_Index   = new_housing_index,
+  Unemployment    = new_unemploy_rate,
+  Inflation_Proxy = new_inflation_prox
+)
+
+# Extract optimized predictions from your champion architecture selection
+quarterly_projections <- predict(
+  object     = trained_numeric_ensemble, 
+  newdata    = new_economic_registry[1:5, ], 
+  model_name = "best"
+)
+
+# Print your custom continuous prediction scores vector
+print(quarterly_projections)
+```
+
+## 5. Disk Serialization Protocols
+
+For production deployments, `NumericEnsembles` features fast disk serialization utilities to save and re-hydrate your entire modeling workspace environment cleanly without rebuilding your data models from scratch:
+
+```{r Disk Serialization Protocols}
+# Serialize and compress your entire environment cache to a local file
+save_pipeline(trained_numeric_ensemble, "economic_gdp_pipeline.rds")
+
+# Re-hydrate your workspace cleanly in a fresh session instantly
+rehydrated_pipeline <- load_pipeline("economic_gdp_pipeline.rds")
+```
+
+The compilation loop will cleanly parse every single markdown chunk and embed a pristine, production-grade continuous regression manual directly inside your package's documentation library!
