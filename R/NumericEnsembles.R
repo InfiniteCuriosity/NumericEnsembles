@@ -795,7 +795,7 @@ Numeric <- function(dataset = NULL,
     ens_reports[[idx]] <- data.frame(
       Model = ens_name, Testing_RMSE = round(rmse_test_c, 4), `RMSE 95% CI Lower` = round(rmse_ci_low_c, 4), `RMSE 95% CI Upper` = round(rmse_ci_upp_c, 4),
       Testing_MAE = round(mae_test_c, 4), `MAE 95% CI Lower` = round(mae_ci_low_c, 4), `MAE 95% CI Upper` = round(mae_ci_upp_c, 4),
-      Adjusted_R2 = round(adj_r2_c, 4), `Adjusted R2 95% CI Lower` = round(adj_r2_low_c, 4), `Adjusted R2 95% CI Upper` = round(adj_r2_upp_c, 4),
+      Adjusted_R2 = round(adj_r2_c, 4), `Adjusted R2 95% CI Lower` = round(adj_r2_low_c, 4), `Adjusted R2 95% CI Upper` = round(adj_r2_upper_val, 4),
       Duration = round(durations_list[[m1]] + durations_list[[m2]], 4), Overfitting = round(rmse_test_c / rmse_train_c, 4), Bias = round(mean(p_test_comb - actual_test), 4),
       Variance = round(var_c, 4), KS_p_value = round(ks_c$p.value, 4), stringsAsFactors = FALSE, check.names = FALSE
     )
@@ -1133,11 +1133,11 @@ LaunchNumericApp <- function() {
   }
 
   launch_opt <- getOption("shiny.launch.browser", TRUE)
-  is_launch_active <- if (is_launch_active <- if (is.logical(launch_opt)) launch_opt else TRUE)
+  is_launch_active <- if (is.logical(launch_opt)) launch_opt else TRUE
 
-    if (is_launch_active && requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
-      shiny::runApp(app_path, launch.browser = rstudioapi::viewer, display.mode = "normal")
-    } else {
-      shiny::runApp(app_path, display.mode = "normal")
-    }
+  if (is_launch_active && requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
+    shiny::runApp(app_path, launch.browser = rstudioapi::viewer, display.mode = "normal")
+  } else {
+    shiny::runApp(app_path, display.mode = "normal")
+  }
 }
