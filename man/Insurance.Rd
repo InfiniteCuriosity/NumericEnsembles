@@ -9,11 +9,11 @@ Insurance
 A data frame with 1338 rows and 7 columns
 Credit to Bob Wakefield
 \describe{
-\item{Age}{The age of the customer. (Integer)}
-\item{Children}{The number of children the customer has. (Integer)}
-\item{Smoker}{Whether or not the customer is a smoker. (Boolean)}
-\item{Region}{The region the customer lives in. (String)}
-\item{Charges}{The insurance charges for the customer. (Float)}
+   \item{Age}{The age of the customer. (Integer)}
+   \item{Children}{The number of children the customer has. (Integer)}
+   \item{Smoker}{Whether or not the customer is a smoker. (Boolean)}
+   \item{Region}{The region the customer lives in. (String)}
+   \item{Charges}{The insurance charges for the customer. (Float)}
 }
 }
 \source{

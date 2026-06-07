@@ -1,0 +1,98 @@
+---
+title: "Predicting on Unseen Production Data with Strength of Concrete"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Predicting on Unseen Production Data with Strength of Concrete}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+## Introduction
+
+The ultimate validation of a predictive machine learning asset is its ability to generalize and score completely unseen data in a production environment.
+
+This vignette demonstrates how the `NumericEnsembles` pipeline implements a strict production firewall using the Strength of Concrete data set. We split the dataset externally to simulate an enterprise deployment, pass historical records to the core execution engine, and dispatch predictions onto completely raw holdout data rows using the unified `predict` S3 generic interface.
+
+## 1. Simulating the Production Firewall
+
+We isolate the first 900 rows of the Concrete data to serve as our historical development environment, entirely withholding the remaining 129 rows to simulate unseen production stream inputs.\
+
+```{r, Simulating the Production Firewall}
+library(NumericEnsembles)
+
+# Establish the holdout firewall partition
+historical_training_data <- Concrete[1:900,]
+unseen_production_rows   <- Concrete[901:1030, ]
+
+message(sprintf("Historical training rows: %d", nrow(historical_training_data)))
+message(sprintf("Unseen production holdout rows: %d", nrow(unseen_production_rows)))
+```
+
+## 2. Model Optimization & Training Domain
+
+We run the core ensemble framework on our historical data to evaluate base architectures, stack meta-learners, and construct blended pairwise options. We will utilize the fast-execution tracking parameters configuration matrix for efficient build cycles.
+
+```{r, Model Optimization and Training Domain}
+# Create an explicit configuration matrix block first
+custom_config <- NumericEnsemblesConfig(
+  cv_folds      = 5,
+  train_pct     = 0.70,
+  vif_threshold = 5
+)
+
+# Pass the config block into the engine safely
+Concrete_pipeline <- Numeric(
+  dataset       = historical_training_data,
+  target_col    = "Strength",
+  palette_style = "modern",
+  config        = custom_config,
+  verbose       = FALSE
+)
+```
+
+## 3. Dispatched Predictive Inference
+
+We extract the current top-performing leaderboard model variant discovered by the pipeline, and feed the completely raw, un-preprocessed production rows directly into the generic `predict()` method.
+
+```{r, Dispatch Predictive Inference}
+# Isolate the champion model name identifier
+champion_model <- Concrete_pipeline$performance_report$Model[1]
+message(sprintf("Leaderboard Champion discovered: %s", champion_model))
+
+# Generate clean strength projection vectors live
+holdout_predictions <- predict(
+  object     = Concrete_pipeline,
+  newdata    = unseen_production_rows,
+  model_name = "best"
+)
+```
+
+## 4. Evaluation and Performance Audit Summary
+
+Behind the scenes, `NumericEnsembles` automatically tracks performance, identifies structural data patterns, and generates comprehensive audit logs. Here, we compare our live projections side-by-side with ground-truth sales records:
+
+```{r, Evaluation and Performance Audit Summary}
+# Synthesize comparison data frame metric results matrix
+demo_leaderboard <- data.frame(
+  Row_Index       = 901:1030,
+  Actual_Strength = unseen_production_rows$Strength,
+  Predicted_Strength = round(holdout_predictions, 0),
+  Absolute_Error  = round(abs(unseen_production_rows$Strength - holdout_predictions), 0)
+)
+
+# Render the first 10 rows of production outputs
+knitr::kable(head(demo_leaderboard, 10), row.names = FALSE)
+
+# Compute out-of-sample holdout root mean squared error
+final_holdout_rmse <- sqrt(mean((demo_leaderboard$Actual_Strength - demo_leaderboard$Predicted_Strength)^2))
+message(sprintf("Final Holdout Production RMSE Score: $%.2f", final_holdout_rmse))
+```

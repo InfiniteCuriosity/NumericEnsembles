@@ -10,6 +10,5 @@ NumericEnsemblesFastConfig()
 A structured list containing optimized, fast-track hyperparameter settings.
 }
 \description{
-Minimizes cross-validation folds and trims tuning grids to guarantee
-lightning-fast execution during package assembly, checking, or testing.
+Fast-Execution Configuration Matrix
 }

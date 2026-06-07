@@ -1,33 +1,41 @@
 Package: NumericEnsembles
-Title: Automatically Runs 18 Individual and 14 Ensembles of Models
-Version: 1.2.0.9000
+Type: Package
+Title: Multi-Model Stacking Optimization and Continuous Regression Ensembles
+Version: 1.2.1
 Authors@R: 
-    person("Russ", "Conte", , "russconte@mac.com", role = c("aut", "cre", "cph"))
-Description: Automatically builds ensembles, plots, tables, and makes it very easy for the user to output the results.
+    person("Russ", "Conte", email = "russconte@mac.com", role = c("aut", "cre", "cph"))
+Description: Automated parallelized regression ensemble pipeline executing 
+    concurrent evaluations across 17 base machine learning architectures, 
+    6 specialized stacking meta-learners, and 136 pairwise hybrid combinations. 
+    Implements dynamic performance-weighted stacking blends, internal data dictionary 
+    profiling metrics, iterative multicollinearity pruning via Variance Inflation Factors (VIF), 
+    and programmatic executive Quarto report generation.
 License: MIT + file LICENSE
 Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
 LazyData: true
-Imports: 
-  car,
-  caret,
-  doParallel,
-  foreach,
-  ggplot2,
-  ggrepel,
-  party,
-  patchwork,
-  rstudioapi,
-  shiny,
-  tidyr,
-  tidyselect
 Depends:
-  R (>= 2.10)
-Config/testthat/edition: 3
-VignetteBuilder: knitr
-URL: http://www.SurvivalEnsembles.com, https://github.com/InfiniteCuriosity/SurvivalEnsembles
-BugReports: https://github.com/InfiniteCuriosity/SurvivalEnsembles/issues
-Config/roxygen2/version: 8.0.0
+    R (>= 4.1.0)
+Imports: 
+    car,
+    caret,
+    doParallel,
+    dplyr,
+    foreach,
+    ggplot2,
+    ggrepel,
+    party,
+    patchwork,
+    rstudioapi,
+    shiny,
+    tidyr,
+    tidyselect
 Suggests: 
     knitr,
-    rmarkdown
+    quarto,
+    rmarkdown,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+VignetteBuilder: knitr
+URL: https://github.com/InfiniteCuriosity/NumericEnsembles
+BugReports: https://github.com/InfiniteCuriosity/NumericEnsembles/issues
+Config/roxygen2/version: 8.0.0

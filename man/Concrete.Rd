@@ -8,15 +8,15 @@
 Concrete
 A data frame with 1030 rows and 9 columns:
 \describe{
-\item{Cement}{ quantitative -- kg in a m3 mixture -- Input Variable}
-\item{Blast_Furnace_Slag}{quantitative -- kg in a m3 mixture -- Input Variable}
-\item{Fly_Ash}{ quantitative  -- kg in a m3 mixture -- Input Variable}
-\item{Water}{quantitative  -- kg in a m3 mixture -- Input Variable}
-\item{Superplasticizer}{quantitative -- kg in a m3 mixture -- Input Variable}
-\item{Coarse_Aggregate}{quantitative -- kg in a m3 mixture -- Input Variable}
-\item{Fine_Aggregate}{quantitative  -- kg in a m3 mixture -- Input Variable}
-\item{Age}{Day (1~365) -- Input Variable}
-\item{Strength}{quantitative -- MPa -- Output Variable}
+   \item{Cement}{ quantitative -- kg in a m3 mixture -- Input Variable}
+   \item{Blast_Furnace_Slag}{quantitative -- kg in a m3 mixture -- Input Variable}
+   \item{Fly_Ash}{ quantitative  -- kg in a m3 mixture -- Input Variable}
+   \item{Water}{quantitative  -- kg in a m3 mixture -- Input Variable}
+   \item{Superplasticizer}{quantitative -- kg in a m3 mixture -- Input Variable}
+   \item{Coarse_Aggregate}{quantitative -- kg in a m3 mixture -- Input Variable}
+   \item{Fine_Aggregate}{quantitative  -- kg in a m3 mixture -- Input Variable}
+   \item{Age}{Day (1~365) -- Input Variable}
+   \item{Strength}{quantitative -- MPa -- Output Variable}
 }
 }
 \source{

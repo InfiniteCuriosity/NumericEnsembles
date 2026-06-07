@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 Ordinary regression analysis often forces analysts to commit to a single structural paradigm—such as Ordinary Least Squares (OLS) or a standard tree. However, real-world data contains complex surface topologies, multi-collinearity constraints, and variable interactions that single models frequently misinterpret.
 
-The `NumericEnsembles` package answers this problem by establishing a highly parallelized, production-grade **Team of Rivals** framework. It trains 17 independent base machine learning architectures simultaneously, feeds their out-of-sample prediction arrays into 3 specialized stacking meta-learners, and evaluates all possible pairwise hybrid blends to construct an optimized ensemble consensus model.
+The `NumericEnsembles` package answers this problem by establishing a highly parallelized, production-grade **Team of Rivals** framework. It trains 17 independent base machine learning architectures simultaneously, feeds their out-of-sample prediction arrays into 5 specialized stacking meta-learners, and evaluates all possible pairwise hybrid blends to construct an optimized ensemble consensus model.
 
 ## 1. The Core Stacking & Blending Architecture
 
@@ -40,7 +40,7 @@ The core engine concurrency loop estimates a diverse collection of algorithms sp
 
 ### Layer 2: Stacking Meta-Learners
 
-The out-of-sample training predictions of all 17 models are isolated into a primary meta-feature dataframe. This grid is used to train three structural stacking meta-learners (a Meta-GLM, a Meta-Random Forest, and a Meta-SVM) to learn exactly how to weight models based on contextual predictor densities.
+The out-of-sample training predictions of all 17 models are isolated into a primary meta-feature dataframe. This grid is used to train five structural stacking meta-learners—a Baseline Meta-GLM, an Optimized Meta-Elastic Net, a Smooth Non-linear Meta-Boosted GAM, a Meta-Random Forest, and a Meta-SVM—to learn exactly how to weight models based on contextual predictor densities.
 
 ### Layer 3: Pairwise Blended Consensus Combinations
 
@@ -54,7 +54,7 @@ Below is an end-to-end workflow demonstrating how to execute the multi-core pipe
 
 We will demonstrate using a simulated economic registry featuring continuous indicators and an underlying multi-collinear structure:
 
-```{r Code walkthrough}
+```{r Initialize the Performance Dataset}
 library(NumericEnsembles)
 
 set.seed(42)
@@ -79,17 +79,23 @@ economic_registry <- data.frame(
 
 ### Deploying the Multi-Core Pipeline
 
-We configure our data-split proportion, map out our maximum allowable Multi-Collinearity threshold using Variable Inflation Factors (VIF), select a visualization theme palette, and execute the core `Numeric()` wrapper engine:
+We generate an isolated configuration parameter matrix using `NumericEnsemblesConfig()`. This decouples operational arguments (such as cross-validation structures, training percentages, and maximum allowable Variance Inflation Factor limits) from the primary wrap runner before executing the core `Numeric()` engine:
 
 ```{r Multi-core pipeline}
-# Execute the complete 17-model parallel optimization backend
+# Initialize the decoupled operational parameters matrix 
+
+custom_config <- NumericEnsemblesConfig(
+  cv_folds      = 5,          # 5-Fold Cross-Validation per candidate
+  train_pct     = 0.70,       # 70% Training / 30% Testing Evaluation Split
+  vif_threshold = 5           # Max allowed VIF multiplier boundary
+)
+
+# Execute the complete parallel optimization backend using our configuration asset
 trained_numeric_ensemble <- Numeric(
   dataset       = economic_registry,
   target_col    = "GDP_Growth",
-  cv_folds      = 5,          # 5-Fold Cross-Validation per candidate
-  train_pct     = 0.70,       # 70% Training / 40% Testing Evaluation Split
-  vif_threshold = 5,          # Max allowed VIF multiplier boundary
   palette_style = "modern",   # High-contrast deep navy/teal theme layout
+  config        = custom_config,
   verbose       = TRUE
 )
 ```
@@ -121,9 +127,7 @@ To map un-indexed prospects or score incoming continuous spreadsheets, pass your
 
 Setting `model_name = "best"` automatically selects the absolute top-performing champion architecture from your validation trials:
 
-```{r Scoring Inferences on Untrained Records}
-# Establish a raw out-of-sample row profile
-
+```{r Establish a raw out-of-sample row profile}
 # Simulate continuous features
 new_housing_index <- runif(n_samples, min = 80, max = 150)
 new_unemploy_rate <- rnorm(n_samples, mean = 5.5, sd = 1.2)

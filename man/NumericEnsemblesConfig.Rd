@@ -25,28 +25,23 @@ NumericEnsemblesConfig(
 
 \item{vif_threshold}{Numeric. Maximum allowed Variance Inflation Factor. Default 5.}
 
-\item{transform_steps}{Character vector. Preprocessing transformations applied via caret.
-Default c("nzv", "medianImpute", "center", "scale", "YeoJohnson").}
+\item{transform_steps}{Character vector. Preprocessing transformations applied via caret.}
 
-\item{rf_grid}{Data frame or NULL. Explicit tuning grid for Random Forest (\code{mtry}).
-If NULL, dynamically computed inside the engine based on feature counts. Default NULL.}
+\item{rf_grid}{Data frame or NULL. Explicit tuning grid for Random Forest.}
 
-\item{glmnet_grid}{Data frame. Hyperparameter grid for elastic net/lasso/ridge tuning bounds.
-Default handles a 5x10 grid search over alpha and lambda space.}
+\item{glmnet_grid}{Data frame. Hyperparameter grid for elastic net.}
 
-\item{svm_tune_length}{Integer. Total tuning resolution steps for \code{svmRadial}. Default 8.}
+\item{svm_tune_length}{Integer. Total tuning resolution steps for svmRadial. Default 8.}
 
-\item{mars_tune_length}{Integer. Total tuning resolution steps for MARS (\code{earth}). Default 5.}
+\item{mars_tune_length}{Integer. Total tuning resolution steps for MARS. Default 5.}
 
-\item{pcr_tune_length}{Integer. Total tuning resolution steps for Principal Component Regression. Default 10.}
+\item{pcr_tune_length}{Integer. Total tuning resolution steps for PCR. Default 10.}
 
-\item{tree_tune_length}{Integer. Total tuning resolution steps for decision trees (\code{rpart}). Default 10.}
+\item{tree_tune_length}{Integer. Total tuning resolution steps for decision trees. Default 10.}
 }
 \value{
 A structured list containing isolated operational tuning parameters.
 }
 \description{
-Houses cross-validation fold structures, train-test split dimensions,
-multicollinearity VIF thresholds, and tuning grids to decouple
-hyperparameter states from core execution loops.
+Configuration Parameters Matrix for Numeric Ensemble Pipeline
 }
