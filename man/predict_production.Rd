@@ -2,18 +2,21 @@
 % Please edit documentation in R/NumericEnsembles.R
 \name{predict_production}
 \alias{predict_production}
-\title{Generate Executive Production Projections with Row-Level 95 percent Confidence Intervals}
+\title{Executive Production Projections with Row-Level 95 percent Confidence Intervals}
 \usage{
 predict_production(object, newdata)
 }
 \arguments{
-\item{object}{A trained `numeric_pipeline` object.}
+\item{object}{A trained \code{numeric_pipeline} asset.}
 
-\item{newdata}{A data.frame containing new data configurations to score.}
+\item{newdata}{A data frame containing incoming raw manufacturing features.}
 }
 \value{
-A data.frame structured with prediction vectors and interval metrics for the top 3 models.
+A data frame matching input dimensions appended with prediction vectors and confidence interval boundaries for the top 3 models.
 }
 \description{
-Generate Executive Production Projections with Row-Level 95 percent Confidence Intervals
+Evaluates champion architectures against un-indexed datasets, appending row-level projection metrics and interval boundaries.
+}
+\details{
+Production Prediction Wrapper
 }

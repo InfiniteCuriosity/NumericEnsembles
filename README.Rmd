@@ -2,9 +2,7 @@
 output: github_document
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-```{r, include = FALSE}
+```{r, Initial setting, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -15,110 +13,197 @@ knitr::opts_chunk$set(
 
 # NumericEnsembles
 
-The goal of NumericEnsembles is to automatically build ensembles of complete solutions where the target column is numeric.
+The goal of NumericEnsembles is to automatically build highly optimized ensembles of complete solutions where the target column is continuous numeric.
 
 ## The story of NumericEnsembles
 
-My name is Russ Conte, and I have worked for many years with multi-million dollar accounts for multi-billion dollar customers, main as a recruiter. One of the most common results I have seen are companies who do not use their data to get the best return for their investment to get the data. I had the insight about how to build ensembles of solutions on Saturday, October 22, 2022 at 4:58 pm. The original ensembles solution has been improved many times, and NumericEnsembles is one of ten ensembles solutions I have built that are currently available. The total list is:
+My name is Russ Conte, and I have worked for many years with multi-million dollar accounts for multi-billion dollar customers, mainly as a recruiter. One of the most common results I have seen are companies who do not use their data to get the best return for their investment to get the data. I had the insight about how to build ensembles of solutions on Saturday, October 22, 2022 at 4:58 pm. The original ensembles solution has been improved many times, and NumericEnsembles is one of 13 ensembles solutions I have built that are currently available. The total list is:
 
 1.  `NumericEnsembles`
+
 2.  `ClassificationEnsembles`
+
 3.  `LogisticEnsembles`
+
 4.  `ForecastingEnsembles`
+
 5.  `ClusteringEnsembles`
+
 6.  `SurvivalEnsembles`
+
 7.  `TextEnsembles`
+
 8.  `CountingEnsembles`
+
 9.  `SeverityEnsembles`
+
 10. `MultiLabelEnsembles`
+
+11. `NetworkEnsembles`
+
+12. `SpatialEnsembles`
+
+13. `SurveyEnsembles`
 
 ## Installation
 
-You can install the development version of NumericEnsembles from [GitHub](https://github.com/) with:
+You can install the development version of NumericEnsembles from [GitHub](https://github.com/) with:
 
 ```{r Install NumericEnsembles}
 # library(pak)
-# pak::pkg_install("NumericEnsembles")
+# pak::pkg_install("InfiniteCuriosity/NumericEnsembles")
 ```
 
 ## Pipelines: The best way to get results from all the ensembles packages
 
-All ten ensembles packages all work best if you start by building a pipeline first. A pipeline will combine all the results (tables, plots, etc.) in one file which you can print, plot, predict, export, save, and much more.
+All 13 ensembles packages work best if you start by building a pipeline first. A pipeline combines all the results (tables, plots, models, and metadata) into one structured asset which you can print, plot, predict, export, save, and much more.
 
-## Your first pipeline in NumericEnsembles
+## Track 1: The Express Track (Quick Start)
 
-```{r, Your first pipeline in NumericEnsembles}
+The Express Track allows you to test your installation instantly using rapid cross-validation configurations and automated synthetic data generations:
+
+```{r NumericEnsembles quick start}
 library(NumericEnsembles)
-Concrete_pipeline <- Numeric(
-  dataset = Concrete[1:1000, ],
-  target_col = 'Strength',
-  facet_col = "",
-  color_col = "",
-  stratify_col = "",
-  palette_style = "standard",
-  verbose = "FALSE"
+
+# Using internal demo data generator as an express validation run
+Concrete_express_pipeline <- NumericEnsemblesDemo()
+```
+
+## Track 2: The Fast (but not as fast as Express) track
+
+This example features facet colors, column colors and stratify colors. You can use these features in many other data sets.
+
+```{r Fast but not express track}
+library(NumericEnsembles)
+Insurance <- NumericEnsembles::Insurance
+Insurance_pipeline <- Numeric(dataset = Insurance, target_col = 'charges', facet_col = 'sex', color_col = 'smoker', stratify_col = 'region', palette_style = "modern", config = NumericEnsemblesFastConfig(), verbose = TRUE)
+print(Insurance_pipeline)
+Insurance_pipeline$plots # plots all in one command
+```
+
+## Track 3: The Institutional Track (Professional Production, this example will have a lower root mean squared error than an article in Nature for the exact same data set)
+
+For this next example we will be using the `Concrete` data set, and achieving a lower root mean squared error (RMSE) than this article in Nature on the same data set: <https://www.nature.com/articles/s41598-024-69616-9>. The article shows a lowest RMSE of 5.11, NumericEnsembles will get a best RMSE that is lower than 5.11, and you will be able to verify the result.
+
+For enterprise-grade model deployments, you can decouple hyperparameter states from your execution tracks using the complete `NumericEnsemblesConfig()` matrix. This path showcases advanced feature transformations (including `YeoJohnson`power-scaling), high-leverage data outlier filtering via Cook's Distance, and rigorous multi-model hyperparameter tuning grids:
+
+```{r Professional Production}
+library(NumericEnsembles)
+
+# 1. Establish custom, comprehensive hyperparameter tuning grids
+custom_glmnet_grid <- expand.grid(
+  alpha  = seq(0, 1, length = 5),
+  lambda = seq(0.001, 0.2, length = 10)
 )
+
+custom_rf_grid <- expand.grid(
+  mtry = c(2, 4, 6, 8)
+)
+
+# 2. Build the fine-grained execution configuration matrix
+institutional_config <- NumericEnsemblesConfig(
+  cv_folds        = 10,       # Rigid 10-fold cross-validation
+  train_pct       = 0.80,     # 80/20 train-test population split
+  vif_threshold   = 10.0,     # Strict multicollinearity screening
+  cooks_threshold = 2.0,      # Prune high-leverage outliers over 2 * (4/n)
+  transform_steps = c("nzv", "medianImpute", "center", "scale", "YeoJohnson"),
+  glmnet_grid     = custom_glmnet_grid,
+  rf_grid         = custom_rf_grid,
+  svm_tune_length = 10,
+  pcr_tune_length = 10
+)
+
+# 3. Execute the concurrent machine learning rival engine
+Concrete_pipeline <- Numeric(
+  dataset       = Concrete[1:1000, ], 
+  target_col    = 'Strength', 
+  palette_style = "modern", 
+  config        = institutional_config, 
+  verbose       = TRUE
+)
+
+# 4 Verify five best results
+Concrete_pipeline$performance_report[1:5, ]
 ```
 
-## Print six summary tables from the pipeline
+## Print the Summary Profiles from any NumericEnsembles Pipeline
 
-```{r, Print summary tables}
-print(Concrete_pipeline)
+When you call `print()` on your pipeline object, it outputs a multi-profile metadata evaluation series:
+
+1.  **Baseline Sample Head & Population Description:** Immediate tracking of your baseline raw data structures.
+
+2.  **Structural Data Dictionary:** Maps column classes, missing value counts, and unique value frequencies.
+
+3.  **Automated Exploratory Summary Insights:** Granular tracking of feature anomalies, calculating exact skewness coefficients, IQR outlier counts, and emitting specific operational text insights.
+
+4.  **Multicollinearity Threshold Audit Report:** A complete breakdown of columns evaluated, empirical Variance Inflation Factors (VIF), and selection status ("Kept" vs "Dropped").
+
+5.  **Ensemble Performance Leaderboard Evaluation:** Multi-engine rankings sorted by Testing RMSE, complete with MAE, Adjusted R2, prediction variance, and run durations.
+
+6.  **Automated Residual Diagnostic Leaderboard:** Runs validation scans checking residuals for normality (Shapiro-Wilk), homoscedasticity (Spearman), and error independence (Durbin-Watson).
+
+## Generate Diagnostic Plots from any NumericEnsembles Pipeline
+
+You can interact with your visual diagnostics package in two standard ways:
+
+```{r Generate diagnostic plots}
+plot(Concrete_pipeline)  # Sequentially render plots to your active device window
+Concrete_pipeline$plots  # Direct programmatic access to specific ggplot2 objects
 ```
 
-The six summary tables:
+The professional visual diagnostics portfolio includes:
 
-1.  Baseline sample head (the first six rows of the data)
-2.  Data dictionary
-3.  Data summary (Min., 1st Qu., Media, Mean, 3rd Qu., Max.)
-4.  Multicollineraity VIF Filters Report
-5.  Leaderboard: Top 10 Architectures by Testing RMSE
-6.  Residuals Diagnostics
+- **Histograms:** Continuous feature density and population distribution panels.
 
-## Generate 11 plots from the pipeline
+- **Box Plots:** Predictor range distribution quantiles and scale profiles.
 
-```{r, Print plots from the pipeline, two ways to do it}
-plot(Concrete_pipeline) # Return one plot at a time
-Concrete_pipeline$plots # Return all plots at the same time
+- **Correlation Heatmap:** Multi-feature linear explanatory predictor correlation matrices.
+
+- **Scatter Analysis Matrix:** Individual regression line mappings matching the target column against features.
+
+- **Performance Metrics & KPIs:** Horizontal ranking of cross-validated architectures showcasing explicit **95% predictive confidence intervals** across RMSE, MAE, and Adjusted R2.
+
+- **Generalization Risks & Structural Bias:** Mappings tracking overfitting ratios and model directionality bias.
+
+- **Bias-Variance Space:** Joint coordinate mapping of directional model bias vs empirical variance relative to an absolute ideal vector origin.
+
+- **Kolmogorov-Smirnov Test Mappings:** Charting distribution alignment p-values across your candidate algorithms.
+
+- **Cook's Distance Leverage Timeline:** A standalone segment tracker charting raw outlier boundaries.
+
+## Predicting on New Data
+
+Programmatic predictions can be generated instantly using the pipeline's optimized S3 method wrapper, utilizing the absolute top-performing champion model architecture:
+
+```{r Predicting on new data}
+prospective_data <- Concrete[1001:1030, ]
+Pipeline_predictions <- predict(object = Concrete_pipeline, newdata = prospective_data, model_name = "best")
 ```
 
-The 11 plots:
+For industrial workloads, use `predict_production()` to automatically obtain point projections alongside matching row-level 95% upper and lower assurance boundaries for the top 3 champion models:
 
-Histograms (Feature Distributions)
+```{r Predict production}
+Production_report <- predict_production(object = Concrete_pipeline, newdata = prospective_data)
+Production_report
+```
 
-Box Plots (Feature Range Profiles)
+## Render the Automated Executive Report
 
-Feature Correlation Heatmap
+You can compile and render a standalone, professional corporate report from your pipeline instantly. This function extracts your metadata matrix and generates a polished, executive summary document utilizing high-speed local Quarto compilation:
 
-Scatter Analysis: Target Variable vs Each Feature (with trend line)
-
-Comparative Performance Metric Heat map Matrix
-
-Core Model Performance Metrics (with 95% Confidence Intervals) and KPIs
-
-Overfitting ratio (closer to 1.00 is better)
-
-Directional Model Bias (closer to 0.00 is better)
-
-Bias-Variance Joint Mapping Space (bias is the x-axis, variance is the y-axis)
-
-Kolomogorov-Smirnov Test p-values (tests how likely the model result is from the same distribution as the training data)
-
-## Predicting on new data, maybe the most important part
-
-```{r, Predict on new untrained data}
-Pipeline_prediction <- predict(object = Concrete_pipeline, newdata = Concrete[1001:nrow(Concrete), ], model_name = "best")
-Pipeline_prediction
+```{r Automated Executive Report}
+# Compiles a polished HTML document matching your chosen palette style
+RenderExecutiveReport(pipeline_object = Concrete_pipeline, output_directory = getwd())
 ```
 
 ## Professional features of NumericEnsembles
 
-Configuration options:
+- Fine-grained hyperparameters handling via `NumericEnsemblesConfig()` and rapid cross-validation configurations with `NumericEnsemblesFastConfig()`.
 
-![Configuration options in the NumericEnsemblesConfig() function](images/Config_file.jpg)
+- Error-bound verifications delivering explicit 95% predictive confidence intervals across all primary KPIs.
 
-![All plotting options from the pipeline](images/Plot_output.jpg)
+- 7 professional curated test sample datasets available at the [EnsemblesData Repository](https://github.com/InfiniteCuriosity/EnsemblesData/tree/main/NumericEnsembles).
 
-All the full reports from the pipeline:
+- Dedicated I/O pipelines for seamless asset transportation via `save_pipeline()`, `load_pipeline()`, and `ExportNumericResults()`.
 
-![All the options from the pipeline (top level only)](images/NumericEnsemblespipelinefeatures.jpg)
+- Never calls any large language models (LLMs). This is a completely LLM-free, high-performance local algorithmic solution.

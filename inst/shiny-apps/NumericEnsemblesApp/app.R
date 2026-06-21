@@ -2,6 +2,7 @@ library(shiny)
 library(ggplot2)
 library(patchwork)
 library(ggrepel)
+library(NumericEnsembles)
 
 # Diagnostic evaluation hook for cosmetic corporate theme matrix overlays
 if (requireNamespace("shinythemes", quietly = TRUE)) {
@@ -11,131 +12,168 @@ if (requireNamespace("shinythemes", quietly = TRUE)) {
 }
 
 # -------------------------------------------------------------------------
-# USER INTERFACE LAYOUT PROFILE
+# INTERACTIVE USER INTERFACE DESIGN
 # -------------------------------------------------------------------------
 ui <- fluidPage(
   theme = app_theme,
 
-  titlePanel("NumericEnsembles Continuous Machine Learning Engine App"),
+  titlePanel("NumericEnsembles Continuous Machine Learning Portal Dashboard"),
 
   sidebarLayout(
     sidebarPanel(
-      h4("Operational Inputs"),
-      helpText("Upload a continuous target numeric dataset to train and evaluate 17 base architectures and ensembles concurrently."),
+      h4("Operational Dataset Setup"),
+      helpText("Upload a continuous target numeric dataset to train and evaluate 17 base architectures and stacking models concurrently."),
 
       fileInput("file_input", "Choose CSV Matrix File", accept = c(".csv")),
 
       uiOutput("target_select_ui"),
+      uiOutput("model_select_ui"),
 
       hr(),
       h4("Algorithmic Hyperparameters"),
-      sliderInput("train_pct", "Training Partition Percentage", min = 0.40, max = 0.90, value = 0.60, step = 0.05),
-      sliderInput("cv_folds", "Cross-Validation Folds (K)", min = 2, max = 10, value = 5, step = 1),
-      sliderInput("vif_threshold", "Max Multi-Collinearity VIF Limit", min = 2, max = 20, value = 5, step = 1),
+      sliderInput("train_pct", "Training Partition Proportion", min = 0.40, max = 0.90, value = 0.80, step = 0.05),
+      sliderInput("cv_folds", "Cross-Validation Folds (K)", min = 2, max = 10, value = 10, step = 1),
+      sliderInput("vif_threshold", "Max Multi-Collinearity VIF Limit", min = 2, max = 1000, value = 1000, step = 10),
+      sliderInput("cooks_threshold", "Cook's Distance Leverage Cutoff Factor (999 to Deactivate)", min = 1.0, max = 5.0, value = 999, step = 0.5),
 
       selectInput("palette_style", "Visualization Color Palette",
-                  choices = c("standard", "viridis", "modern"), selected = "standard"),
+                  choices = c("standard", "viridis", "modern"), selected = "modern"),
 
-      actionButton("run_pipeline", "Deploy Core Pipeline", class = "btn-primary btn-block"),
+      actionButton("run_engine", "Launch Stacking Engine Matrix", class = "btn-primary btn-block"),
 
       hr(),
-      h4("Out-of-Sample Score Projection"),
-      helpText("Isolate any champion archetype from the validation leaderboard to evaluate custom row profiles instantly."),
-      uiOutput("model_select_ui"),
-      uiOutput("scoring_inputs_ui"),
-      actionButton("run_prediction", "Score Profiler Row", class = "btn-success btn-block"),
-      br(),
-      tableOutput("prediction_result_table")
+      h4("Row-Level Diagnostic Scoring"),
+      uiOutput("scoring_sliders_ui"),
+      selectInput("selected_model", "Inference Model Selector", choices = c("best"), selected = "best"),
+      uiOutput("predict_button_ui")
     ),
 
     mainPanel(
       tabsetPanel(
-        tabPanel("Executive Leaderboard",
+        id = "dashboard_tabs",
+        tabPanel("Leaderboard Standings",
+                 h4("Team of Rivals Regression Evaluation Matrix"),
                  verbatimTextOutput("console_report")),
-        tabPanel("Core Performance KPIs",
-                 plotOutput("kpi_plot", height = "550px")),
-        tabPanel("Generalization & Tradeoffs",
-                 plotOutput("risk_plot", height = "550px")),
-        tabPanel("Comparative Heatmap Matrix",
-                 plotOutput("heatmap_plot", height = "550px"))
+        tabPanel("Exploratory Data Insights",
+                 h4("Automated Population Property Profile Summary Matrix"),
+                 tableOutput("insights_table")),
+        tabPanel("Core KPIs Dashboard",
+                 h4("Predictive Performance Bounds & Confidence Spread Boundaries"),
+                 plotOutput("kpi_plot", height = "650px")),
+        tabPanel("Generalization Risks",
+                 h4("Directional Model Bias & Structural Variance Dashboards"),
+                 plotOutput("risk_plot", height = "700px")),
+        tabPanel("Z-Score Performance Heatmap",
+                 h4("Standardized Multi-Metric Comparative Evaluation Profile"),
+                 plotOutput("heatmap_plot", height = "600px")),
+        tabPanel("Inference Results Window",
+                 h4("Programmatic Out-of-Sample Row Projections Vector"),
+                 tableOutput("prediction_result_table"))
       )
     )
   )
 )
 
 # -------------------------------------------------------------------------
-# SERVER SIDE CORE PROCESSING LOGIC
+# ENTERPRISE SERVER LOGIC BLOCK ENGINE
 # -------------------------------------------------------------------------
 server <- function(input, output, session) {
 
-  # Reactive file loader
+  # Reactive memory allocator caching raw csv file inputs
   raw_data <- reactive({
     req(input$file_input)
-    utils::read.csv(input$file_input$datapath, stringsAsFactors = TRUE)
+    df <- read.csv(input$file_input$datapath, stringsAsFactors = TRUE)
+    colnames(df) <- make.names(colnames(df), unique = TRUE)
+    return(df)
   })
 
-  # Dynamic Target Variable Selector (filtering for strictly continuous numeric values)
+  # Dynamic target continuous column drop-down selector generator
   output$target_select_ui <- renderUI({
-    req(raw_data())
     df <- raw_data()
     numeric_cols <- colnames(df)[sapply(df, is.numeric)]
-
-    if (length(numeric_cols) == 0) {
-      return(p("Error: No continuous numeric target vectors detected within this dataset."))
-    }
-    selectInput("target_col", "Target Continuous Variable (Y)", choices = numeric_cols)
+    selectInput("target_col", "Select Target Numeric Continuous Variable (Y)", choices = numeric_cols)
   })
 
-  # Reactive pipeline container triggered by the user action button
-  pipeline_object <- eventReactive(input$run_pipeline, {
+  # Reactive pipeline execution anchor loop
+  pipeline_object <- eventReactive(input$run_engine, {
     req(raw_data(), input$target_col)
 
-    # Fire the full 17-model multi-core architecture engine inside your package
-    NumericEnsembles::Numeric(
-      dataset       = raw_data(),
-      target_col    = input$target_col,
-      cv_folds      = input$cv_folds,
-      train_pct     = input$train_pct,
-      vif_threshold = input$vif_threshold,
-      palette_style = input$palette_style,
-      verbose       = FALSE
+    # Isolate parameters out into your package's operational configuration matrix
+    custom_config <- NumericEnsemblesConfig(
+      cv_folds        = input$cv_folds,
+      train_pct       = input$train_pct,
+      vif_threshold   = input$vif_threshold,
+      cooks_threshold = input$cooks_threshold,
+      transform_steps = if(input$vif_threshold < 50) c("nzv", "medianImpute", "center", "scale", "YeoJohnson") else c("center")
     )
+
+    # Display processing progress window bar indicator modal
+    showModal(modalDialog(title = "Concurrency Engine Running", "Deploying 17 base learning topologies and stacking ensembles. Please look at your R console log tracker...", easyClose = FALSE, footer = NULL))
+
+    pipeline_output <- tryCatch({
+      Numeric(
+        dataset       = raw_data(),
+        target_col    = input$target_col,
+        palette_style = input$palette_style,
+        config        = custom_config,
+        verbose       = TRUE
+      )
+    }, error = function(e) {
+      showNotification(paste("Operational Error Caught:", e$message), type = "error")
+      return(NULL)
+    })
+
+    removeModal()
+    return(pipeline_output)
   })
 
-  # Dynamic Model Selector populated directly from the active leaderboard
+  # Synchronize model list drop-downs dynamically after model estimations conclude
   output$model_select_ui <- renderUI({
     req(pipeline_object())
-    models_available <- pipeline_object()$performance_report$Model
-    selectInput("selected_model", "Target Model for Inference", choices = models_available)
+    available_models <- c("best", pipeline_object()$performance_report$Model)
+    updateSelectInput(session, "selected_model", choices = available_models, selected = "best")
+    return(NULL)
   })
 
-  # Dynamic feature form fields rendering for active row profile scoring
-  output$scoring_inputs_ui <- renderUI({
-    req(pipeline_object())
-    features <- pipeline_object()$pipeline_meta$kept_features
-    df_ref <- raw_data()
+  # Build interactive dynamic slider rows corresponding to input predictor fields
+  output$scoring_sliders_ui <- renderUI({
+    req(raw_data(), input$target_col)
+    df <- raw_data()
+    predictor_names <- setdiff(colnames(df), input$target_col)
 
-    # Generate individual text input controls matching required numeric variables
-    lapply(features, function(feat) {
-      baseline_val <- round(mean(df_ref[[feat]], na.rm = TRUE), 2)
-      numericInput(paste0("feat_", feat), sprintf("Variable: %s (Mean = %s)", feat, baseline_val), value = baseline_val)
+    slider_elements <- lapply(predictor_names, function(feat) {
+      if (is.numeric(df[[feat]])) {
+        val_min <- min(df[[feat]], na.rm = TRUE)
+        val_max <- max(df[[feat]], na.rm = TRUE)
+        val_med <- median(df[[feat]], na.rm = TRUE)
+        numericInput(paste0("feat_", feat), label = sprintf("Feature Matrix: %s (Range: %.1f - %.1f)", feat, val_min, val_max), value = val_med)
+      } else {
+        unique_factors <- unique(na.omit(df[[feat]]))
+        selectInput(paste0("feat_", feat), label = sprintf("Factor Category: %s", feat), choices = unique_factors)
+      }
     })
+    do.call(tagList, slider_elements)
   })
 
-  # Dynamic prediction execution channel
-  predicted_value <- eventReactive(input$run_prediction, {
-    req(pipeline_object(), input$selected_model)
-    features <- pipeline_object()$pipeline_meta$kept_features
+  output$predict_button_ui <- renderUI({
+    req(pipeline_object())
+    actionButton("trigger_prediction", "Execute Production Scoring Vector", class = "btn-success btn-block")
+  })
 
-    # Scrape the dynamically generated input elements back into a clean row data frame
-    scoring_row <- data.frame(matrix(ncol = length(features), nrow = 1))
-    colnames(scoring_row) <- features
-    for (feat in features) {
+  # Isolated inference scoring array pipeline tracking block
+  predicted_value <- eventReactive(input$trigger_prediction, {
+    req(pipeline_object(), raw_data(), input$target_col)
+
+    df <- raw_data()
+    predictor_names <- setdiff(colnames(df), input$target_col)
+    scoring_row <- data.frame(matrix(ncol = length(predictor_names), nrow = 1))
+    colnames(scoring_row) <- predictor_names
+
+    for (feat in predictor_names) {
       scoring_row[[feat]] <- input[[paste0("feat_", feat)]]
     }
 
-    # Route row entries straight back into your package's S3 predict method
-    res <- NumericEnsembles:::predict.numeric_pipeline(
+    res <- predict(
       object     = pipeline_object(),
       newdata    = scoring_row,
       model_name = input$selected_model
@@ -143,42 +181,54 @@ server <- function(input, output, session) {
     return(res)
   })
 
-  # Render Tab 1: S3 print output layout
+  # Render Tab 1: S3 print output layout console registry profile
   output$console_report <- renderPrint({
     req(pipeline_object())
-    NumericEnsembles:::print.numeric_pipeline(pipeline_object())
+    print(pipeline_object())
   })
 
-  # Render Tab 2: Core Performance KPIs Dashboard
+  # Render Tab 2: Brand New Exploratory Insights Grid Summary Panel
+  output$insights_table <- renderTable({
+    req(pipeline_object())
+    pipeline_object()$exploratory_insights
+  }, striped = TRUE, hover = TRUE, bordered = TRUE, spacing = "m")
+
+  # Render Tab 3: Core Performance KPIs Dashboard
   output$kpi_plot <- renderPlot({
     req(pipeline_object())
     print(pipeline_object()$plots$kpis)
   })
 
-  # Render Tab 3: Generalization Risks & Tradeoffs Dashboard
+  # Render Tab 4: Generalization Risks, Tradeoffs, and Outlier Bounds Dashboard Grid
   output$risk_plot <- renderPlot({
     req(pipeline_object())
-    # Arrange the tradeoff and risk metrics inside a side-by-side grid panel layout
-    (pipeline_object()$plots$risks / pipeline_object()$plots$tradeoff) +
-      patchwork::plot_layout(heights = c(1, 1))
+
+    # Seamlessly stack the risk plot, tradeoff scatter, and new Cooks Distance bar segment
+    assembled_risk_dashboard <- (pipeline_object()$plots$risks /
+                                   pipeline_object()$plots$tradeoff /
+                                   pipeline_object()$plots$cooks_distance) +
+      patchwork::plot_layout(heights = c(1.1, 1.2, 0.8))
+
+    print(assembled_risk_dashboard)
   })
 
-  # Render Tab 4: Scaled Performance Heatmap Matrix
+  # Render Tab 5: Scaled Performance Heatmap Matrix
   output$heatmap_plot <- renderPlot({
     req(pipeline_object())
     print(pipeline_object()$plots$metric_heatmap)
   })
 
-  # Output tabular row inference scores window
+  # Output Tab 6: Tabular row inference scores window layout metrics
   output$prediction_result_table <- renderTable({
     req(predicted_value())
     data.frame(
-      Target_Metric = input$target_col,
-      Selected_Model = input$selected_model,
-      Projected_Score = predicted_value(),
-      stringsAsFactors = FALSE
+      Target_Continuous_Metric = input$target_col,
+      Selected_Topology_Key    = input$selected_model,
+      Calculated_Inference_Y   = round(predicted_value(), 4),
+      stringsAsFactors         = FALSE
     )
-  }, digits = 4)
+  }, striped = TRUE, hover = TRUE, bordered = TRUE)
 }
 
+# Bind app matrices elements cleanly into an running active local workspace instance
 shinyApp(ui = ui, server = server)

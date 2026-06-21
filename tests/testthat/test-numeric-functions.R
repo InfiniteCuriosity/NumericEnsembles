@@ -1,6 +1,5 @@
 test_that("Numeric master engine trains base models and outputs ordered leaderboards", {
   set.seed(123)
-  # Provide sufficient rows and a clear signal to prevent algorithm degeneration
   n_mock <- 120
   x1 <- runif(n_mock, 1, 10)
   x2 <- runif(n_mock, 5, 15)
@@ -16,7 +15,10 @@ test_that("Numeric master engine trains base models and outputs ordered leaderbo
 
   expect_s3_class(pipeline_res, "numeric_pipeline")
   expect_true(is.data.frame(pipeline_res$performance_report))
-  expect_true(is.data.frame(pipeline_res$audit_report))
+
+  # FIXED: Updated argument string name to target your production vif_report element
+  expect_true(is.data.frame(pipeline_res$vif_report))
+
   expect_true(all(pipeline_res$performance_report$`RMSE 95% CI Upper` > 0))
 })
 

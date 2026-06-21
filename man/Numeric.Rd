@@ -2,7 +2,7 @@
 % Please edit documentation in R/NumericEnsembles.R
 \name{Numeric}
 \alias{Numeric}
-\title{Core Performance Pipeline Engine for Continuous Data}
+\title{Comprehensive Continuous Regression Ensemble Pipeline Engine}
 \usage{
 Numeric(
   dataset = NULL,
@@ -16,25 +16,27 @@ Numeric(
 )
 }
 \arguments{
-\item{dataset}{A data.frame containing continuous target outputs and features.}
+\item{dataset}{A data frame containing the predictors and target variable.}
 
-\item{target_col}{Character string specifying the name of the target column.}
+\item{target_col}{Character string specifying the name of the target continuous numeric column.}
 
-\item{facet_col}{Character string specifying a column to facet EDA charts by. Default = "".}
+\item{facet_col}{Character string specifying an optional categorical column to facet EDA charts by. Default is "".}
 
-\item{color_col}{Character string specifying a column to color EDA charts by. Default = "".}
+\item{color_col}{Character string specifying an optional column to color exploratory EDA charts by. Default is "".}
 
-\item{stratify_col}{Character string specifying a categorical column to anchor stratified sampling splits. Default = "".}
+\item{stratify_col}{Character string specifying an optional categorical column to anchor stratified sampling splits. Default is "".}
 
-\item{palette_style}{Character string choosing a color palette: "standard", "viridis", or "modern".}
+\item{palette_style}{Character choice layout. Visual color scheme for plot vectors: "standard", "viridis", or "modern".}
 
-\item{config}{A pre-configured architecture parameter matrix block from \code{NumericEnsemblesConfig()}.}
+\item{config}{A pre-configured architecture configuration parameter matrix list from \code{NumericEnsemblesConfig()}.}
 
-\item{verbose}{Logical console logging status indicator. Default TRUE.}
+\item{verbose}{Logical. If TRUE, logs operational pipeline milestones to console. Default is TRUE.}
 }
 \value{
-An integrated execution bundle data object of class type \code{numeric_pipeline}.
+An object of class \code{numeric_pipeline} containing complete metrics matrices, model instances, data dictionaries, and analytical plots.
 }
 \description{
-Core Performance Pipeline Engine for Continuous Data
+Orchestrates high-velocity multi-model exploration across continuous regression domains,
+managing automated data dictionary profiling, iterative collinearity pruning, model training,
+competitive stacking meta-learners, and advanced visual diagnostics matrices.
 }

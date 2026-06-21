@@ -127,44 +127,24 @@ To map un-indexed prospects or score incoming continuous spreadsheets, pass your
 
 Setting `model_name = "best"` automatically selects the absolute top-performing champion architecture from your validation trials:
 
-```{r Establish a raw out-of-sample row profile}
-# Simulate continuous features
-new_housing_index <- runif(n_samples, min = 80, max = 150)
-new_unemploy_rate <- rnorm(n_samples, mean = 5.5, sd = 1.2)
-# Introduce explicit collinearity to trigger the VIF filter
-new_inflation_prox <- (0.45 * unemploy_rate) + rnorm(n_samples, mean = 2, sd = 0.2)
-
-# Construct a continuous target variable
-new_gdp_growth <- 2.5 + (0.04 * housing_index) - (0.35 * unemploy_rate) + rnorm(n_samples, sd = 0.5)
-
-new_economic_registry <- data.frame(
-  GDP_Growth      = new_gdp_growth,
-  Housing_Index   = new_housing_index,
-  Unemployment    = new_unemploy_rate,
-  Inflation_Proxy = new_inflation_prox
-)
-
-# Extract optimized predictions from your champion architecture selection
-quarterly_projections <- predict(
-  object     = trained_numeric_ensemble, 
-  newdata    = new_economic_registry[1:5, ], 
-  model_name = "best"
-)
-
-# Print your custom continuous prediction scores vector
-print(quarterly_projections)
+```{r Establish a raw out-of-sample row profile using the RandomForest model}
+library(NumericEnsembles)
+Concrete <- NumericEnsembles::Concrete
+Concrete_pipeline1 <- Numeric(dataset = Concrete[1:1000, ], target_col = 'Strength', facet_col = "", color_col = "", stratify_col = "", palette_style = "modern", config = NumericEnsemblesFastConfig(), verbose = TRUE)
+Concrete_predictions <- predict(object = Concrete_pipeline1$base_models$RandomForest, newdata = Concrete[1001:1010, ])
+Concrete_predictions
 ```
 
 ## 5. Disk Serialization Protocols
 
-For production deployments, `NumericEnsembles` features fast disk serialization utilities to save and re-hydrate your entire modeling workspace environment cleanly without rebuilding your data models from scratch:
+For production deployments, `NumericEnsembles` features fast disk serialization utilities to save and re-hydrate your entire modeling workspace environment cleanly without rebuilding your data models from scratch. Un-comment the second line of each set if you want to us these functions.
 
 ```{r Disk Serialization Protocols}
 # Serialize and compress your entire environment cache to a local file
-save_pipeline(trained_numeric_ensemble, "economic_gdp_pipeline.rds")
+# save_pipeline(Concrete_pipeline1, "Concrete_pipeline1.rds")
 
 # Re-hydrate your workspace cleanly in a fresh session instantly
-rehydrated_pipeline <- load_pipeline("economic_gdp_pipeline.rds")
+# rehydrated_pipeline <- load_pipeline("Concrete_pipeline1.rds")
 ```
 
 The compilation loop will cleanly parse every single markdown chunk and embed a pristine, production-grade continuous regression manual directly inside your package's documentation library!

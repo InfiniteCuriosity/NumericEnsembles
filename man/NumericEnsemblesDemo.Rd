@@ -2,10 +2,13 @@
 % Please edit documentation in R/NumericEnsembles.R
 \name{NumericEnsemblesDemo}
 \alias{NumericEnsemblesDemo}
-\title{Run a Demonstration of the Numeric Ensembles Pipeline}
+\title{Run Fast Validation Regression Demo Suite}
 \usage{
 NumericEnsemblesDemo()
 }
+\value{
+An invisible trained \code{numeric_pipeline} object run over simulated macroeconomic metrics.
+}
 \description{
-Run a Demonstration of the Numeric Ensembles Pipeline
+Run Fast Validation Regression Demo Suite
 }

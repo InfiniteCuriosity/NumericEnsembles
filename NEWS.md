@@ -1,4 +1,16 @@
-# NumericEnsembles (development version)
+# NumericEnsembles 1.2.1
+
+### Documentation & Compliance Updates
+* Added complete, CRAN-compliant roxygen2 `@param` tags to all primary exported pipeline functions to ensure complete `.Rd` manual generation.
+* Fully documented previously undocumented core user-level assets, including `ExportNumericResults()`, `LaunchNumericApp()`, `NumericEnsemblesDemo()`, `RenderExecutiveReport()`, `load_pipeline()`, `predict_production()`, and `save_pipeline()`.
+* Enhanced `DESCRIPTION` field to satisfy CRAN's 3-sentence minimum structural rule and refined package dependency metadata.
+
+### Algorithmic & Performance Enhancements
+* Implemented defensive warning filters within the core engine's predictive evaluation sub-routine (`suppressWarnings` on `ks.test`) to prevent terminal logging pollution caused by dataset tie-points.
+* Standardized validation checks for input execution tracks, confirming parameter metrics adhere strictly to decimal fractions where proportional values are required.
+
+### Bug Fixes
+* Resolved missing argument matching warnings within `Numeric.Rd` and `NumericEnsemblesConfig.Rd` usage specifications.
 
 # NumericEnsembles 1.2
 

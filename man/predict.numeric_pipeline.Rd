@@ -7,13 +7,13 @@
 \method{predict}{numeric_pipeline}(object, newdata, model_name = "best", ...)
 }
 \arguments{
-\item{object}{A numeric_pipeline object.}
+\item{object}{A numeric_pipeline object trained by the engine.}
 
-\item{newdata}{A data.frame containing new data configurations to score.}
+\item{newdata}{A data frame containing incoming new samples to score.}
 
-\item{model_name}{Character string specifying the target model from the leaderboard to score. Default = "best".}
+\item{model_name}{Character string specifying the target model from the leaderboard to score. Default is "best".}
 
-\item{...}{Additional arguments.}
+\item{...}{Additional arguments passed to underlying predict methods.}
 }
 \value{
 A numeric vector of predictions.

@@ -4,12 +4,7 @@ Title: Multi-Model Stacking Optimization and Continuous Regression Ensembles
 Version: 1.2.1
 Authors@R: 
     person("Russ", "Conte", email = "russconte@mac.com", role = c("aut", "cre", "cph"))
-Description: Automated parallelized regression ensemble pipeline executing 
-    concurrent evaluations across 17 base machine learning architectures, 
-    6 specialized stacking meta-learners, and 136 pairwise hybrid combinations. 
-    Implements dynamic performance-weighted stacking blends, internal data dictionary 
-    profiling metrics, iterative multicollinearity pruning via Variance Inflation Factors (VIF), 
-    and programmatic executive Quarto report generation.
+Description: Automated parallelized regression ensemble pipeline executing concurrent evaluations across 17 base machine learning architectures, 6 specialized stacking meta-learners, and 136 pairwise hybrid combinations. The package implements dynamic performance-weighted stacking blends alongside internal data dictionary profiling metrics. It provides iterative multicollinearity pruning via Variance Inflation Factors (VIF) and automated executive Quarto report generation.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -23,15 +18,17 @@ Imports:
     foreach,
     ggplot2,
     ggrepel,
+    parallel,
     party,
     patchwork,
+    quarto,
     rstudioapi,
     shiny,
+    stats,
     tidyr,
     tidyselect
 Suggests: 
     knitr,
-    quarto,
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

@@ -2,15 +2,18 @@
 % Please edit documentation in R/NumericEnsembles.R
 \name{save_pipeline}
 \alias{save_pipeline}
-\title{Save Serialized Numeric Pipeline Environment to Disk File}
+\title{Compress and Save Trained Pipeline Assets}
 \usage{
 save_pipeline(object, file_path)
 }
 \arguments{
-\item{object}{A numeric_pipeline object.}
+\item{object}{A trained \code{numeric_pipeline} asset.}
 
-\item{file_path}{Character string tracking destination directory file path.}
+\item{file_path}{Character path mapping where to save the binary output.}
+}
+\value{
+Invisible NULL.
 }
 \description{
-Save Serialized Numeric Pipeline Environment to Disk File
+Compress and Save Trained Pipeline Assets
 }

@@ -2,13 +2,13 @@
 % Please edit documentation in R/NumericEnsembles.R
 \name{NumericEnsemblesFastConfig}
 \alias{NumericEnsemblesFastConfig}
-\title{Fast-Execution Configuration Matrix}
+\title{Fast-Execution Configuration Matrix for Regression Testing}
 \usage{
 NumericEnsemblesFastConfig()
 }
 \value{
-A structured list containing optimized, fast-track hyperparameter settings.
+A fast-track parameter subset list optimized for rapid package verification checks.
 }
 \description{
-Fast-Execution Configuration Matrix
+Fast-Execution Configuration Matrix for Regression Testing
 }

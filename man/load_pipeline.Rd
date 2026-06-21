@@ -2,16 +2,16 @@
 % Please edit documentation in R/NumericEnsembles.R
 \name{load_pipeline}
 \alias{load_pipeline}
-\title{Load Serialized Numeric Pipeline Environment from Disk File}
+\title{Load and Decompress Package Pipeline Footprints}
 \usage{
 load_pipeline(file_path)
 }
 \arguments{
-\item{file_path}{Character string tracking destination directory file path.}
+\item{file_path}{Character path mapping to a serialized rds file.}
 }
 \value{
-A re-hydrated numeric_pipeline object.
+A deserialized \code{numeric_pipeline} object.
 }
 \description{
-Load Serialized Numeric Pipeline Environment from Disk File
+Load and Decompress Package Pipeline Footprints
 }

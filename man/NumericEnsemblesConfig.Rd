@@ -15,33 +15,38 @@ NumericEnsemblesConfig(
   svm_tune_length = 8,
   mars_tune_length = 5,
   pcr_tune_length = 10,
-  tree_tune_length = 10
+  tree_tune_length = 10,
+  cooks_threshold = 999
 )
 }
 \arguments{
-\item{cv_folds}{Integer. Number of cross-validation folds. Default 5.}
+\item{cv_folds}{Integer. The number of cross-validation folds. Default is 5.}
 
-\item{train_pct}{Decimal fraction between 0 and 1 for the training split. Default 0.60.}
+\item{train_pct}{Numeric. The training data proportion as a decimal between 0 and 1. Default is 0.60.}
 
-\item{vif_threshold}{Numeric. Maximum allowed Variance Inflation Factor. Default 5.}
+\item{vif_threshold}{Numeric. Variance Inflation Factor threshold for filtering multicollinear predictors. Default is 5.}
 
-\item{transform_steps}{Character vector. Preprocessing transformations applied via caret.}
+\item{transform_steps}{Character vector. Preprocessing transforms to pass to caret. Default is c("nzv", "medianImpute", "center", "scale", "YeoJohnson").}
 
-\item{rf_grid}{Data frame or NULL. Explicit tuning grid for Random Forest.}
+\item{rf_grid}{Optional custom tuning grid for Random Forest models. Default is NULL.}
 
-\item{glmnet_grid}{Data frame. Hyperparameter grid for elastic net.}
+\item{glmnet_grid}{Custom tuning grid for Elastic Net models.}
 
-\item{svm_tune_length}{Integer. Total tuning resolution steps for svmRadial. Default 8.}
+\item{svm_tune_length}{Integer. Tuning length parameter for SVM models. Default is 8.}
 
-\item{mars_tune_length}{Integer. Total tuning resolution steps for MARS. Default 5.}
+\item{mars_tune_length}{Integer. Tuning length parameter for MARS models. Default is 5.}
 
-\item{pcr_tune_length}{Integer. Total tuning resolution steps for PCR. Default 10.}
+\item{pcr_tune_length}{Integer. Tuning length parameter for PCR/PLS models. Default is 10.}
 
-\item{tree_tune_length}{Integer. Total tuning resolution steps for decision trees. Default 10.}
+\item{tree_tune_length}{Integer. Tuning length parameter for tree-based models. Default is 10.}
+
+\item{cooks_threshold}{Numeric. Leverage cutoff multiplier relative to 4/n benchmark threshold. Values between 1-5 enforce pruning; 999 deactivates filter. Default is 999.}
 }
 \value{
 A structured list containing isolated operational tuning parameters.
 }
 \description{
-Configuration Parameters Matrix for Numeric Ensemble Pipeline
+Houses cross-validation fold structures, train-test split dimensions,
+multicollinearity VIF thresholds, and tuning grids to decouple
+hyperparameter states from core execution loops.
 }

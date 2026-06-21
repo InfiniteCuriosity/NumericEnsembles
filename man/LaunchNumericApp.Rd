@@ -2,11 +2,13 @@
 % Please edit documentation in R/NumericEnsembles.R
 \name{LaunchNumericApp}
 \alias{LaunchNumericApp}
-\title{Launch Interactive NumericEnsembles Web Interface App}
+\title{Launch Interactive Shiny Application Portal}
 \usage{
 LaunchNumericApp()
 }
+\value{
+Activated browser session running the dashboard interface.
+}
 \description{
-Fires up a local instance of the interactive OLS vs. GLM tuning,
-diagnostic, and residual validation web dashboard system.
+Launch Interactive Shiny Application Portal
 }
