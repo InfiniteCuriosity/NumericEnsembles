@@ -81,7 +81,7 @@ This example features facet colors, column colors and stratify colors. You can u
 
 ```{r Fast_but_not_express_track}
 library(NumericEnsembles)
-Insurance <- NumericEnsembles::Insurance
+Insurance <- NumericEnsembles::Insurance[1:100, ]
 Insurance_pipeline <- Numeric(dataset = Insurance, target_col = 'charges', facet_col = 'sex', color_col = 'smoker', stratify_col = 'region', palette_style = "modern", config = NumericEnsemblesFastConfig(), verbose = TRUE)
 print(Insurance_pipeline)
 Insurance_pipeline$plots # plots all in one command
@@ -121,7 +121,7 @@ institutional_config <- NumericEnsemblesConfig(
 
 # 3. Execute the concurrent machine learning rival engine
 Concrete_pipeline <- Numeric(
-  dataset       = Concrete[1:1000, ], 
+  dataset       = Concrete[1:100, ], 
   target_col    = 'Strength', 
   palette_style = "modern", 
   config        = institutional_config, 

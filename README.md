@@ -168,16 +168,16 @@ Concrete_express_pipeline <- NumericEnsemblesDemo()
 #>  Cubist+ElasticNet       0.5352      0.4277      0.8563   1.7455     0.3777
 #>       Cubist+Lasso       0.5352      0.4277      0.8563   1.7455     0.3777
 #>  Overfitting    Bias Duration
-#>       1.0706 -0.0212    1.195
-#>       1.0735 -0.0216    1.269
-#>       1.0735 -0.0216    1.254
-#>       1.0737 -0.0238    1.304
-#>       1.0765 -0.0221    0.074
-#>       1.0765 -0.0221    0.059
-#>       1.0765 -0.0221    0.133
-#>       1.0769 -0.0265    0.109
-#>       1.0767 -0.0243    0.183
-#>       1.0767 -0.0243    0.168
+#>       1.0706 -0.0212    1.433
+#>       1.0735 -0.0216    1.521
+#>       1.0735 -0.0216    1.502
+#>       1.0737 -0.0238    1.553
+#>       1.0765 -0.0221    0.088
+#>       1.0765 -0.0221    0.069
+#>       1.0765 -0.0221    0.157
+#>       1.0769 -0.0265    0.120
+#>       1.0767 -0.0243    0.208
+#>       1.0767 -0.0243    0.189
 #> 
 #> =========================================================================
 #>                AUTOMATED RESIDUAL DIAGNOSTIC LEADERBOARD                 
@@ -202,7 +202,7 @@ You can use these features in many other data sets.
 
 ``` r
 library(NumericEnsembles)
-Insurance <- NumericEnsembles::Insurance
+Insurance <- NumericEnsembles::Insurance[1:100, ]
 Insurance_pipeline <- Numeric(dataset = Insurance, target_col = 'charges', facet_col = 'sex', color_col = 'smoker', stratify_col = 'region', palette_style = "modern", config = NumericEnsemblesFastConfig(), verbose = TRUE)
 #> --- Comprehensive Machine Learning Pipeline ---
 #> 
@@ -213,10 +213,10 @@ Insurance_pipeline <- Numeric(dataset = Insurance, target_col = 'charges', facet
 #> [VIF Check]: Evaluating attributes for multicollinearity using car::vif...
 #> 
 #> [Modeling Phase]: Launching 17 competitive base architectures concurrently...
-#> Number of parameters (weights and biases) to estimate: 20 
+#> Number of parameters (weights and biases) to estimate: 30 
 #> Nguyen-Widrow method
-#> Scaling factor= 0.7006037 
-#> gamma= 19.5235    alpha= 0.2628   beta= 27.0007 
+#> Scaling factor= 0.7127212 
+#> gamma= 23.1   alpha= 2.5274   beta= 20.8045 
 #> 
 #> [Meta-Learner Engine]: Training 6 Advanced Stacking Meta-Learners (GLM, Enet, GAM, PLS, RF, SVM)...
 #>   |                                                                              |                                                                      |   0%  |                                                                              |=                                                                     |   1%  |                                                                              |==                                                                    |   2%  |                                                                              |==                                                                    |   3%  |                                                                              |===                                                                   |   4%  |                                                                              |====                                                                  |   5%  |                                                                              |====                                                                  |   6%  |                                                                              |=====                                                                 |   7%  |                                                                              |======                                                                |   8%  |                                                                              |======                                                                |   9%  |                                                                              |=======                                                               |  10%  |                                                                              |========                                                              |  11%  |                                                                              |========                                                              |  12%  |                                                                              |=========                                                             |  12%  |                                                                              |=========                                                             |  13%  |                                                                              |==========                                                            |  14%  |                                                                              |==========                                                            |  15%  |                                                                              |===========                                                           |  15%  |                                                                              |===========                                                           |  16%  |                                                                              |============                                                          |  17%  |                                                                              |============                                                          |  18%  |                                                                              |=============                                                         |  18%  |                                                                              |=============                                                         |  19%  |                                                                              |==============                                                        |  20%  |                                                                              |==============                                                        |  21%  |                                                                              |===============                                                       |  21%  |                                                                              |===============                                                       |  22%  |                                                                              |================                                                      |  23%  |                                                                              |================                                                      |  24%  |                                                                              |=================                                                     |  24%  |                                                                              |==================                                                    |  25%  |                                                                              |==================                                                    |  26%  |                                                                              |===================                                                   |  26%  |                                                                              |===================                                                   |  27%  |                                                                              |====================                                                  |  28%  |                                                                              |====================                                                  |  29%  |                                                                              |=====================                                                 |  29%  |                                                                              |=====================                                                 |  30%  |                                                                              |======================                                                |  31%  |                                                                              |======================                                                |  32%  |                                                                              |=======================                                               |  32%  |                                                                              |=======================                                               |  33%  |                                                                              |========================                                              |  34%  |                                                                              |========================                                              |  35%  |                                                                              |=========================                                             |  35%  |                                                                              |=========================                                             |  36%  |                                                                              |==========================                                            |  37%  |                                                                              |==========================                                            |  38%  |                                                                              |===========================                                           |  38%  |                                                                              |===========================                                           |  39%  |                                                                              |============================                                          |  40%  |                                                                              |=============================                                         |  41%  |                                                                              |=============================                                         |  42%  |                                                                              |==============================                                        |  43%  |                                                                              |===============================                                       |  44%  |                                                                              |===============================                                       |  45%  |                                                                              |================================                                      |  46%  |                                                                              |=================================                                     |  47%  |                                                                              |=================================                                     |  48%  |                                                                              |==================================                                    |  49%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================                                  |  51%  |                                                                              |=====================================                                 |  52%  |                                                                              |=====================================                                 |  53%  |                                                                              |======================================                                |  54%  |                                                                              |=======================================                               |  55%  |                                                                              |=======================================                               |  56%  |                                                                              |========================================                              |  57%  |                                                                              |=========================================                             |  58%  |                                                                              |=========================================                             |  59%  |                                                                              |==========================================                            |  60%  |                                                                              |===========================================                           |  61%  |                                                                              |===========================================                           |  62%  |                                                                              |============================================                          |  62%  |                                                                              |============================================                          |  63%  |                                                                              |=============================================                         |  64%  |                                                                              |=============================================                         |  65%  |                                                                              |==============================================                        |  65%  |                                                                              |==============================================                        |  66%  |                                                                              |===============================================                       |  67%  |                                                                              |===============================================                       |  68%  |                                                                              |================================================                      |  68%  |                                                                              |================================================                      |  69%  |                                                                              |=================================================                     |  70%  |                                                                              |=================================================                     |  71%  |                                                                              |==================================================                    |  71%  |                                                                              |==================================================                    |  72%  |                                                                              |===================================================                   |  73%  |                                                                              |===================================================                   |  74%  |                                                                              |====================================================                  |  74%  |                                                                              |====================================================                  |  75%  |                                                                              |=====================================================                 |  76%  |                                                                              |======================================================                |  76%  |                                                                              |======================================================                |  77%  |                                                                              |=======================================================               |  78%  |                                                                              |=======================================================               |  79%  |                                                                              |========================================================              |  79%  |                                                                              |========================================================              |  80%  |                                                                              |=========================================================             |  81%  |                                                                              |=========================================================             |  82%  |                                                                              |==========================================================            |  82%  |                                                                              |==========================================================            |  83%  |                                                                              |===========================================================           |  84%  |                                                                              |===========================================================           |  85%  |                                                                              |============================================================          |  85%  |                                                                              |============================================================          |  86%  |                                                                              |=============================================================         |  87%  |                                                                              |=============================================================         |  88%  |                                                                              |==============================================================        |  88%  |                                                                              |==============================================================        |  89%  |                                                                              |===============================================================       |  90%  |                                                                              |================================================================      |  91%  |                                                                              |================================================================      |  92%  |                                                                              |=================================================================     |  93%  |                                                                              |==================================================================    |  94%  |                                                                              |==================================================================    |  95%  |                                                                              |===================================================================   |  96%  |                                                                              |====================================================================  |  97%  |                                                                              |====================================================================  |  98%  |                                                                              |===================================================================== |  99%  |                                                                              |======================================================================| 100%
@@ -237,58 +237,58 @@ print(Insurance_pipeline)
 #> 
 #> [2. STRUCTURAL DATA DICTIONARY]
 #>   Feature  Type      Missing_Count Missing_Pct Unique_Values
-#> 1 age      integer   0             0%            47         
-#> 2 sex      character 0             0%             2         
-#> 3 bmi      numeric   0             0%           548         
-#> 4 children integer   0             0%             6         
-#> 5 smoker   character 0             0%             2         
-#> 6 region   character 0             0%             4         
-#> 7 charges  numeric   0             0%          1337         
+#> 1 age      integer   0             0%           41          
+#> 2 sex      character 0             0%            2          
+#> 3 bmi      numeric   0             0%           93          
+#> 4 children integer   0             0%            6          
+#> 5 smoker   character 0             0%            2          
+#> 6 region   character 0             0%            4          
+#> 7 charges  numeric   0             0%          100          
 #> 
 #> [3. PIPELINE AUTOMATED EXPLORATORY SUMMARY INSIGHTS]
 #>   Feature_Name Data_Type          Missing_Rate Skewness_Coef Outliers_Found
-#> 1 age          Numeric Continuous 0%           0.06            0           
-#> 2 sex          character          0%             NA            0           
-#> 3 bmi          Numeric Continuous 0%           0.28            9           
-#> 4 children     Numeric Continuous 0%           0.94            0           
-#> 5 smoker       character          0%             NA            0           
-#> 6 region       character          0%             NA            0           
-#> 7 charges      Numeric Continuous 0%           1.51          139           
-#>   Operational_Insight                                        
-#> 1 Structural Signature: Healthy                              
-#> 2 Discrete Feature / Dummy Pipeline Required                 
-#> 3 Structural Signature: Healthy                              
-#> 4 Structural Signature: Healthy                              
-#> 5 Discrete Feature / Dummy Pipeline Required                 
-#> 6 Discrete Feature / Dummy Pipeline Required                 
-#> 7 High Structural Tail Skewness Risk / Severe Outlier Density
+#> 1 age          Numeric Continuous 0%            0.20         0             
+#> 2 sex          character          0%              NA         0             
+#> 3 bmi          Numeric Continuous 0%           -0.12         0             
+#> 4 children     Numeric Continuous 0%            1.06         0             
+#> 5 smoker       character          0%              NA         0             
+#> 6 region       character          0%              NA         0             
+#> 7 charges      Numeric Continuous 0%            1.15         4             
+#>   Operational_Insight                       
+#> 1 Structural Signature: Healthy             
+#> 2 Discrete Feature / Dummy Pipeline Required
+#> 3 Structural Signature: Healthy             
+#> 4 Structural Signature: Healthy             
+#> 5 Discrete Feature / Dummy Pipeline Required
+#> 6 Discrete Feature / Dummy Pipeline Required
+#> 7 Structural Signature: Healthy             
 #> 
 #> [4. STATISTICAL POPULATION DESCRIPTIVE SUMMARY]
-#>       age               sex            bmi           children    
-#>  Min.   :18.00   Length   :1338   Min.   :15.96   Min.   :0.000  
-#>  1st Qu.:27.00   N.unique :   2   1st Qu.:26.30   1st Qu.:0.000  
-#>  Median :39.00   N.blank  :   0   Median :30.40   Median :1.000  
-#>  Mean   :39.21   Min.nchar:   4   Mean   :30.66   Mean   :1.095  
-#>  3rd Qu.:51.00   Max.nchar:   6   3rd Qu.:34.69   3rd Qu.:2.000  
-#>  Max.   :64.00                    Max.   :53.13   Max.   :5.000  
-#>        smoker           region        charges     
-#>  Length   :1338   Length   :1338   Min.   : 1122  
-#>  N.unique :   2   N.unique :   4   1st Qu.: 4740  
-#>  N.blank  :   0   N.blank  :   0   Median : 9382  
-#>  Min.nchar:   2   Min.nchar:   9   Mean   :13270  
-#>  Max.nchar:   3   Max.nchar:   9   3rd Qu.:16640  
-#>                                    Max.   :63770  
+#>       age               sex           bmi           children          smoker   
+#>  Min.   :18.00   Length   :100   Min.   :17.39   Min.   :0.00   Length   :100  
+#>  1st Qu.:26.75   N.unique :  2   1st Qu.:26.53   1st Qu.:0.00   N.unique :  2  
+#>  Median :37.00   N.blank  :  0   Median :30.98   Median :1.00   N.blank  :  0  
+#>  Mean   :38.84   Min.nchar:  4   Mean   :30.85   Mean   :1.07   Min.nchar:  2  
+#>  3rd Qu.:55.00   Max.nchar:  6   3rd Qu.:35.55   3rd Qu.:2.00   Max.nchar:  3  
+#>  Max.   :64.00                   Max.   :42.13   Max.   :5.00                  
+#>        region       charges     
+#>  Length   :100   Min.   : 1137  
+#>  N.unique :  4   1st Qu.: 4368  
+#>  N.blank  :  0   Median :10700  
+#>  Min.nchar:  9   Mean   :14588  
+#>  Max.nchar:  9   3rd Qu.:20747  
+#>                  Max.   :51195  
 #> 
 #> [5. MULTICOLLINEARITY VIF FILTERS REPORT]
 #>          Feature  VIF Status
-#>              age 1.01   Kept
-#>          sexmale 1.01   Kept
-#>              bmi 1.12   Kept
-#>         children 1.01   Kept
-#>        smokeryes 1.02   Kept
-#>  regionnorthwest 1.52   Kept
-#>  regionsoutheast 1.69   Kept
-#>  regionsouthwest 1.53   Kept
+#>              age 1.12   Kept
+#>          sexmale 1.11   Kept
+#>              bmi 1.11   Kept
+#>         children 1.11   Kept
+#>        smokeryes 1.11   Kept
+#>  regionnorthwest 1.78   Kept
+#>  regionsoutheast 1.74   Kept
+#>  regionsouthwest 1.71   Kept
 #> 
 #> =========================================================================
 #>                      LEADERBOARD & PREDICTIVE KPIS                       
@@ -297,54 +297,54 @@ print(Insurance_pipeline)
 #> Sampling Protocol: Stratified Sampling based on column 'region'
 #> 
 #> Top 10 Architectures By Testing RMSE:
-#>                       Model Testing_RMSE Testing_MAE Adjusted_R2  Variance
-#>    BayesRNN+Cond_Inf_Forest     4908.037    2522.371      0.8309 126742185
-#>             Cond_Inf_Forest     4912.411    2529.773      0.8287 129879265
-#>            Bagging+BayesRNN     4935.244    2603.404      0.8290 122689321
-#>     Bagging+Cond_Inf_Forest     4941.068    2634.172      0.8286 125840811
-#>  QuantileRF+Cond_Inf_Forest     4953.368    2155.342      0.8278 129123324
-#>      Cubist+Cond_Inf_Forest     4960.479    2129.591      0.8273 128970974
-#>  SVM_Radial+Cond_Inf_Forest     4964.969    2539.397      0.8270 118230632
-#>         BayesRNN+QuantileRF     4979.868    2183.544      0.8259 126282087
-#>          Bagging+SVM_Radial     4995.343    2628.982      0.8248 114216462
-#>          Bagging+QuantileRF     5003.294    2356.372      0.8243 125309146
-#>  KS_p_value Overfitting      Bias Duration
-#>      0.0095      1.2588 -435.5202    1.859
-#>      0.0268      1.3121 -425.0740    1.740
-#>      0.0000      1.1986 -426.7560    0.256
-#>      0.0000      1.2457 -416.3099    1.877
-#>      0.0673      1.3751 -946.4446    3.542
-#>      0.0193      1.2775 -979.4971    2.084
-#>      0.0076      1.2550 -657.9079    2.401
-#>      0.0390      1.3047 -956.8907    1.921
-#>      0.0000      1.1954 -649.1437    0.798
-#>      0.0000      1.3012 -937.6804    1.939
+#>                   Model Testing_RMSE Testing_MAE Adjusted_R2  Variance
+#>                  Cubist     3830.211    1617.970      0.9079 184736472
+#>       Cubist+QuantileRF     3880.504    1731.593      0.9212 183208282
+#>              QuantileRF     3986.518    1898.923      0.9002 182114770
+#>               Meta_Enet     4053.167    2394.955      0.8526 144352331
+#>                Meta_PLS     4097.671    2495.042      0.8494 151645008
+#>                 Meta_RF     4138.611    2423.682      0.8463 147140706
+#>     BayesRNN+QuantileRF     4144.248    2476.923      0.9101 167541748
+#>         Cubist+BayesRNN     4179.025    2564.561      0.9086 169731508
+#>      Cubist+Bagged_MARS     4398.077    2759.742      0.8988 151497298
+#>  QuantileRF+Bagged_MARS     4439.854    2872.456      0.8968 149966829
+#>  KS_p_value Overfitting       Bias Duration
+#>      0.9256      1.2349  -980.3730    0.138
+#>      0.9261      1.6550 -1086.8736    0.350
+#>      0.9059      1.9278 -1193.3742    0.212
+#>      0.8103      1.8826  -903.5311    0.190
+#>      0.7314      2.3371 -1130.0778    0.061
+#>      0.9357      3.1345  -903.5435    0.168
+#>      0.9146      1.9479  -933.5961    0.299
+#>      0.8602      1.4893  -827.0955    0.225
+#>      0.8877      1.2155  -903.5828    0.613
+#>      0.7393      1.4838 -1010.0833    0.687
 #> 
 #> =========================================================================
 #>                AUTOMATED RESIDUAL DIAGNOSTIC LEADERBOARD                 
 #> =========================================================================
-#>                       Model             Residual_Normality
-#>    BayesRNN+Cond_Inf_Forest Non-Normal (Biased Tail Risks)
-#>             Cond_Inf_Forest Non-Normal (Biased Tail Risks)
-#>            Bagging+BayesRNN Non-Normal (Biased Tail Risks)
-#>     Bagging+Cond_Inf_Forest Non-Normal (Biased Tail Risks)
-#>  QuantileRF+Cond_Inf_Forest Non-Normal (Biased Tail Risks)
-#>      Cubist+Cond_Inf_Forest Non-Normal (Biased Tail Risks)
-#>  SVM_Radial+Cond_Inf_Forest Non-Normal (Biased Tail Risks)
-#>         BayesRNN+QuantileRF Non-Normal (Biased Tail Risks)
-#>          Bagging+SVM_Radial Non-Normal (Biased Tail Risks)
-#>          Bagging+QuantileRF Non-Normal (Biased Tail Risks)
+#>                   Model             Residual_Normality
+#>                  Cubist Non-Normal (Biased Tail Risks)
+#>       Cubist+QuantileRF Non-Normal (Biased Tail Risks)
+#>              QuantileRF Non-Normal (Biased Tail Risks)
+#>               Meta_Enet Non-Normal (Biased Tail Risks)
+#>                Meta_PLS Non-Normal (Biased Tail Risks)
+#>                 Meta_RF Non-Normal (Biased Tail Risks)
+#>     BayesRNN+QuantileRF Non-Normal (Biased Tail Risks)
+#>         Cubist+BayesRNN Non-Normal (Biased Tail Risks)
+#>      Cubist+Bagged_MARS Non-Normal (Biased Tail Risks)
+#>  QuantileRF+Bagged_MARS Non-Normal (Biased Tail Risks)
 #>                   Variance_Stability Error_Independence
 #>                        Homoscedastic        Independent
-#>  Heteroscedastic (Unstable Variance)        Independent
-#>  Heteroscedastic (Unstable Variance)        Independent
-#>  Heteroscedastic (Unstable Variance)        Independent
+#>                        Homoscedastic        Independent
 #>  Heteroscedastic (Unstable Variance)        Independent
 #>  Heteroscedastic (Unstable Variance)        Independent
 #>  Heteroscedastic (Unstable Variance)        Independent
 #>  Heteroscedastic (Unstable Variance)        Independent
 #>                        Homoscedastic        Independent
 #>                        Homoscedastic        Independent
+#>  Heteroscedastic (Unstable Variance)        Independent
+#>  Heteroscedastic (Unstable Variance)        Independent
 #> 
 #> [Audit Alert]: Heteroscedasticity caught in leader zone. Upper intervals could degrade.
 #> [Audit Alert]: Non-normal residuals mapped in leader zone. Points possess fat tails.
@@ -403,13 +403,13 @@ Insurance_pipeline$plots # plots all in one command
     #> 
     #> $draw_top3
     #> function() { .draw_top3_panel(top_3_models, pred_test_list, actual_test, models_list, train_data, target_col, theme_colors) }
-    #> <bytecode: 0xa01e58a88>
-    #> <environment: 0x9fed84e40>
+    #> <bytecode: 0xb85858ee8>
+    #> <environment: 0xb88858ba0>
     #> 
     #> $draw_diagnostics
     #> function() { .draw_diagnostics_panel(top_3_models, pred_test_list, pred_train_list, actual_test, actual_train, test_data, target_col, theme_colors, top_pred_names) }
-    #> <bytecode: 0xa01e5e270>
-    #> <environment: 0x9fed84e40>
+    #> <bytecode: 0xb8585e6d0>
+    #> <environment: 0xb88858ba0>
 
 ## Track 3: The Institutional Track (Professional Production, this example will have a lower root mean squared error than an article in Nature for the exact same data set)
 
@@ -455,7 +455,7 @@ institutional_config <- NumericEnsemblesConfig(
 
 # 3. Execute the concurrent machine learning rival engine
 Concrete_pipeline <- Numeric(
-  dataset       = Concrete[1:1000, ], 
+  dataset       = Concrete[1:100, ], 
   target_col    = 'Strength', 
   palette_style = "modern", 
   config        = institutional_config, 
@@ -467,45 +467,45 @@ Concrete_pipeline <- Numeric(
 #> 
 #> [EDA Engine]: Generating data distribution, correlation, and scatter plots...
 #> 
-#> [Leverage Engine]: Pruning 25 structural outliers via Cook's Distance cutoff (0.00998)...
+#> [Leverage Engine]: Pruning 5 structural outliers via Cook's Distance cutoff (0.10000)...
 #> 
 #> [VIF Check]: Evaluating attributes for multicollinearity using car::vif...
 #> 
 #> [Modeling Phase]: Launching 17 competitive base architectures concurrently...
-#> Number of parameters (weights and biases) to estimate: 30 
+#> Number of parameters (weights and biases) to estimate: 27 
 #> Nguyen-Widrow method
-#> Scaling factor= 0.7009904 
-#> gamma= 28.6345    alpha= 0.3958   beta= 21.9296 
+#> Scaling factor= 0.7103292 
+#> gamma= 24.8518    alpha= 0.0991   beta= 83.4948 
 #> 
 #> [Meta-Learner Engine]: Training 6 Advanced Stacking Meta-Learners (GLM, Enet, GAM, PLS, RF, SVM)...
 #>   |                                                                              |                                                                      |   0%  |                                                                              |=                                                                     |   1%  |                                                                              |==                                                                    |   2%  |                                                                              |==                                                                    |   3%  |                                                                              |===                                                                   |   4%  |                                                                              |====                                                                  |   5%  |                                                                              |====                                                                  |   6%  |                                                                              |=====                                                                 |   7%  |                                                                              |======                                                                |   8%  |                                                                              |======                                                                |   9%  |                                                                              |=======                                                               |  10%  |                                                                              |========                                                              |  11%  |                                                                              |========                                                              |  12%  |                                                                              |=========                                                             |  12%  |                                                                              |=========                                                             |  13%  |                                                                              |==========                                                            |  14%  |                                                                              |==========                                                            |  15%  |                                                                              |===========                                                           |  15%  |                                                                              |===========                                                           |  16%  |                                                                              |============                                                          |  17%  |                                                                              |============                                                          |  18%  |                                                                              |=============                                                         |  18%  |                                                                              |=============                                                         |  19%  |                                                                              |==============                                                        |  20%  |                                                                              |==============                                                        |  21%  |                                                                              |===============                                                       |  21%  |                                                                              |===============                                                       |  22%  |                                                                              |================                                                      |  23%  |                                                                              |================                                                      |  24%  |                                                                              |=================                                                     |  24%  |                                                                              |==================                                                    |  25%  |                                                                              |==================                                                    |  26%  |                                                                              |===================                                                   |  26%  |                                                                              |===================                                                   |  27%  |                                                                              |====================                                                  |  28%  |                                                                              |====================                                                  |  29%  |                                                                              |=====================                                                 |  29%  |                                                                              |=====================                                                 |  30%  |                                                                              |======================                                                |  31%  |                                                                              |======================                                                |  32%  |                                                                              |=======================                                               |  32%  |                                                                              |=======================                                               |  33%  |                                                                              |========================                                              |  34%  |                                                                              |========================                                              |  35%  |                                                                              |=========================                                             |  35%  |                                                                              |=========================                                             |  36%  |                                                                              |==========================                                            |  37%  |                                                                              |==========================                                            |  38%  |                                                                              |===========================                                           |  38%  |                                                                              |===========================                                           |  39%  |                                                                              |============================                                          |  40%  |                                                                              |=============================                                         |  41%  |                                                                              |=============================                                         |  42%  |                                                                              |==============================                                        |  43%  |                                                                              |===============================                                       |  44%  |                                                                              |===============================                                       |  45%  |                                                                              |================================                                      |  46%  |                                                                              |=================================                                     |  47%  |                                                                              |=================================                                     |  48%  |                                                                              |==================================                                    |  49%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================                                  |  51%  |                                                                              |=====================================                                 |  52%  |                                                                              |=====================================                                 |  53%  |                                                                              |======================================                                |  54%  |                                                                              |=======================================                               |  55%  |                                                                              |=======================================                               |  56%  |                                                                              |========================================                              |  57%  |                                                                              |=========================================                             |  58%  |                                                                              |=========================================                             |  59%  |                                                                              |==========================================                            |  60%  |                                                                              |===========================================                           |  61%  |                                                                              |===========================================                           |  62%  |                                                                              |============================================                          |  62%  |                                                                              |============================================                          |  63%  |                                                                              |=============================================                         |  64%  |                                                                              |=============================================                         |  65%  |                                                                              |==============================================                        |  65%  |                                                                              |==============================================                        |  66%  |                                                                              |===============================================                       |  67%  |                                                                              |===============================================                       |  68%  |                                                                              |================================================                      |  68%  |                                                                              |================================================                      |  69%  |                                                                              |=================================================                     |  70%  |                                                                              |=================================================                     |  71%  |                                                                              |==================================================                    |  71%  |                                                                              |==================================================                    |  72%  |                                                                              |===================================================                   |  73%  |                                                                              |===================================================                   |  74%  |                                                                              |====================================================                  |  74%  |                                                                              |====================================================                  |  75%  |                                                                              |=====================================================                 |  76%  |                                                                              |======================================================                |  76%  |                                                                              |======================================================                |  77%  |                                                                              |=======================================================               |  78%  |                                                                              |=======================================================               |  79%  |                                                                              |========================================================              |  79%  |                                                                              |========================================================              |  80%  |                                                                              |=========================================================             |  81%  |                                                                              |=========================================================             |  82%  |                                                                              |==========================================================            |  82%  |                                                                              |==========================================================            |  83%  |                                                                              |===========================================================           |  84%  |                                                                              |===========================================================           |  85%  |                                                                              |============================================================          |  85%  |                                                                              |============================================================          |  86%  |                                                                              |=============================================================         |  87%  |                                                                              |=============================================================         |  88%  |                                                                              |==============================================================        |  88%  |                                                                              |==============================================================        |  89%  |                                                                              |===============================================================       |  90%  |                                                                              |================================================================      |  91%  |                                                                              |================================================================      |  92%  |                                                                              |=================================================================     |  93%  |                                                                              |==================================================================    |  94%  |                                                                              |==================================================================    |  95%  |                                                                              |===================================================================   |  96%  |                                                                              |====================================================================  |  97%  |                                                                              |====================================================================  |  98%  |                                                                              |===================================================================== |  99%  |                                                                              |======================================================================| 100%
 
 # 4 Verify five best results
 Concrete_pipeline$performance_report[1:5, ]
-#>                 Model Testing_RMSE RMSE 95% CI Lower RMSE 95% CI Upper
-#> 1              Cubist       4.8121            3.6889            5.7189
-#> 2   Cubist+QuantileRF       5.0015            3.6721            6.0453
-#> 3 Cubist+RandomForest       5.0550            3.7793            6.0682
-#> 4   Cubist+SVM_Radial       5.1411            4.1628            5.9608
-#> 5         Cubist+MARS       5.1521            4.3007            5.8815
+#>                Model Testing_RMSE RMSE 95% CI Lower RMSE 95% CI Upper
+#> 1               MARS       4.8621                 0            7.5851
+#> 2   MARS+Bagged_MARS       5.3312                 0            8.2688
+#> 3        Cubist+MARS       5.3869                 0            8.7566
+#> 4 Cubist+Bagged_MARS       6.0587                 0            9.5680
+#> 5        Bagged_MARS       6.0823                 0            9.1439
 #>   Testing_MAE MAE 95% CI Lower MAE 95% CI Upper Adjusted_R2
-#> 1      3.2407           2.7440           3.7375      0.9118
-#> 2      3.1639           2.6230           3.7049      0.9077
-#> 3      3.3311           2.8002           3.8621      0.9057
-#> 4      3.5358           3.0146           4.0569      0.9024
-#> 5      3.8439           3.3648           4.3229      0.9020
+#> 1      2.7305           0.9215           4.5394      0.7264
+#> 2      3.0929           1.1404           5.0454      0.7871
+#> 3      2.6236           0.5080           4.7392      0.7827
+#> 4      3.1201           0.7849           5.4554      0.7251
+#> 5      3.7004           1.5298           5.8710      0.5718
 #>   Adjusted R2 95% CI Lower Adjusted R2 95% CI Upper Duration Overfitting
-#> 1                   0.8761                   0.9484    1.893      1.7693
-#> 2                   0.8658                   0.9299   13.345      2.8946
-#> 3                   0.8647                   0.9299   19.739      2.1659
-#> 4                   0.8695                   0.9299    5.315      1.6825
-#> 5                   0.8729                   0.9299    2.241      1.3146
+#> 1                   0.3674                        1    0.242      1.1184
+#> 2                   0.5135                        1    1.830      1.5195
+#> 3                   0.4544                        1    0.668      2.1965
+#> 4                   0.3487                        1    2.014      3.1049
+#> 5                   0.0806                        1    1.588      1.9645
 #>      Bias Variance KS_p_value
-#> 1  0.1372 250.7353     0.6135
-#> 2 -0.0770 236.7411     0.6135
-#> 3  0.0233 227.5309     0.4804
-#> 4  0.3395 251.0203     0.6407
-#> 5  0.0410 233.9051     0.4687
+#> 1 -1.1402  97.8231     0.9910
+#> 2 -1.4963  94.9299     0.7468
+#> 3 -1.7481  94.1771     0.4838
+#> 4 -2.1042  93.8884     0.4880
+#> 5 -1.8524  95.7606     0.4847
 ```
 
 ## Print the Summary Profiles from any NumericEnsembles Pipeline
@@ -597,13 +597,13 @@ Concrete_pipeline$plots  # Direct programmatic access to specific ggplot2 object
     #> 
     #> $draw_top3
     #> function() { .draw_top3_panel(top_3_models, pred_test_list, actual_test, models_list, train_data, target_col, theme_colors) }
-    #> <bytecode: 0xa01e58a88>
-    #> <environment: 0x9f788d3b8>
+    #> <bytecode: 0xb85858ee8>
+    #> <environment: 0xb8df57a10>
     #> 
     #> $draw_diagnostics
     #> function() { .draw_diagnostics_panel(top_3_models, pred_test_list, pred_train_list, actual_test, actual_train, test_data, target_col, theme_colors, top_pred_names) }
-    #> <bytecode: 0xa01e5e270>
-    #> <environment: 0x9f788d3b8>
+    #> <bytecode: 0xb8585e6d0>
+    #> <environment: 0xb8df57a10>
 
 The professional visual diagnostics portfolio includes:
 
@@ -654,223 +654,161 @@ lower assurance boundaries for the top 3 champion models:
 ``` r
 Production_report <- predict_production(object = Concrete_pipeline, newdata = prospective_data)
 Production_report
-#>    Row_Index Rank_1_Cubist_Prediction Rank_1_Cubist_95_LowerBound
-#> 1          1                    34.62                       25.17
-#> 2          2                    43.88                       34.43
-#> 3          3                    55.04                       45.59
-#> 4          4                    65.06                       55.61
-#> 5          5                    48.83                       39.38
-#> 6          6                    35.70                       26.25
-#> 7          7                    17.56                        8.11
-#> 8          8                    31.79                       22.34
-#> 9          9                    30.92                       21.47
-#> 10        10                    38.16                       28.71
-#> 11        11                    34.44                       24.99
-#> 12        12                    43.37                       33.92
-#> 13        13                    54.33                       44.87
-#> 14        14                    41.25                       31.80
-#> 15        15                    32.04                       22.59
-#> 16        16                    47.40                       37.95
-#> 17        17                    17.78                        8.33
-#> 18        18                    39.29                       29.84
-#> 19        19                    38.36                       28.91
-#> 20        20                    25.16                       15.70
-#> 21        21                    39.85                       30.40
-#> 22        22                    29.19                       19.74
-#> 23        23                    37.68                       28.23
-#> 24        24                    37.70                       28.25
-#> 25        25                    36.47                       27.02
-#> 26        26                    43.83                       34.38
-#> 27        27                    35.16                       25.71
-#> 28        28                    29.12                       19.67
-#> 29        29                    31.68                       22.22
-#> 30        30                    34.10                       24.65
-#>    Rank_1_Cubist_95_UpperBound Rank_2_Cubist_and_QuantileRF_Prediction
-#> 1                        44.08                                   36.03
-#> 2                        53.33                                   48.70
-#> 3                        64.49                                   55.83
-#> 4                        74.51                                   65.48
-#> 5                        58.28                                   50.51
-#> 6                        45.15                                   34.55
-#> 7                        27.01                                   17.79
-#> 8                        41.24                                   29.33
-#> 9                        40.37                                   31.88
-#> 10                       47.62                                   40.15
-#> 11                       43.89                                   37.25
-#> 12                       52.82                                   42.66
-#> 13                       63.78                                   57.06
-#> 14                       50.71                                   41.06
-#> 15                       41.49                                   32.67
-#> 16                       56.86                                   49.91
-#> 17                       27.24                                   16.44
-#> 18                       48.75                                   38.88
-#> 19                       47.81                                   37.81
-#> 20                       34.61                                   30.19
-#> 21                       49.30                                   40.99
-#> 22                       38.64                                   30.53
-#> 23                       47.13                                   39.31
-#> 24                       47.15                                   38.57
-#> 25                       45.92                                   37.19
-#> 26                       53.28                                   44.06
-#> 27                       44.61                                   33.52
-#> 28                       38.57                                   26.43
-#> 29                       41.13                                   32.26
-#> 30                       43.56                                   33.25
-#>    Rank_2_Cubist_and_QuantileRF_95_LowerBound
-#> 1                                       26.20
-#> 2                                       38.87
-#> 3                                       46.00
-#> 4                                       55.66
-#> 5                                       40.69
-#> 6                                       24.72
-#> 7                                        7.97
-#> 8                                       19.50
-#> 9                                       22.05
-#> 10                                      30.32
-#> 11                                      27.42
-#> 12                                      32.83
-#> 13                                      47.24
-#> 14                                      31.24
-#> 15                                      22.84
-#> 16                                      40.09
-#> 17                                       6.61
-#> 18                                      29.05
-#> 19                                      27.99
-#> 20                                      20.37
-#> 21                                      31.16
-#> 22                                      20.70
-#> 23                                      29.48
-#> 24                                      28.75
-#> 25                                      27.36
-#> 26                                      34.23
-#> 27                                      23.69
-#> 28                                      16.60
-#> 29                                      22.43
-#> 30                                      23.43
-#>    Rank_2_Cubist_and_QuantileRF_95_UpperBound
-#> 1                                       45.85
-#> 2                                       58.53
-#> 3                                       65.66
-#> 4                                       75.31
-#> 5                                       60.34
-#> 6                                       44.38
-#> 7                                       27.62
-#> 8                                       39.15
-#> 9                                       41.71
-#> 10                                      49.97
-#> 11                                      47.08
-#> 12                                      52.48
-#> 13                                      66.89
-#> 14                                      50.89
-#> 15                                      42.50
-#> 16                                      59.74
-#> 17                                      26.26
-#> 18                                      48.70
-#> 19                                      47.64
-#> 20                                      40.02
-#> 21                                      50.82
-#> 22                                      40.36
-#> 23                                      49.13
-#> 24                                      48.40
-#> 25                                      47.02
-#> 26                                      53.88
-#> 27                                      43.34
-#> 28                                      36.26
-#> 29                                      42.08
-#> 30                                      43.08
-#>    Rank_3_Cubist_and_RandomForest_Prediction
-#> 1                                      36.31
-#> 2                                      45.22
-#> 3                                      53.77
-#> 4                                      62.87
-#> 5                                      48.62
-#> 6                                      34.78
-#> 7                                      19.05
-#> 8                                      29.07
-#> 9                                      31.57
-#> 10                                     38.02
-#> 11                                     36.52
-#> 12                                     42.29
-#> 13                                     55.66
-#> 14                                     41.68
-#> 15                                     31.86
-#> 16                                     48.90
-#> 17                                     17.67
-#> 18                                     39.40
-#> 19                                     38.79
-#> 20                                     28.75
-#> 21                                     40.59
-#> 22                                     30.96
-#> 23                                     38.40
-#> 24                                     37.73
-#> 25                                     36.02
-#> 26                                     43.73
-#> 27                                     34.91
-#> 28                                     27.31
-#> 29                                     33.55
-#> 30                                     34.61
-#>    Rank_3_Cubist_and_RandomForest_95_LowerBound
-#> 1                                         26.37
-#> 2                                         35.29
-#> 3                                         43.84
-#> 4                                         52.93
-#> 5                                         38.68
-#> 6                                         24.85
-#> 7                                          9.12
-#> 8                                         19.13
-#> 9                                         21.63
-#> 10                                        28.09
-#> 11                                        26.59
-#> 12                                        32.36
-#> 13                                        45.73
-#> 14                                        31.75
-#> 15                                        21.93
-#> 16                                        38.96
-#> 17                                         7.73
-#> 18                                        29.47
-#> 19                                        28.86
-#> 20                                        18.82
-#> 21                                        30.66
-#> 22                                        21.02
-#> 23                                        28.47
-#> 24                                        27.79
-#> 25                                        26.08
-#> 26                                        33.80
-#> 27                                        24.98
-#> 28                                        17.38
-#> 29                                        23.62
-#> 30                                        24.68
-#>    Rank_3_Cubist_and_RandomForest_95_UpperBound
-#> 1                                         46.24
-#> 2                                         55.16
-#> 3                                         63.70
-#> 4                                         72.80
-#> 5                                         58.55
-#> 6                                         44.72
-#> 7                                         28.98
-#> 8                                         39.00
-#> 9                                         41.50
-#> 10                                        47.96
-#> 11                                        46.45
-#> 12                                        52.23
-#> 13                                        65.59
-#> 14                                        51.61
-#> 15                                        41.79
-#> 16                                        58.83
-#> 17                                        27.60
-#> 18                                        49.34
-#> 19                                        48.73
-#> 20                                        38.68
-#> 21                                        50.53
-#> 22                                        40.89
-#> 23                                        48.33
-#> 24                                        47.66
-#> 25                                        45.95
-#> 26                                        53.66
-#> 27                                        44.85
-#> 28                                        37.24
-#> 29                                        43.48
-#> 30                                        44.54
+#>    Row_Index Rank_1_MARS_Prediction Rank_1_MARS_95_LowerBound
+#> 1          1                  26.20                     16.69
+#> 2          2                  42.02                     32.51
+#> 3          3                  48.30                     38.79
+#> 4          4                  52.68                     43.17
+#> 5          5                  42.85                     33.34
+#> 6          6                  36.98                     27.47
+#> 7          7                  23.52                     14.01
+#> 8          8                  33.03                     23.53
+#> 9          9                  30.10                     20.60
+#> 10        10                  41.12                     31.62
+#> 11        11                  42.41                     32.91
+#> 12        12                  43.27                     33.77
+#> 13        13                  48.72                     39.21
+#> 14        14                  44.89                     35.38
+#> 15        15                  27.39                     17.89
+#> 16        16                  47.37                     37.87
+#> 17        17                  23.46                     13.96
+#> 18        18                  42.14                     32.64
+#> 19        19                  42.64                     33.13
+#> 20        20                  22.77                     13.27
+#> 21        21                  43.38                     33.87
+#> 22        22                  41.13                     31.62
+#> 23        23                  39.58                     30.08
+#> 24        24                  34.03                     24.53
+#> 25        25                  35.51                     26.01
+#> 26        26                  41.55                     32.05
+#> 27        27                  42.69                     33.19
+#> 28        28                  25.36                     15.86
+#> 29        29                  29.87                     20.36
+#> 30        30                  38.41                     28.91
+#>    Rank_1_MARS_95_UpperBound Rank_2_MARS_and_Bagged_MARS_Prediction
+#> 1                      35.70                                  34.67
+#> 2                      51.52                                  45.94
+#> 3                      57.80                                  45.32
+#> 4                      62.18                                  49.69
+#> 5                      52.35                                  44.29
+#> 6                      46.48                                  37.39
+#> 7                      33.02                                  32.52
+#> 8                      42.54                                  39.72
+#> 9                      39.61                                  37.97
+#> 10                     50.62                                  39.45
+#> 11                     51.92                                  41.77
+#> 12                     52.78                                  47.45
+#> 13                     58.22                                  47.22
+#> 14                     54.39                                  44.65
+#> 15                     36.90                                  36.44
+#> 16                     56.88                                  48.46
+#> 17                     32.97                                  29.86
+#> 18                     51.65                                  43.51
+#> 19                     52.14                                  43.24
+#> 20                     32.28                                  30.82
+#> 21                     52.88                                  41.77
+#> 22                     50.63                                  40.54
+#> 23                     49.09                                  39.64
+#> 24                     43.54                                  42.52
+#> 25                     45.02                                  36.46
+#> 26                     51.06                                  43.48
+#> 27                     52.20                                  40.78
+#> 28                     34.87                                  31.36
+#> 29                     39.37                                  34.18
+#> 30                     47.92                                  39.47
+#>    Rank_2_MARS_and_Bagged_MARS_95_LowerBound
+#> 1                                      24.38
+#> 2                                      35.65
+#> 3                                      35.03
+#> 4                                      39.40
+#> 5                                      34.00
+#> 6                                      27.10
+#> 7                                      22.23
+#> 8                                      29.43
+#> 9                                      27.68
+#> 10                                     29.16
+#> 11                                     31.48
+#> 12                                     37.16
+#> 13                                     36.93
+#> 14                                     34.36
+#> 15                                     26.15
+#> 16                                     38.17
+#> 17                                     19.57
+#> 18                                     33.22
+#> 19                                     32.95
+#> 20                                     20.53
+#> 21                                     31.48
+#> 22                                     30.25
+#> 23                                     29.35
+#> 24                                     32.23
+#> 25                                     26.17
+#> 26                                     33.19
+#> 27                                     30.49
+#> 28                                     21.07
+#> 29                                     23.89
+#> 30                                     29.18
+#>    Rank_2_MARS_and_Bagged_MARS_95_UpperBound Rank_3_Cubist_and_MARS_Prediction
+#> 1                                      44.96                             28.29
+#> 2                                      56.23                             43.46
+#> 3                                      55.61                             39.36
+#> 4                                      59.98                             46.94
+#> 5                                      54.58                             36.69
+#> 6                                      47.68                             33.14
+#> 7                                      42.81                             27.79
+#> 8                                      50.01                             36.09
+#> 9                                      48.26                             30.18
+#> 10                                     49.74                             35.77
+#> 11                                     52.06                             36.60
+#> 12                                     57.74                             42.19
+#> 13                                     57.51                             39.84
+#> 14                                     54.94                             44.58
+#> 15                                     46.73                             29.10
+#> 16                                     58.75                             39.53
+#> 17                                     40.15                             26.67
+#> 18                                     53.80                             37.00
+#> 19                                     53.53                             36.98
+#> 20                                     41.11                             34.96
+#> 21                                     52.06                             36.42
+#> 22                                     50.83                             35.87
+#> 23                                     49.93                             34.66
+#> 24                                     52.81                             36.29
+#> 25                                     46.75                             31.92
+#> 26                                     53.77                             36.24
+#> 27                                     51.07                             36.36
+#> 28                                     41.65                             27.54
+#> 29                                     44.47                             29.55
+#> 30                                     49.76                             34.25
+#>    Rank_3_Cubist_and_MARS_95_LowerBound Rank_3_Cubist_and_MARS_95_UpperBound
+#> 1                                 18.05                                38.54
+#> 2                                 33.22                                53.71
+#> 3                                 29.12                                49.61
+#> 4                                 36.69                                57.19
+#> 5                                 26.44                                46.93
+#> 6                                 22.89                                43.38
+#> 7                                 17.54                                38.03
+#> 8                                 25.84                                46.33
+#> 9                                 19.93                                40.43
+#> 10                                25.52                                46.02
+#> 11                                26.35                                46.85
+#> 12                                31.95                                52.44
+#> 13                                29.60                                50.09
+#> 14                                34.33                                54.82
+#> 15                                18.85                                39.35
+#> 16                                29.28                                49.78
+#> 17                                16.42                                36.91
+#> 18                                26.76                                47.25
+#> 19                                26.73                                47.23
+#> 20                                24.71                                45.21
+#> 21                                26.18                                46.67
+#> 22                                25.62                                46.12
+#> 23                                24.42                                44.91
+#> 24                                26.04                                46.53
+#> 25                                21.68                                42.17
+#> 26                                25.99                                46.49
+#> 27                                26.11                                46.60
+#> 28                                17.29                                37.78
+#> 29                                19.31                                39.80
+#> 30                                24.00                                44.50
 ```
 
 ## Render the Automated Executive Report
