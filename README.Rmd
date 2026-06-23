@@ -146,7 +146,7 @@ When you call `print()` on your pipeline object, it outputs a multi-profile me
 
 You can interact with your visual diagnostics package in two standard ways:
 
-```{r Generate diagnostic plots}
+```{r Generate_diagnostic_plots}
 plot(Concrete_pipeline)  # Sequentially render plots to your active device window
 Concrete_pipeline$plots  # Direct programmatic access to specific ggplot2 objects
 ```
