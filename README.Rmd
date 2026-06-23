@@ -73,7 +73,7 @@ Concrete_express_pipeline <- NumericEnsemblesDemo()
 
 This example features facet colors, column colors and stratify colors. You can use these features in many other data sets.
 
-```{r Fast but not express track}
+```{r Fast_but_not_express_track}
 library(NumericEnsembles)
 Insurance <- NumericEnsembles::Insurance
 Insurance_pipeline <- Numeric(dataset = Insurance, target_col = 'charges', facet_col = 'sex', color_col = 'smoker', stratify_col = 'region', palette_style = "modern", config = NumericEnsemblesFastConfig(), verbose = TRUE)

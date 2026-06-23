@@ -10,7 +10,7 @@ format:
 ---
 
 ```{r setup, include=FALSE}
-pipeline <- readRDS('/Users/russconte/Library/Mobile Documents/com~apple~CloudDocs/Documents/Machine Learning templates in R/NumericEnsembles/NumericEnsembles/numeric_pipeline_data_cache.rds')
+pipeline <- readRDS('/Users/russellconte/Library/Mobile Documents/com~apple~CloudDocs/Documents/Machine Learning templates in R/NumericEnsembles/NumericEnsembles/numeric_pipeline_data_cache.rds')
 ```
 
 ## 1. Executive Summary

@@ -163,16 +163,16 @@ Concrete_express_pipeline <- NumericEnsemblesDemo()
 #>  Cubist+ElasticNet       0.5352      0.4277      0.8563   1.7455     0.3777
 #>       Cubist+Lasso       0.5352      0.4277      0.8563   1.7455     0.3777
 #>  Overfitting    Bias Duration
-#>       1.0706 -0.0212    1.462
-#>       1.0735 -0.0216    1.549
-#>       1.0735 -0.0216    1.529
-#>       1.0737 -0.0238    1.595
-#>       1.0765 -0.0221    0.087
-#>       1.0765 -0.0221    0.067
-#>       1.0765 -0.0221    0.154
-#>       1.0769 -0.0265    0.133
-#>       1.0767 -0.0243    0.220
-#>       1.0767 -0.0243    0.200
+#>       1.0706 -0.0212    1.220
+#>       1.0735 -0.0216    1.295
+#>       1.0735 -0.0216    1.279
+#>       1.0737 -0.0238    1.330
+#>       1.0765 -0.0221    0.075
+#>       1.0765 -0.0221    0.059
+#>       1.0765 -0.0221    0.134
+#>       1.0769 -0.0265    0.110
+#>       1.0767 -0.0243    0.185
+#>       1.0767 -0.0243    0.169
 #> 
 #> =========================================================================
 #>                AUTOMATED RESIDUAL DIAGNOSTIC LEADERBOARD                 
@@ -304,16 +304,16 @@ print(Insurance_pipeline)
 #>          Bagging+SVM_Radial     4995.343    2628.982      0.8248 114216462
 #>          Bagging+QuantileRF     5003.294    2356.372      0.8243 125309146
 #>  KS_p_value Overfitting      Bias Duration
-#>      0.0095      1.2588 -435.5202    1.992
-#>      0.0268      1.3121 -425.0740    1.858
-#>      0.0000      1.1986 -426.7560    0.289
-#>      0.0000      1.2457 -416.3099    2.013
-#>      0.0673      1.3751 -946.4446    3.797
-#>      0.0193      1.2775 -979.4971    2.237
-#>      0.0076      1.2550 -657.9079    2.582
-#>      0.0390      1.3047 -956.8907    2.073
-#>      0.0000      1.1954 -649.1437    0.879
-#>      0.0000      1.3012 -937.6804    2.094
+#>      0.0095      1.2588 -435.5202    1.867
+#>      0.0268      1.3121 -425.0740    1.747
+#>      0.0000      1.1986 -426.7560    0.256
+#>      0.0000      1.2457 -416.3099    1.883
+#>      0.0673      1.3751 -946.4446    3.556
+#>      0.0193      1.2775 -979.4971    2.088
+#>      0.0076      1.2550 -657.9079    2.408
+#>      0.0390      1.3047 -956.8907    1.929
+#>      0.0000      1.1954 -649.1437    0.797
+#>      0.0000      1.3012 -937.6804    1.945
 #> 
 #> =========================================================================
 #>                AUTOMATED RESIDUAL DIAGNOSTIC LEADERBOARD                 
@@ -347,73 +347,64 @@ Insurance_pipeline$plots # plots all in one command
 #> $histograms
 ```
 
-<img src="man/figures/README-Fast but not express track-1.png" alt="" width="100%" />
+<img src="man/figures/README-Fast_but_not_express_track-1.png" alt="" width="100%" />
 
     #> 
     #> $boxplots
 
-<img src="man/figures/README-Fast but not express track-2.png" alt="" width="100%" />
+<img src="man/figures/README-Fast_but_not_express_track-2.png" alt="" width="100%" />
 
     #> 
     #> $correlation
 
-<img src="man/figures/README-Fast but not express track-3.png" alt="" width="100%" />
+<img src="man/figures/README-Fast_but_not_express_track-3.png" alt="" width="100%" />
 
     #> 
     #> $scatter_matrix
     #> `geom_smooth()` using formula = 'y ~ x'
 
-<img src="man/figures/README-Fast but not express track-4.png" alt="" width="100%" />
+<img src="man/figures/README-Fast_but_not_express_track-4.png" alt="" width="100%" />
 
     #> 
     #> $metric_heatmap
 
-<img src="man/figures/README-Fast but not express track-5.png" alt="" width="100%" />
+<img src="man/figures/README-Fast_but_not_express_track-5.png" alt="" width="100%" />
 
     #> 
     #> $kpis
 
-<img src="man/figures/README-Fast but not express track-6.png" alt="" width="100%" />
+<img src="man/figures/README-Fast_but_not_express_track-6.png" alt="" width="100%" />
 
     #> 
     #> $risks
 
-<img src="man/figures/README-Fast but not express track-7.png" alt="" width="100%" />
+<img src="man/figures/README-Fast_but_not_express_track-7.png" alt="" width="100%" />
 
     #> 
     #> $tradeoff
 
-<img src="man/figures/README-Fast but not express track-8.png" alt="" width="100%" />
+<img src="man/figures/README-Fast_but_not_express_track-8.png" alt="" width="100%" />
 
     #> 
     #> $ks_test
 
-<img src="man/figures/README-Fast but not express track-9.png" alt="" width="100%" />
+<img src="man/figures/README-Fast_but_not_express_track-9.png" alt="" width="100%" />
 
     #> 
     #> $cooks_distance
 
-<img src="man/figures/README-Fast but not express track-10.png" alt="" width="100%" />
+<img src="man/figures/README-Fast_but_not_express_track-10.png" alt="" width="100%" />
 
     #> 
     #> $draw_top3
-    #> function () 
-    #> {
-    #>     .draw_top3_panel(top_3_models, pred_test_list, actual_test, 
-    #>         models_list, train_data, target_col, theme_colors)
-    #> }
-    #> <bytecode: 0x99801a0e8>
-    #> <environment: 0x988151428>
+    #> function() { .draw_top3_panel(top_3_models, pred_test_list, actual_test, models_list, train_data, target_col, theme_colors) }
+    #> <bytecode: 0x92faca5b8>
+    #> <environment: 0x93bbad1f8>
     #> 
     #> $draw_diagnostics
-    #> function () 
-    #> {
-    #>     .draw_diagnostics_panel(top_3_models, pred_test_list, pred_train_list, 
-    #>         actual_test, actual_train, test_data, target_col, theme_colors, 
-    #>         top_pred_names)
-    #> }
-    #> <bytecode: 0x99801a698>
-    #> <environment: 0x988151428>
+    #> function() { .draw_diagnostics_panel(top_3_models, pred_test_list, pred_train_list, actual_test, actual_train, test_data, target_col, theme_colors, top_pred_names) }
+    #> <bytecode: 0x92fad1700>
+    #> <environment: 0x93bbad1f8>
 
 ## Track 3: The Institutional Track (Professional Production, this example will have a lower root mean squared error than an article in Nature for the exact same data set)
 
@@ -499,11 +490,11 @@ Concrete_pipeline$performance_report[1:5, ]
 #> 4      3.5358           3.0146           4.0569      0.9024
 #> 5      3.8439           3.3648           4.3229      0.9020
 #>   Adjusted R2 95% CI Lower Adjusted R2 95% CI Upper Duration Overfitting
-#> 1                   0.8761                   0.9484    2.088      1.7693
-#> 2                   0.8658                   0.9299   14.480      2.8946
-#> 3                   0.8647                   0.9299   20.834      2.1659
-#> 4                   0.8695                   0.9299    5.759      1.6825
-#> 5                   0.8729                   0.9299    2.478      1.3146
+#> 1                   0.8761                   0.9484    1.907      1.7693
+#> 2                   0.8658                   0.9299   13.546      2.8946
+#> 3                   0.8647                   0.9299   19.798      2.1659
+#> 4                   0.8695                   0.9299    5.366      1.6825
+#> 5                   0.8729                   0.9299    2.258      1.3146
 #>      Bias Variance KS_p_value
 #> 1  0.1372 250.7353     0.6135
 #> 2 -0.0770 236.7411     0.6135
@@ -548,84 +539,75 @@ ways:
 plot(Concrete_pipeline)  # Sequentially render plots to your active device window
 ```
 
-<img src="man/figures/README-Generate diagnostic plots-1.png" alt="" width="100%" /><img src="man/figures/README-Generate diagnostic plots-2.png" alt="" width="100%" /><img src="man/figures/README-Generate diagnostic plots-3.png" alt="" width="100%" />
+<img src="man/figures/README-Generate_diagnostic_plots-1.png" alt="" width="100%" /><img src="man/figures/README-Generate_diagnostic_plots-2.png" alt="" width="100%" /><img src="man/figures/README-Generate_diagnostic_plots-3.png" alt="" width="100%" />
 
     #> `geom_smooth()` using formula = 'y ~ x'
 
-<img src="man/figures/README-Generate diagnostic plots-4.png" alt="" width="100%" /><img src="man/figures/README-Generate diagnostic plots-5.png" alt="" width="100%" /><img src="man/figures/README-Generate diagnostic plots-6.png" alt="" width="100%" /><img src="man/figures/README-Generate diagnostic plots-7.png" alt="" width="100%" /><img src="man/figures/README-Generate diagnostic plots-8.png" alt="" width="100%" /><img src="man/figures/README-Generate diagnostic plots-9.png" alt="" width="100%" /><img src="man/figures/README-Generate diagnostic plots-10.png" alt="" width="100%" /><img src="man/figures/README-Generate diagnostic plots-11.png" alt="" width="100%" /><img src="man/figures/README-Generate diagnostic plots-12.png" alt="" width="100%" />
+<img src="man/figures/README-Generate_diagnostic_plots-4.png" alt="" width="100%" /><img src="man/figures/README-Generate_diagnostic_plots-5.png" alt="" width="100%" /><img src="man/figures/README-Generate_diagnostic_plots-6.png" alt="" width="100%" /><img src="man/figures/README-Generate_diagnostic_plots-7.png" alt="" width="100%" /><img src="man/figures/README-Generate_diagnostic_plots-8.png" alt="" width="100%" /><img src="man/figures/README-Generate_diagnostic_plots-9.png" alt="" width="100%" /><img src="man/figures/README-Generate_diagnostic_plots-10.png" alt="" width="100%" /><img src="man/figures/README-Generate_diagnostic_plots-11.png" alt="" width="100%" /><img src="man/figures/README-Generate_diagnostic_plots-12.png" alt="" width="100%" />
 
 ``` r
 Concrete_pipeline$plots  # Direct programmatic access to specific ggplot2 objects
 #> $histograms
 ```
 
-<img src="man/figures/README-Generate diagnostic plots-13.png" alt="" width="100%" />
+<img src="man/figures/README-Generate_diagnostic_plots-13.png" alt="" width="100%" />
 
     #> 
     #> $boxplots
 
-<img src="man/figures/README-Generate diagnostic plots-14.png" alt="" width="100%" />
+<img src="man/figures/README-Generate_diagnostic_plots-14.png" alt="" width="100%" />
 
     #> 
     #> $correlation
 
-<img src="man/figures/README-Generate diagnostic plots-15.png" alt="" width="100%" />
+<img src="man/figures/README-Generate_diagnostic_plots-15.png" alt="" width="100%" />
 
     #> 
     #> $scatter_matrix
     #> `geom_smooth()` using formula = 'y ~ x'
 
-<img src="man/figures/README-Generate diagnostic plots-16.png" alt="" width="100%" />
+<img src="man/figures/README-Generate_diagnostic_plots-16.png" alt="" width="100%" />
 
     #> 
     #> $metric_heatmap
 
-<img src="man/figures/README-Generate diagnostic plots-17.png" alt="" width="100%" />
+<img src="man/figures/README-Generate_diagnostic_plots-17.png" alt="" width="100%" />
 
     #> 
     #> $kpis
 
-<img src="man/figures/README-Generate diagnostic plots-18.png" alt="" width="100%" />
+<img src="man/figures/README-Generate_diagnostic_plots-18.png" alt="" width="100%" />
 
     #> 
     #> $risks
 
-<img src="man/figures/README-Generate diagnostic plots-19.png" alt="" width="100%" />
+<img src="man/figures/README-Generate_diagnostic_plots-19.png" alt="" width="100%" />
 
     #> 
     #> $tradeoff
 
-<img src="man/figures/README-Generate diagnostic plots-20.png" alt="" width="100%" />
+<img src="man/figures/README-Generate_diagnostic_plots-20.png" alt="" width="100%" />
 
     #> 
     #> $ks_test
 
-<img src="man/figures/README-Generate diagnostic plots-21.png" alt="" width="100%" />
+<img src="man/figures/README-Generate_diagnostic_plots-21.png" alt="" width="100%" />
 
     #> 
     #> $cooks_distance
 
-<img src="man/figures/README-Generate diagnostic plots-22.png" alt="" width="100%" />
+<img src="man/figures/README-Generate_diagnostic_plots-22.png" alt="" width="100%" />
 
     #> 
     #> $draw_top3
-    #> function () 
-    #> {
-    #>     .draw_top3_panel(top_3_models, pred_test_list, actual_test, 
-    #>         models_list, train_data, target_col, theme_colors)
-    #> }
-    #> <bytecode: 0x99801a0e8>
-    #> <environment: 0x986fcce78>
+    #> function() { .draw_top3_panel(top_3_models, pred_test_list, actual_test, models_list, train_data, target_col, theme_colors) }
+    #> <bytecode: 0x92faca5b8>
+    #> <environment: 0x93c4a9dc8>
     #> 
     #> $draw_diagnostics
-    #> function () 
-    #> {
-    #>     .draw_diagnostics_panel(top_3_models, pred_test_list, pred_train_list, 
-    #>         actual_test, actual_train, test_data, target_col, theme_colors, 
-    #>         top_pred_names)
-    #> }
-    #> <bytecode: 0x99801a698>
-    #> <environment: 0x986fcce78>
+    #> function() { .draw_diagnostics_panel(top_3_models, pred_test_list, pred_train_list, actual_test, actual_train, test_data, target_col, theme_colors, top_pred_names) }
+    #> <bytecode: 0x92fad1700>
+    #> <environment: 0x93c4a9dc8>
 
 The professional visual diagnostics portfolio includes:
 
