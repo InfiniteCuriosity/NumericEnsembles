@@ -17,7 +17,7 @@ The goal of NumericEnsembles is to automatically build highly optimized ensemble
 
 ## The story of NumericEnsembles
 
-My name is Russ Conte, and I have worked for many years with multi-million dollar accounts for multi-billion dollar customers, mainly as a recruiter. One of the most common results I have seen are companies who do not use their data to get the best return for their investment to get the data. I had the insight about how to build ensembles of solutions on Saturday, October 22, 2022 at 4:58 pm. The original ensembles solution has been improved many times, and NumericEnsembles is one of 13 ensembles solutions I have built that are currently available. The total list is:
+My name is Russ Conte, and I have worked for many years with multi-million dollar accounts for multi-billion dollar customers, mainly as a recruiter. One of the most common results I have seen are companies who do not use their data to get the best return for their investment to get the data. I had the insight about how to build ensembles of solutions on Saturday, October 22, 2022 at 4:58 pm. The original ensembles solution has been improved many times, and NumericEnsembles is one of 16 ensembles solutions I am building. The total list is:
 
 1.  `NumericEnsembles`
 
@@ -44,6 +44,12 @@ My name is Russ Conte, and I have worked for many years with multi-million dolla
 12. `SpatialEnsembles`
 
 13. `SurveyEnsembles`
+
+14. `LongitudinalEnsembles`
+
+15. `CrossSectionalEnsembles`
+
+16. `CohortEnsembles`
 
 ## Installation
 
@@ -147,7 +153,7 @@ When you call `print()` on your pipeline object, it outputs a multi-profile me
 You can interact with your visual diagnostics package in two standard ways:
 
 ```{r Generate_diagnostic_plots}
-plot(Concrete_pipeline)  # Sequentially render plots to your active device window
+# plot(Concrete_pipeline)  # Sequentially render plots to your active device window
 Concrete_pipeline$plots  # Direct programmatic access to specific ggplot2 objects
 ```
 
