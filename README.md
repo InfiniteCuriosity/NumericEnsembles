@@ -168,16 +168,16 @@ Concrete_express_pipeline <- NumericEnsemblesDemo()
 #>  Cubist+ElasticNet       0.5352      0.4277      0.8563   1.7455     0.3777
 #>       Cubist+Lasso       0.5352      0.4277      0.8563   1.7455     0.3777
 #>  Overfitting    Bias Duration
-#>       1.0706 -0.0212    1.433
-#>       1.0735 -0.0216    1.521
-#>       1.0735 -0.0216    1.502
-#>       1.0737 -0.0238    1.553
-#>       1.0765 -0.0221    0.088
-#>       1.0765 -0.0221    0.069
-#>       1.0765 -0.0221    0.157
-#>       1.0769 -0.0265    0.120
-#>       1.0767 -0.0243    0.208
-#>       1.0767 -0.0243    0.189
+#>       1.0706 -0.0212    1.485
+#>       1.0735 -0.0216    1.572
+#>       1.0735 -0.0216    1.553
+#>       1.0737 -0.0238    1.616
+#>       1.0765 -0.0221    0.087
+#>       1.0765 -0.0221    0.068
+#>       1.0765 -0.0221    0.155
+#>       1.0769 -0.0265    0.131
+#>       1.0767 -0.0243    0.218
+#>       1.0767 -0.0243    0.199
 #> 
 #> =========================================================================
 #>                AUTOMATED RESIDUAL DIAGNOSTIC LEADERBOARD                 
@@ -309,16 +309,16 @@ print(Insurance_pipeline)
 #>      Cubist+Bagged_MARS     4398.077    2759.742      0.8988 151497298
 #>  QuantileRF+Bagged_MARS     4439.854    2872.456      0.8968 149966829
 #>  KS_p_value Overfitting       Bias Duration
-#>      0.9256      1.2349  -980.3730    0.138
-#>      0.9261      1.6550 -1086.8736    0.350
-#>      0.9059      1.9278 -1193.3742    0.212
-#>      0.8103      1.8826  -903.5311    0.190
-#>      0.7314      2.3371 -1130.0778    0.061
-#>      0.9357      3.1345  -903.5435    0.168
-#>      0.9146      1.9479  -933.5961    0.299
-#>      0.8602      1.4893  -827.0955    0.225
-#>      0.8877      1.2155  -903.5828    0.613
-#>      0.7393      1.4838 -1010.0833    0.687
+#>      0.9256      1.2349  -980.3730    0.146
+#>      0.9261      1.6550 -1086.8736    0.351
+#>      0.9059      1.9278 -1193.3742    0.205
+#>      0.8103      1.8826  -903.5311    0.199
+#>      0.7314      2.3371 -1130.0778    0.070
+#>      0.9357      3.1345  -903.5435    0.171
+#>      0.9146      1.9479  -933.5961    0.301
+#>      0.8602      1.4893  -827.0955    0.242
+#>      0.8877      1.2155  -903.5828    0.540
+#>      0.7393      1.4838 -1010.0833    0.599
 #> 
 #> =========================================================================
 #>                AUTOMATED RESIDUAL DIAGNOSTIC LEADERBOARD                 
@@ -402,14 +402,23 @@ Insurance_pipeline$plots # plots all in one command
 
     #> 
     #> $draw_top3
-    #> function() { .draw_top3_panel(top_3_models, pred_test_list, actual_test, models_list, train_data, target_col, theme_colors) }
-    #> <bytecode: 0xb85858ee8>
-    #> <environment: 0xb88858ba0>
+    #> function () 
+    #> {
+    #>     .draw_top3_panel(top_3_models, pred_test_list, actual_test, 
+    #>         models_list, train_data, target_col, theme_colors)
+    #> }
+    #> <bytecode: 0xc667124d8>
+    #> <environment: 0xc563a1c78>
     #> 
     #> $draw_diagnostics
-    #> function() { .draw_diagnostics_panel(top_3_models, pred_test_list, pred_train_list, actual_test, actual_train, test_data, target_col, theme_colors, top_pred_names) }
-    #> <bytecode: 0xb8585e6d0>
-    #> <environment: 0xb88858ba0>
+    #> function () 
+    #> {
+    #>     .draw_diagnostics_panel(top_3_models, pred_test_list, pred_train_list, 
+    #>         actual_test, actual_train, test_data, target_col, theme_colors, 
+    #>         top_pred_names)
+    #> }
+    #> <bytecode: 0xc66712ac0>
+    #> <environment: 0xc563a1c78>
 
 ## Track 3: The Institutional Track (Professional Production, this example will have a lower root mean squared error than an article in Nature for the exact same data set)
 
@@ -495,11 +504,11 @@ Concrete_pipeline$performance_report[1:5, ]
 #> 4      3.1201           0.7849           5.4554      0.7251
 #> 5      3.7004           1.5298           5.8710      0.5718
 #>   Adjusted R2 95% CI Lower Adjusted R2 95% CI Upper Duration Overfitting
-#> 1                   0.3674                        1    0.242      1.1184
-#> 2                   0.5135                        1    1.830      1.5195
-#> 3                   0.4544                        1    0.668      2.1965
-#> 4                   0.3487                        1    2.014      3.1049
-#> 5                   0.0806                        1    1.588      1.9645
+#> 1                   0.3674                        1    0.180      1.1184
+#> 2                   0.5135                        1    1.853      1.5195
+#> 3                   0.4544                        1    0.618      2.1965
+#> 4                   0.3487                        1    2.111      3.1049
+#> 5                   0.0806                        1    1.673      1.9645
 #>      Bias Variance KS_p_value
 #> 1 -1.1402  97.8231     0.9910
 #> 2 -1.4963  94.9299     0.7468
@@ -596,14 +605,23 @@ Concrete_pipeline$plots  # Direct programmatic access to specific ggplot2 object
 
     #> 
     #> $draw_top3
-    #> function() { .draw_top3_panel(top_3_models, pred_test_list, actual_test, models_list, train_data, target_col, theme_colors) }
-    #> <bytecode: 0xb85858ee8>
-    #> <environment: 0xb8df57a10>
+    #> function () 
+    #> {
+    #>     .draw_top3_panel(top_3_models, pred_test_list, actual_test, 
+    #>         models_list, train_data, target_col, theme_colors)
+    #> }
+    #> <bytecode: 0xc667124d8>
+    #> <environment: 0xc566a7000>
     #> 
     #> $draw_diagnostics
-    #> function() { .draw_diagnostics_panel(top_3_models, pred_test_list, pred_train_list, actual_test, actual_train, test_data, target_col, theme_colors, top_pred_names) }
-    #> <bytecode: 0xb8585e6d0>
-    #> <environment: 0xb8df57a10>
+    #> function () 
+    #> {
+    #>     .draw_diagnostics_panel(top_3_models, pred_test_list, pred_train_list, 
+    #>         actual_test, actual_train, test_data, target_col, theme_colors, 
+    #>         top_pred_names)
+    #> }
+    #> <bytecode: 0xc66712ac0>
+    #> <environment: 0xc566a7000>
 
 The professional visual diagnostics portfolio includes:
 
