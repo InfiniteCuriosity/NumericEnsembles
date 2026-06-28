@@ -4,7 +4,7 @@ author: "Russ Conte"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Getting Started with NumericEnsembles}
+  %\VignetteIndexEntry{Getting Started with NumericEnsembles: Advanced Continuous Stacking Optimization}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
