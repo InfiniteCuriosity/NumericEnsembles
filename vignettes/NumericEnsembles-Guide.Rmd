@@ -104,7 +104,7 @@ trained_numeric_ensemble <- Numeric(
 
 `NumericEnsembles` contains custom S3 methods designed to inspect performance reporting profiles and handle visual analytics arrays cleanly.
 
-### Executive Summary Report
+### Print Multidimensional Objects
 
 Passing your output object straight into the standard `print()` method prints your continuous evaluation portfolio, showing your training durations, overfitting ratios, and out-of-sample validation leaderboards:
 
@@ -119,6 +119,14 @@ Calling the custom `plot()` method loops through an exhaustive visual audit po
 ```{r Visual evaluation}
 # Paces through your visual evaluation windows interactively
 plot(trained_numeric_ensemble, pace_output = FALSE)
+```
+
+### Executive Summary Report
+
+```{r Executive Summary Report}
+setwd(dir = tempdir()) # The executive summary will output to the working directory
+NumericEnsembles::RenderExecutiveReport(trained_numeric_ensemble)
+tempdir()
 ```
 
 ## 4. Deploying Scoring Inferences over Untrained Records
